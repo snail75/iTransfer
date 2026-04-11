@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { TbDownload, TbEye, TbLink } from "react-icons/tb";
+import { TbDownload, TbEye, TbLink, TbRefresh, TbShieldCheck } from "react-icons/tb";
 import { FormattedMessage } from "react-intl";
 import useTranslate from "../../hooks/useTranslate.hook";
 import shareService from "../../services/share.service";
@@ -18,11 +18,13 @@ const FileList = ({
   setShare,
   share,
   isLoading,
+  onReplaceFile,
 }: {
   files?: FileMetaData[];
   setShare: Dispatch<SetStateAction<Share | undefined>>;
   share: Share;
   isLoading: boolean;
+  onReplaceFile?: (file: FileMetaData) => void;
 }) => {
   const clipboard = useClipboard();
   const modals = useModals();
@@ -101,7 +103,19 @@ const FileList = ({
             ? skeletonRows
             : files!.map((file) => (
                 <Table.Row key={file.name}>
-                  <Table.Cell>{file.name}</Table.Cell>
+                  <Table.Cell>
+                    <div className="flex items-center gap-2">
+                      <span>{file.name}</span>
+                      {file.scanStatus === "CLEAN" && (
+                        <TbShieldCheck
+                          className="text-green-600 dark:text-green-400"
+                          size={18}
+                          title="Virus-free"
+                          aria-label="Virus-free"
+                        />
+                      )}
+                    </div>
+                  </Table.Cell>
                   <Table.Cell>{byteToHumanSizeString(parseInt(file.size))}</Table.Cell>
                   <Table.Cell>
                     <div className="flex items-center justify-end gap-2">
@@ -123,6 +137,16 @@ const FileList = ({
                           aria-label="Copy file link"
                         >
                           <TbLink size={18} />
+                        </button>
+                      )}
+                      {share.allowVersioning && onReplaceFile && (
+                        <button
+                          onClick={() => onReplaceFile(file)}
+                          className="p-1.5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          aria-label={`Replace ${file.name}`}
+                          title="Replace file with a new version"
+                        >
+                          <TbRefresh size={18} />
                         </button>
                       )}
                       <button

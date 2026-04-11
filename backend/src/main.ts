@@ -47,6 +47,23 @@ async function bootstrap() {
 
   const config = app.get<ConfigService>(ConfigService);
 
+  const desktopClientOrigins = (
+    process.env.DESKTOP_CLIENT_ORIGINS ||
+    "tauri://localhost,http://tauri.localhost,https://tauri.localhost,http://localhost:1420,http://127.0.0.1:1420"
+  )
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  app.enableCors({
+    allowedHeaders: ["Authorization", "Content-Type"],
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    origin: (origin, callback) => {
+      callback(null, !origin || desktopClientOrigins.includes(origin));
+    },
+  });
+
   app.use((req: Request, res: Response, next: NextFunction) => {
     const chunkSize = config.get("share.chunkSize");
     bodyParser.raw({
@@ -67,7 +84,7 @@ async function bootstrap() {
   // Setup Swagger in development mode
   if (process.env.NODE_ENV == "development") {
     const config = new DocumentBuilder()
-      .setTitle("Swiss DataShare API")
+      .setTitle("Mediapult Transfer API")
       .setVersion("1.0")
       .build();
     const document = SwaggerModule.createDocument(app, config);

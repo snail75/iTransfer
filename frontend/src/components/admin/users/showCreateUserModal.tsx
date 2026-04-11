@@ -6,6 +6,7 @@ import toast from "../../../utils/toast.util";
 import { Button, Input, PasswordInput, Switch } from "../../../components/ui";
 import { useForm } from "../../../hooks/useForm";
 import { ModalContextType } from "../../../contexts/ModalContext";
+import FileSizeInput from "../../core/FileSizeInput";
 
 const showCreateUserModal = (
   modals: ModalContextType,
@@ -48,6 +49,8 @@ const Body = ({
       email: "",
       password: undefined,
       isAdmin: false,
+      storageQuotaBytes: 0,
+      unlimitedStorage: true,
       setPasswordManually: false,
     },
     validationSchema,
@@ -57,7 +60,15 @@ const Body = ({
     <form
       onSubmit={form.onSubmit(async (values) => {
         userService
-          .create(values)
+          .create({
+            username: values.username,
+            email: values.email,
+            password: values.password,
+            isAdmin: values.isAdmin,
+            storageQuotaBytes: values.unlimitedStorage
+              ? null
+              : values.storageQuotaBytes.toString(),
+          })
           .then(() => {
             getUsers();
             modals.closeAll();
@@ -101,6 +112,19 @@ const Body = ({
         checked={form.values.isAdmin}
         onChange={(checked) => form.setValue("isAdmin", checked)}
       />
+      <Switch
+        label="Unlimited storage"
+        helperText="Turn this off to assign a storage quota to the user."
+        checked={form.values.unlimitedStorage}
+        onChange={(checked) => form.setValue("unlimitedStorage", checked)}
+      />
+      {!form.values.unlimitedStorage && (
+        <FileSizeInput
+          label="Storage quota"
+          value={form.values.storageQuotaBytes || 12_000_000_000}
+          onChange={(bytes) => form.setValue("storageQuotaBytes", bytes)}
+        />
+      )}
       <div className="flex justify-end">
         <Button type="submit">
           <FormattedMessage id="common.button.create" />

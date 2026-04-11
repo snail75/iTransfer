@@ -150,8 +150,8 @@ const Upload = ({
       }),
     );
 
-    Promise.all(fileUploadPromises);
-    console.log(`[Upload] All file upload promises initiated`);
+    await Promise.all(fileUploadPromises);
+    console.log(`[Upload] All file uploads completed`);
   };
 
   const showCreateUploadModalCallback = (files: FileUpload[]) => {

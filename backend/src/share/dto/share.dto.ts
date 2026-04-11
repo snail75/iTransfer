@@ -24,6 +24,12 @@ export class ShareDTO {
   description: string;
 
   @Expose()
+  allowPublicUpload: boolean;
+
+  @Expose()
+  allowVersioning: boolean;
+
+  @Expose()
   hasPassword: boolean;
 
   @Expose()

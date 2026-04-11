@@ -12,7 +12,7 @@ export const configVariables = {
   general: {
     appName: {
       type: "string",
-      defaultValue: "Swiss DataShare",
+      defaultValue: "Mediapult Transfer",
       secret: false,
     },
     appUrl: {
@@ -51,6 +51,11 @@ export const configVariables = {
       defaultValue: "0 days",
       secret: false,
     },
+    defaultExpiration: {
+      type: "timespan",
+      defaultValue: "7 days",
+      secret: false,
+    },
     shareIdLength: {
       type: "number",
       defaultValue: "8",
@@ -73,6 +78,13 @@ export const configVariables = {
     autoOpenShareModal: {
       type: "boolean",
       defaultValue: "false",
+      secret: false,
+    },
+  },
+  storage: {
+    localUploadPath: {
+      type: "string",
+      defaultValue: "",
       secret: false,
     },
   },
@@ -108,7 +120,7 @@ export const configVariables = {
     shareRecipientsMessage: {
       type: "text",
       defaultValue:
-        "Hey!\n\n{creator} ({creatorEmail}) shared some files with you. You can view or download the files with this link: {shareUrl}\n\nThe share will expire {expires}.\n\nNote: {desc}\n\nShared securely with Swiss DataShare",
+        "Hey!\n\n{creator} ({creatorEmail}) shared some files with you. You can view or download the files with this link: {shareUrl}\n\nThe share will expire {expires}.\n\nNote: {desc}\n\nShared securely with Mediapult Transfer",
     },
     reverseShareSubject: {
       type: "string",
@@ -117,25 +129,25 @@ export const configVariables = {
     reverseShareMessage: {
       type: "text",
       defaultValue:
-        "Hey!\n\nA share was just created with your reverse share link: {shareUrl}\n\nShared securely with Swiss DataShare",
+        "Hey!\n\nA share was just created with your reverse share link: {shareUrl}\n\nShared securely with Mediapult Transfer",
     },
     resetPasswordSubject: {
       type: "string",
-      defaultValue: "Swiss DataShare password reset",
+      defaultValue: "Mediapult Transfer password reset",
     },
     resetPasswordMessage: {
       type: "text",
       defaultValue:
-        "Hey!\n\nYou requested a password reset. Click this link to reset your password: {url}\nThe link expires in an hour.\n\nSwiss DataShare",
+        "Hey!\n\nYou requested a password reset. Click this link to reset your password: {url}\nThe link expires in an hour.\n\nMediapult Transfer",
     },
     inviteSubject: {
       type: "string",
-      defaultValue: "Swiss DataShare invite",
+      defaultValue: "Mediapult Transfer invite",
     },
     inviteMessage: {
       type: "text",
       defaultValue:
-        'Hey!\n\nYou were invited to Swiss DataShare. Click this link to accept the invite: {url}\n\nYou can use the email "{email}" and the password "{password}" to sign in.\n\nSwiss DataShare',
+        'Hey!\n\nYou were invited to Mediapult Transfer. Click this link to accept the invite: {url}\n\nYou can use the email "{email}" and the password "{password}" to sign in.\n\nMediapult Transfer',
     },
   },
   smtp: {
@@ -431,7 +443,7 @@ const prisma = new PrismaClient({
     db: {
       url:
         process.env.DATABASE_URL ||
-        "file:../data/swiss-datashare.db?connection_limit=1",
+        "file:../data/mediapult-transfer.db?connection_limit=1",
     },
   },
 });

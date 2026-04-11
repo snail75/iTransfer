@@ -33,9 +33,12 @@ export default function AdminConfigPage() {
   >([]);
 
   const [logo, setLogo] = useState<File | null>(null);
+  const [isMigratingStorage, setIsMigratingStorage] = useState(false);
 
   const isEditingAllowed = (): boolean => {
-    return !configVariables || configVariables[0].allowEdit;
+    return (
+      !configVariables || !configVariables[0] || configVariables[0].allowEdit
+    );
   };
 
   const saveConfigVariables = async () => {
@@ -60,6 +63,33 @@ export default function AdminConfigPage() {
       void config.refresh();
     } else {
       toast.success(t("admin.config.notify.no-changes"));
+    }
+  };
+
+  const migrateStorage = async () => {
+    if (!window.confirm(t("admin.config.storage.migrate.confirm"))) return;
+
+    setIsMigratingStorage(true);
+    try {
+      if (updatedConfigVariables.length > 0) {
+        await configService.updateMany(updatedConfigVariables);
+        setUpdatedConfigVariables([]);
+        void config.refresh();
+      }
+
+      const result =
+        await configService.migrateLocalSharesToConfiguredStoragePath();
+
+      toast.success(
+        t("admin.config.storage.migrate.success", {
+          count: result.movedShares,
+          path: result.targetPath,
+        }),
+      );
+    } catch (error) {
+      toast.axiosError(error);
+    } finally {
+      setIsMigratingStorage(false);
     }
   };
 
@@ -105,12 +135,7 @@ export default function AdminConfigPage() {
           isMobileNavBarOpened={isMobileNavBarOpened}
           setIsMobileNavBarOpened={setIsMobileNavBarOpened}
         />
-        <main
-          className={clsx(
-            "pt-16 transition-all",
-            "sm:ml-64 lg:ml-80"
-          )}
-        >
+        <main className={clsx("pt-16 transition-all", "sm:ml-64 lg:ml-80")}>
           <Container size="lg" className="py-8">
             {!configVariables ? (
               <CenterLoader />
@@ -130,6 +155,15 @@ export default function AdminConfigPage() {
                   <h2 className="text-2xl font-bold text-text dark:text-text-dark mb-6">
                     {t("admin.config.category." + categoryId)}
                   </h2>
+                  {configVariables.length === 0 && (
+                    <Alert
+                      color="blue"
+                      title={t("admin.config.empty-category.title")}
+                      icon={<TbInfoCircle size={16} />}
+                    >
+                      <FormattedMessage id="admin.config.empty-category.description" />
+                    </Alert>
+                  )}
                   {configVariables.map((configVariable) => (
                     <div
                       key={configVariable.key}
@@ -143,9 +177,7 @@ export default function AdminConfigPage() {
                             )}`}
                           />
                         </h3>
-                        <p
-                          className="text-sm text-gray-500 dark:text-gray-400 whitespace-pre-line"
-                        >
+                        <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-pre-line">
                           <FormattedMessage
                             id={`admin.config.${camelToKebab(
                               configVariable.key,
@@ -168,11 +200,33 @@ export default function AdminConfigPage() {
                       <LogoConfigInput logo={logo} setLogo={setLogo} />
                     </div>
                   )}
+                  {categoryId == "storage" && (
+                    <Alert
+                      color="yellow"
+                      title={t("admin.config.storage.migrate.title")}
+                      icon={<TbInfoCircle size={16} />}
+                    >
+                      <div className="space-y-4">
+                        <p>
+                          <FormattedMessage id="admin.config.storage.migrate.description" />
+                        </p>
+                        <Button
+                          variant="secondary"
+                          onClick={migrateStorage}
+                          loading={isMigratingStorage}
+                        >
+                          <FormattedMessage id="admin.config.storage.migrate.button" />
+                        </Button>
+                      </div>
+                    </Alert>
+                  )}
                 </div>
                 <div className="flex justify-end gap-4 mt-8">
                   {categoryId == "smtp" && (
                     <TestEmailButton
-                      configVariablesChanged={updatedConfigVariables.length != 0}
+                      configVariablesChanged={
+                        updatedConfigVariables.length != 0
+                      }
                       saveConfigVariables={saveConfigVariables}
                     />
                   )}

@@ -38,11 +38,23 @@ const sidebars: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "setup/desktop-client",
+        },
+        {
+          type: "doc",
           id: "setup/s3",
         },
         {
           type: "doc",
           id: "setup/upgrading",
+        },
+        {
+          type: "doc",
+          id: "setup/backup-and-restore",
+        },
+        {
+          type: "doc",
+          id: "setup/live-deployment",
         },
       ],
     },
@@ -63,7 +75,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "link",
       label: "Demo",
-      href: "https://swiss-datashare.dev.eliasschneider.com",
+      href: "https://mediapult-transfer.dev.eliasschneider.com",
     },
     {
       type: "link",

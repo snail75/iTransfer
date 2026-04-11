@@ -6,6 +6,9 @@ export type FileMetaData = {
   id: string;
   name: string;
   size: string;
+  scanStatus?: "PENDING" | "CLEAN" | "INFECTED" | "ERROR" | "UNSCANNED";
+  scanCheckedAt?: string;
+  scanMessage?: string;
 };
 
 export type FileListItem = FileUpload | (FileMetaData & { deleted?: boolean });

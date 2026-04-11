@@ -3,15 +3,15 @@ import type { Config } from "@docusaurus/types";
 import { themes as prismThemes } from "prism-react-renderer";
 
 const config: Config = {
-  title: "Swiss DataShare",
+  title: "Mediapult Transfer",
   tagline:
-    "Swiss DataShare is self-hosted file sharing platform and an alternative for WeTransfer.",
+    "Mediapult Transfer is self-hosted file sharing platform and an alternative for WeTransfer.",
   favicon: "img/pingvinshare.svg",
 
-  url: "https://swissmakers.github.io",
-  baseUrl: "/swiss-datashare/",
-  organizationName: "swissmakers",
-  projectName: "swiss-datashare",
+  url: "https://mediapult.github.io",
+  baseUrl: "/mediapult-transfer/",
+  organizationName: "mediapult",
+  projectName: "mediapult-transfer",
 
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
@@ -28,7 +28,7 @@ const config: Config = {
         docs: {
           routeBasePath: "/",
           sidebarPath: "./sidebars.ts",
-          editUrl: "https://github.com/swissmakers/swiss-datashare/edit/main/docs",
+          editUrl: "https://github.com/mediapult/mediapult-transfer/edit/main/docs",
         },
         blog: false,
       } satisfies Preset.Options,
@@ -41,14 +41,14 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: "Swiss DataShare",
+      title: "Mediapult Transfer",
       logo: {
-        alt: "Swiss DataShare Logo",
+        alt: "Mediapult Transfer Logo",
         src: "img/pingvinshare.svg",
       },
       items: [
         {
-          href: "https://github.com/swissmakers/swiss-datashare",
+          href: "https://github.com/mediapult/mediapult-transfer",
           label: "GitHub",
           position: "right",
         },

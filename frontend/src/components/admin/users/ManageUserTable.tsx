@@ -4,6 +4,7 @@ import showUpdateUserModal from "./showUpdateUserModal";
 import { FormattedMessage } from "react-intl";
 import { Table, Badge } from "../../../components/ui";
 import { useModals } from "../../../contexts/ModalContext";
+import { byteToHumanSizeString } from "../../../utils/fileSize.util";
 
 const ManageUserTable = ({
   users,
@@ -32,6 +33,7 @@ const ManageUserTable = ({
             <Table.Cell header>
               <FormattedMessage id="admin.users.table.admin" />
             </Table.Cell>
+            <Table.Cell header>Storage quota</Table.Cell>
             <Table.Cell header>{null}</Table.Cell>
           </Table.Row>
         </Table.Header>
@@ -51,6 +53,11 @@ const ManageUserTable = ({
                   <Table.Cell>{user.email}</Table.Cell>
                   <Table.Cell>
                     {user.isAdmin && <TbCheck className="text-green-600 dark:text-green-400" size={18} />}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {user.storageQuotaBytes
+                      ? byteToHumanSizeString(parseInt(user.storageQuotaBytes))
+                      : "Unlimited"}
                   </Table.Cell>
                   <Table.Cell>
                     <div className="flex items-center justify-end gap-2">
@@ -92,6 +99,9 @@ const skeletonRows = [...Array(10)].map((v, i) => (
     </Table.Cell>
     <Table.Cell>
       <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-6" />
+    </Table.Cell>
+    <Table.Cell>
+      <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-20" />
     </Table.Cell>
     <Table.Cell>
       <div className="h-6 w-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />

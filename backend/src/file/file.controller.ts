@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Query,
+  Req,
   Res,
   StreamableFile,
   UseGuards,
@@ -13,11 +14,12 @@ import {
 import { SkipThrottle } from "@nestjs/throttler";
 import * as contentDisposition from "content-disposition";
 import { Response } from "express";
-import { CreateShareGuard } from "src/share/guard/createShare.guard";
 import { ShareOwnerGuard } from "src/share/guard/shareOwner.guard";
 import { FileService } from "./file.service";
+import { FileUploadGuard } from "./guard/fileUpload.guard";
 import { FileSecurityGuard } from "./guard/fileSecurity.guard";
 import * as mime from "mime-types";
+import { Request } from "express";
 
 @Controller("shares/:shareId/files")
 export class FileController {
@@ -25,7 +27,7 @@ export class FileController {
 
   @Post()
   @SkipThrottle()
-  @UseGuards(CreateShareGuard, ShareOwnerGuard)
+  @UseGuards(FileUploadGuard)
   async create(
     @Query()
     query: {
@@ -36,6 +38,7 @@ export class FileController {
     },
     @Body() body: string,
     @Param("shareId") shareId: string,
+    @Req() request: Request,
   ) {
     const { id, name, chunkIndex, totalChunks } = query;
 
@@ -45,6 +48,9 @@ export class FileController {
       { index: parseInt(chunkIndex), total: parseInt(totalChunks) },
       { id, name },
       shareId,
+      request["allowCompletedShareUpload"] === true,
+      request["allowVersioning"] === true,
+      request["allowPublicUpload"] === true,
     );
   }
 

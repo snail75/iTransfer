@@ -1,5 +1,5 @@
 services:
-  swiss-datashare:
+  mediapult-transfer:
     build: .
     restart: unless-stopped
     ports:

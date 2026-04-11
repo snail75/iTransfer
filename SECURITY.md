@@ -2,8 +2,8 @@
 
 ## Supported Versions
 
-Older versions of Swiss DataShare do not receive security updates. To ensure your system remains secure, we strongly recommend updating Swiss DataShare regularly. You can automate these updates using tools like [Watchtower](https://github.com/containrrr/watchtower).
+Older versions of Mediapult Transfer do not receive security updates. To ensure your system remains secure, we strongly recommend updating Mediapult Transfer regularly. You can automate these updates using tools like [Watchtower](https://github.com/containrrr/watchtower).
 
 ## Reporting a Vulnerability
 
-Thank you for taking the time to report a vulnerability. Please DO NOT create an issue on GitHub because the vulnerability could get exploited. Instead please create a security advisory on GitHub or contact Swissmakers GmbH.
+Thank you for taking the time to report a vulnerability. Please DO NOT create an issue on GitHub because the vulnerability could get exploited. Instead please create a security advisory on GitHub or contact Mediapult.

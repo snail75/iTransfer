@@ -49,6 +49,9 @@ export class S3FileService {
     chunk: { index: number; total: number },
     file: { id?: string; name: string },
     shareId: string,
+    allowCompletedShareUpload = false,
+    allowVersioning = false,
+    allowPublicUpload = false,
   ) {
     if (!file.id) {
       file.id = crypto.randomUUID();
@@ -57,6 +60,22 @@ export class S3FileService {
     }
 
     const buffer = Buffer.from(data, "base64");
+    const share = await this.prisma.share.findUnique({
+      where: { id: shareId },
+      include: { files: true },
+    });
+    if (share?.uploadLocked && !allowCompletedShareUpload)
+      throw new BadRequestException("Share is already completed");
+
+    if (
+      share?.uploadLocked &&
+      allowVersioning &&
+      !allowPublicUpload &&
+      !share.files.some((savedFile) => savedFile.name === file.name)
+    ) {
+      throw new BadRequestException("Versioning requires an existing file name");
+    }
+
     const key = `${this.getS3Path()}${shareId}/${file.name}`;
     const bucketName = this.config.get("s3.bucketName");
     const s3Instance = this.getS3Instance();
@@ -153,26 +172,43 @@ export class S3FileService {
     if (isLastChunk) {
       const fileSize: number = await this.getFileSize(shareId, file.name);
 
+      if (allowVersioning) {
+        await this.prisma.file.deleteMany({
+          where: {
+            shareId,
+            name: file.name,
+          },
+        });
+      }
       await this.prisma.file.create({
         data: {
           id: file.id,
           name: file.name,
           size: fileSize.toString(),
+          scanStatus: "UNSCANNED",
+          scanMessage: "ClamAV scan is not available for S3 storage.",
           share: { connect: { id: shareId } },
         },
       });
+      if (share?.uploadLocked) {
+        await this.prisma.share.update({
+          where: { id: shareId },
+          data: { isZipReady: false },
+        });
+      }
     }
 
     return file;
   }
 
   async get(shareId: string, fileId: string): Promise<File> {
-    const fileName = (
-      await this.prisma.file.findUnique({ where: { id: fileId } })
-    ).name;
+    const fileMetaData = await this.prisma.file.findUnique({
+      where: { id: fileId },
+    });
+    if (!fileMetaData) throw new NotFoundException("File not found");
 
     const s3Instance = this.getS3Instance();
-    const key = `${this.getS3Path()}${shareId}/${fileName}`;
+    const key = `${this.getS3Path()}${shareId}/${fileMetaData.name}`;
     const response = await s3Instance.send(
       new GetObjectCommand({
         Bucket: this.config.get("s3.bucketName"),
@@ -184,9 +220,12 @@ export class S3FileService {
       metaData: {
         id: fileId,
         size: response.ContentLength?.toString() || "0",
-        name: fileName,
+        name: fileMetaData.name,
         shareId: shareId,
         createdAt: response.LastModified || new Date(),
+        scanStatus: fileMetaData.scanStatus,
+        scanCheckedAt: fileMetaData.scanCheckedAt,
+        scanMessage: fileMetaData.scanMessage,
         mimeType:
           mime.contentType(fileId.split(".").pop()) ||
           "application/octet-stream",

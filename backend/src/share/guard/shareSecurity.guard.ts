@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import { Request } from "express";
 import * as moment from "moment";
+import { ApiTokenService } from "src/apiToken/apiToken.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ShareService } from "src/share/share.service";
 import { ConfigService } from "src/config/config.service";
@@ -18,8 +19,9 @@ export class ShareSecurityGuard extends JwtGuard {
     private shareService: ShareService,
     private prisma: PrismaService,
     configService: ConfigService,
+    apiTokenService: ApiTokenService,
   ) {
-    super(configService);
+    super(configService, apiTokenService);
   }
 
   async canActivate(context: ExecutionContext) {

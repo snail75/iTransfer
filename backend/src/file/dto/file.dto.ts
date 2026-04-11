@@ -11,6 +11,15 @@ export class FileDTO {
   @Expose()
   size: string;
 
+  @Expose()
+  scanStatus: string;
+
+  @Expose()
+  scanCheckedAt?: Date;
+
+  @Expose()
+  scanMessage?: string;
+
   share: ShareDTO;
 
   from(partial: Partial<FileDTO>) {

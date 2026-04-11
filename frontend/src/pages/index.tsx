@@ -106,7 +106,7 @@ export default function Home() {
                 </Button>
                 <Button
                   as={Link}
-                  href="https://github.com/swissmakers/swiss-datashare"
+                  href="https://github.com/mediapult/mediapult-transfer"
                   target="_blank"
                   variant="outline"
                   size="lg"

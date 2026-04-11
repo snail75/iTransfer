@@ -10,6 +10,7 @@ import {
   TbSettings,
   TbShare,
   TbSocial,
+  TbFolderCog,
 } from "react-icons/tb";
 import { FormattedMessage } from "react-intl";
 import clsx from "clsx";
@@ -18,6 +19,7 @@ const categories = [
   { name: "General", icon: TbSettings },
   { name: "Email", icon: TbMail },
   { name: "Share", icon: TbShare },
+  { name: "Storage", icon: TbFolderCog },
   { name: "SMTP", icon: TbAt },
   { name: "OAuth", icon: TbSocial },
   { name: "LDAP", icon: TbBinaryTree },

@@ -1,7 +1,7 @@
 services:
-  swiss-datashare:
-    image: registry.swissmakers.ch/infra/swiss-datashare:latest # Prebuilt image from Swissmakers GmbH
-    # Alternative: swissmakers/swiss-datashare or build from source using: docker build -t swiss-datashare .
+  mediapult-transfer:
+    image: mediapult-transfer:latest
+    # Build the local image with: docker build -t mediapult-transfer .
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -10,7 +10,6 @@ services:
     volumes:
       - "./data:/opt/app/backend/data:Z"
       - "./data/images:/opt/app/frontend/public/img:Z"
-  #      - "./config.yaml:/opt/app/config.yaml" # Add this line, if you want to configure swiss-datashare via config file and not via UI
+  #      - "./config.yaml:/opt/app/config.yaml" # Add this line, if you want to configure mediapult-transfer via config file and not via UI
 
-  # To add ClamAV, to scan your shares for malicious files, 
-  # see https://github.com/swissmakers/swiss-datashare
+  # To add ClamAV, extend this compose file with a ClamAV service and set CLAMAV_HOST.

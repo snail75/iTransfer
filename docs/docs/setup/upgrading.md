@@ -6,7 +6,7 @@ id: upgrading
 
 ### Upgrade to a new version
 
-As Swiss DataShare is in early stage, see the release notes for breaking changes before upgrading.
+As Mediapult Transfer is in early stage, see the release notes for breaking changes before upgrading.
 
 #### Docker / Podman Compose
 
@@ -28,10 +28,10 @@ For systemd service installations, upgrade by pulling the latest image and resta
 
 ```bash
 # Pull the latest image
-sudo podman pull registry.swissmakers.ch/infra/swiss-datashare:latest
+sudo podman pull mediapult-transfer:latest
 
 # Restart the service (this will stop the old container and start a new one)
-sudo systemctl restart swiss-datashare-container.service
+sudo systemctl restart mediapult-transfer-container.service
 ```
 
 The service will automatically recreate the container with the new image on restart.
@@ -46,12 +46,12 @@ The service will automatically recreate the container with the new image on rest
 
 1. Stop the running app
    ```bash
-   pm2 stop swiss-datashare-backend swiss-datashare-frontend
+   pm2 stop mediapult-transfer-backend mediapult-transfer-frontend
    ```
 2. Repeat the steps from the [installation guide](#stand-alone-installation) except the `git clone` step.
 
    ```bash
-   cd swiss-datashare
+   cd mediapult-transfer
 
    # Checkout the latest version
    git fetch --tags && git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
@@ -60,12 +60,12 @@ The service will automatically recreate the container with the new image on rest
    cd backend
    npm install
    npm run build
-   pm2 restart swiss-datashare-backend
+   pm2 restart mediapult-transfer-backend
 
    # Start the frontend
    cd ../frontend
    npm install
    npm run build
-   pm2 restart swiss-datashare-frontend
+   pm2 restart mediapult-transfer-frontend
    ```
 Note that environment variables are not picked up when using pm2 restart, if you actually want to change configs, you need to run ````pm2 --update-env restart````

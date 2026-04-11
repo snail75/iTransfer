@@ -11,22 +11,22 @@ const Intro = () => {
         <div className="flex flex-col items-center space-y-6 py-10">
           <Logo height={80} width={80} />
           <h2 className="text-3xl font-bold text-center text-text dark:text-text-dark">
-            Welcome to Swiss DataShare
+            Welcome to Mediapult Transfer
           </h2>
           <p className="text-center text-gray-700 dark:text-gray-300">
-            Swiss DataShare is actively maintained and developed by{" "}
+            Mediapult Transfer is actively maintained and developed by{" "}
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://github.com/swissmakers/swiss-datashare"
+              href="https://github.com/mediapult/mediapult-transfer"
               className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 underline"
             >
-              Swissmakers GmbH
+              Mediapult
             </a>
             . We are committed to providing a reliable, secure, and feature-rich file sharing solution.
           </p>
           <p className="text-center text-gray-700 dark:text-gray-300">
-            Enough talked, have fun with Swiss DataShare!
+            Enough talked, have fun with Mediapult Transfer!
           </p>
           <p className="text-center font-medium text-text dark:text-text-dark mt-6">
             How do you want to continue?
@@ -36,7 +36,7 @@ const Intro = () => {
               Customize configuration
             </Button>
             <Button as={Link} href="/" variant="outline" fullWidth>
-              Explore Swiss DataShare
+              Explore Mediapult Transfer
             </Button>
           </div>
         </div>

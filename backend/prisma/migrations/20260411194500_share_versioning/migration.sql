@@ -1,0 +1,1 @@
+ALTER TABLE "Share" ADD COLUMN "allowVersioning" BOOLEAN NOT NULL DEFAULT false;

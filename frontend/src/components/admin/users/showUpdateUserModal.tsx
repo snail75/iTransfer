@@ -9,6 +9,7 @@ import toast from "../../../utils/toast.util";
 import { Button, Input, PasswordInput, Switch, Accordion } from "../../../components/ui";
 import { useForm } from "../../../hooks/useForm";
 import { ModalContextType } from "../../../contexts/ModalContext";
+import FileSizeInput from "../../core/FileSizeInput";
 
 const showUpdateUserModal = (
   modals: ModalContextType,
@@ -46,6 +47,10 @@ const Body = ({
       username: user.username,
       email: user.email,
       isAdmin: user.isAdmin,
+      storageQuotaBytes: user.storageQuotaBytes
+        ? parseInt(user.storageQuotaBytes)
+        : 12_000_000_000,
+      unlimitedStorage: !user.storageQuotaBytes,
     },
     validationSchema: accountValidationSchema,
   });
@@ -69,7 +74,14 @@ const Body = ({
         id="accountForm"
         onSubmit={accountForm.onSubmit(async (values) => {
           userService
-            .update(user.id, values)
+            .update(user.id, {
+              username: values.username,
+              email: values.email,
+              isAdmin: values.isAdmin,
+              storageQuotaBytes: values.unlimitedStorage
+                ? null
+                : values.storageQuotaBytes.toString(),
+            })
             .then(() => {
               getUsers();
               modals.closeAll();
@@ -96,6 +108,18 @@ const Body = ({
           checked={accountForm.values.isAdmin}
           onChange={(checked) => accountForm.setValue("isAdmin", checked)}
         />
+        <Switch
+          label="Unlimited storage"
+          checked={accountForm.values.unlimitedStorage}
+          onChange={(checked) => accountForm.setValue("unlimitedStorage", checked)}
+        />
+        {!accountForm.values.unlimitedStorage && (
+          <FileSizeInput
+            label="Storage quota"
+            value={accountForm.values.storageQuotaBytes}
+            onChange={(bytes) => accountForm.setValue("storageQuotaBytes", bytes)}
+          />
+        )}
       </form>
       <Accordion>
         <Accordion.Item value="changePassword">

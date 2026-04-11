@@ -1,9 +1,14 @@
-import { Injectable, Logger } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  ServiceUnavailableException,
+} from "@nestjs/common";
 import * as NodeClam from "clamscan";
 import * as fs from "fs";
-import { FileService } from "src/file/file.service";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CLAMAV_HOST, CLAMAV_PORT, SHARE_DIRECTORY } from "../constants";
+import { resolveShareDirectory } from "src/storage/localStoragePath.util";
+import { CLAMAV_HOST, CLAMAV_PORT } from "../constants";
 
 const clamscanConfig = {
   clamdscan: {
@@ -17,10 +22,7 @@ const clamscanConfig = {
 export class ClamScanService {
   private readonly logger = new Logger(ClamScanService.name);
 
-  constructor(
-    private fileService: FileService,
-    private prisma: PrismaService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   private ClamScan: Promise<NodeClam | null> = new NodeClam()
     .init(clamscanConfig)
@@ -39,22 +41,27 @@ export class ClamScanService {
     if (!clamScan) return [];
 
     const infectedFiles = [];
+    const share = await this.prisma.share.findUnique({ where: { id: shareId } });
+    if (!share) return [];
+    const shareDirectory = resolveShareDirectory(share);
 
     const files = fs
-      .readdirSync(`${SHARE_DIRECTORY}/${shareId}`)
-      .filter((file) => file != "archive.zip");
+      .readdirSync(shareDirectory)
+      .filter((file) => file != "archive.zip" && !file.endsWith(".tmp-chunk"));
 
     for (const fileId of files) {
       const { isInfected } = await clamScan
-        .isInfected(`${SHARE_DIRECTORY}/${shareId}/${fileId}`)
+        .isInfected(`${shareDirectory}/${fileId}`)
         .catch(() => {
           this.logger.log("ClamAV is not active");
           return { isInfected: false };
         });
 
-      const fileName = (
-        await this.prisma.file.findUnique({ where: { id: fileId } })
-      ).name;
+      const fileRecord = await this.prisma.file.findUnique({
+        where: { id: fileId },
+      });
+      if (!fileRecord) continue;
+      const fileName = fileRecord.name;
 
       if (isInfected) {
         infectedFiles.push({ id: fileId, name: fileName });
@@ -68,7 +75,12 @@ export class ClamScanService {
     const infectedFiles = await this.check(shareId);
 
     if (infectedFiles.length > 0) {
-      await this.fileService.deleteAllFiles(shareId);
+      const share = await this.prisma.share.findUnique({ where: { id: shareId } });
+      if (!share) return;
+      await fs.promises.rm(resolveShareDirectory(share), {
+        recursive: true,
+        force: true,
+      });
       await this.prisma.file.deleteMany({ where: { shareId } });
 
       const fileNames = infectedFiles.map((file) => file.name).join(", ");
@@ -84,5 +96,34 @@ export class ClamScanService {
         `Share ${shareId} deleted because it contained ${infectedFiles.length} malicious file(s)`,
       );
     }
+  }
+
+  async scanLocalFile(filePath: string, fileName: string) {
+    const clamScan = await this.ClamScan;
+
+    if (!clamScan) {
+      if (process.env.NODE_ENV == "development") {
+        return {
+          scanStatus: "UNSCANNED",
+          scanCheckedAt: new Date(),
+          scanMessage: "ClamAV is not active in development mode.",
+        };
+      }
+      throw new ServiceUnavailableException("ClamAV is not active");
+    }
+
+    const { isInfected } = await clamScan.isInfected(filePath).catch(() => {
+      throw new ServiceUnavailableException("ClamAV scan failed");
+    });
+
+    if (isInfected) {
+      throw new BadRequestException(`Malware detected in ${fileName}`);
+    }
+
+    return {
+      scanStatus: "CLEAN",
+      scanCheckedAt: new Date(),
+      scanMessage: "Virus-free",
+    };
   }
 }

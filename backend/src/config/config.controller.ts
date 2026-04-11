@@ -59,6 +59,12 @@ export class ConfigController {
     await this.emailService.sendTestMail(email);
   }
 
+  @Post("admin/storage/migrate")
+  @UseGuards(JwtGuard, AdministratorGuard)
+  async migrateLocalSharesToConfiguredStoragePath() {
+    return await this.configService.migrateLocalSharesToConfiguredStoragePath();
+  }
+
   @Post("admin/logo")
   @UseInterceptors(FileInterceptor("file"))
   @UseGuards(JwtGuard, AdministratorGuard)

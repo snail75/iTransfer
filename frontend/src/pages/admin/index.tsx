@@ -40,7 +40,7 @@ const Admin = () => {
               title: "Update",
               icon: TbRefresh,
               route:
-                "https://github.com/swissmakers/swiss-datashare/releases/latest",
+                "https://github.com/mediapult/mediapult-transfer/releases/latest",
             },
           ]);
         }

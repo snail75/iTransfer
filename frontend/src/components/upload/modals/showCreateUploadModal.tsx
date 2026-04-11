@@ -12,7 +12,18 @@ import { CreateShare } from "../../../types/share.type";
 import { getExpirationPreview } from "../../../utils/date.util";
 import toast from "../../../utils/toast.util";
 import { Timespan } from "../../../types/timespan.type";
-import { Alert, Button, Input, PasswordInput, NumberInput, Select, Textarea, Checkbox, Accordion, MultiSelect } from "../../../components/ui";
+import {
+  Alert,
+  Button,
+  Input,
+  PasswordInput,
+  NumberInput,
+  Select,
+  Textarea,
+  Checkbox,
+  Accordion,
+  MultiSelect,
+} from "../../../components/ui";
 import { useForm } from "../../../hooks/useForm";
 import { ModalContextType } from "../../../contexts/ModalContext";
 import clsx from "clsx";
@@ -148,6 +159,8 @@ const CreateUploadModalBody = ({
       expiration_num: 1,
       expiration_unit: "-days",
       never_expires: false,
+      allowPublicUpload: false,
+      allowVersioning: false,
     },
     validationSchema,
   });
@@ -195,6 +208,8 @@ const CreateUploadModalBody = ({
           expiration: expirationString,
           recipients: values.recipients,
           description: values.description,
+          allowPublicUpload: values.allowPublicUpload,
+          allowVersioning: values.allowVersioning,
           security: {
             password: values.password || undefined,
             maxViews: values.maxViews || undefined,
@@ -234,10 +249,7 @@ const CreateUploadModalBody = ({
           <Button
             variant="outline"
             onClick={() =>
-              form.setValue(
-                "link",
-                generateShareId(options.shareIdLength),
-              )
+              form.setValue("link", generateShareId(options.shareIdLength))
             }
             type="button"
             className="mt-6"
@@ -251,7 +263,12 @@ const CreateUploadModalBody = ({
         </p>
         {!options.isReverseShare && (
           <>
-            <div className={clsx("grid grid-cols-2 gap-4", form.errors.expiration_num && "items-center")}>
+            <div
+              className={clsx(
+                "grid grid-cols-2 gap-4",
+                form.errors.expiration_num && "items-center",
+              )}
+            >
               <NumberInput
                 min={1}
                 max={99999}
@@ -259,13 +276,17 @@ const CreateUploadModalBody = ({
                 label={t("upload.modal.expires.label")}
                 disabled={form.values.never_expires}
                 value={form.values.expiration_num}
-                onChange={(value) => form.setValue("expiration_num", value || 1)}
+                onChange={(value) =>
+                  form.setValue("expiration_num", value || 1)
+                }
                 error={form.errors.expiration_num}
               />
               <Select
                 disabled={form.values.never_expires}
                 value={form.values.expiration_unit}
-                onChange={(e) => form.setValue("expiration_unit", e.target.value)}
+                onChange={(e) =>
+                  form.setValue("expiration_unit", e.target.value)
+                }
                 options={[
                   {
                     value: "-minutes",
@@ -317,7 +338,9 @@ const CreateUploadModalBody = ({
               <Checkbox
                 label={t("upload.modal.expires.never-long")}
                 checked={form.values.never_expires}
-                onChange={(e) => form.setValue("never_expires", e.target.checked)}
+                onChange={(e) =>
+                  form.setValue("never_expires", e.target.checked)
+                }
               />
             )}
             <p className="text-xs text-gray-500 dark:text-gray-400 italic">
@@ -331,6 +354,20 @@ const CreateUploadModalBody = ({
             </p>
           </>
         )}
+        <div className="space-y-3">
+          <Checkbox
+            label="Allow uploads"
+            checked={Boolean(form.values.allowPublicUpload)}
+            onChange={(e) =>
+              form.setValue("allowPublicUpload", e.target.checked)
+            }
+          />
+          <Checkbox
+            label="Allow versioning"
+            checked={Boolean(form.values.allowVersioning)}
+            onChange={(e) => form.setValue("allowVersioning", e.target.checked)}
+          />
+        </div>
         <Accordion>
           <Accordion.Item value="description">
             <Accordion.Control>
@@ -342,7 +379,9 @@ const CreateUploadModalBody = ({
                   placeholder={t(
                     "upload.modal.accordion.name-and-description.name.placeholder",
                   )}
-                  value={typeof form.values.name === "string" ? form.values.name : ""}
+                  value={
+                    typeof form.values.name === "string" ? form.values.name : ""
+                  }
                   onChange={(e) => form.setValue("name", e.target.value)}
                   error={form.errors.name}
                 />
@@ -350,7 +389,11 @@ const CreateUploadModalBody = ({
                   placeholder={t(
                     "upload.modal.accordion.name-and-description.description.placeholder",
                   )}
-                  value={typeof form.values.description === "string" ? form.values.description : ""}
+                  value={
+                    typeof form.values.description === "string"
+                      ? form.values.description
+                      : ""
+                  }
                   onChange={(e) => form.setValue("description", e.target.value)}
                   error={form.errors.description}
                 />
@@ -374,11 +417,16 @@ const CreateUploadModalBody = ({
                     onCreate={(query) => {
                       if (!query.match(/^\S+@\S+\.\S+$/)) {
                         form.setErrors({
-                          recipients: t("upload.modal.accordion.email.invalid-email"),
+                          recipients: t(
+                            "upload.modal.accordion.email.invalid-email",
+                          ),
                         });
                       } else {
                         form.setErrors({ recipients: undefined });
-                        const newRecipients = [...form.values.recipients, query];
+                        const newRecipients = [
+                          ...form.values.recipients,
+                          query,
+                        ];
                         form.setValue("recipients", newRecipients);
                         return query;
                       }
@@ -392,7 +440,10 @@ const CreateUploadModalBody = ({
                           e.target as HTMLInputElement
                         ).value.trim();
                         if (inputValue.match(/^\S+@\S+\.\S+$/)) {
-                          const newRecipients = [...form.values.recipients, inputValue];
+                          const newRecipients = [
+                            ...form.values.recipients,
+                            inputValue,
+                          ];
                           form.setValue("recipients", newRecipients);
                           (e.target as HTMLInputElement).value = "";
                         }
@@ -419,7 +470,11 @@ const CreateUploadModalBody = ({
                   )}
                   label={t("upload.modal.accordion.security.password.label")}
                   autoComplete="new-password"
-                  value={typeof form.values.password === "string" ? form.values.password : ""}
+                  value={
+                    typeof form.values.password === "string"
+                      ? form.values.password
+                      : ""
+                  }
                   onChange={(e) => form.setValue("password", e.target.value)}
                   error={form.errors.password}
                 />
@@ -429,8 +484,14 @@ const CreateUploadModalBody = ({
                     "upload.modal.accordion.security.max-views.placeholder",
                   )}
                   label={t("upload.modal.accordion.security.max-views.label")}
-                  value={typeof form.values.maxViews === "number" ? form.values.maxViews : undefined}
-                  onChange={(value) => form.setValue("maxViews", value || undefined)}
+                  value={
+                    typeof form.values.maxViews === "number"
+                      ? form.values.maxViews
+                      : undefined
+                  }
+                  onChange={(value) =>
+                    form.setValue("maxViews", value || undefined)
+                  }
                 />
               </div>
             </Accordion.Panel>
@@ -478,6 +539,8 @@ const SimplifiedCreateUploadModalModal = ({
     initialValues: {
       name: undefined,
       description: undefined,
+      allowPublicUpload: false,
+      allowVersioning: false,
     },
     validationSchema,
   });
@@ -501,6 +564,8 @@ const SimplifiedCreateUploadModalModal = ({
         expiration: "never",
         recipients: [],
         description: values.description,
+        allowPublicUpload: values.allowPublicUpload,
+        allowVersioning: values.allowVersioning,
         security: {
           password: undefined,
           maxViews: undefined,
@@ -538,9 +603,25 @@ const SimplifiedCreateUploadModalModal = ({
             placeholder={t(
               "upload.modal.accordion.name-and-description.description.placeholder",
             )}
-            value={typeof form.values.description === "string" ? form.values.description : ""}
+            value={
+              typeof form.values.description === "string"
+                ? form.values.description
+                : ""
+            }
             onChange={(e) => form.setValue("description", e.target.value)}
             error={form.errors.description}
+          />
+          <Checkbox
+            label="Allow uploads"
+            checked={Boolean(form.values.allowPublicUpload)}
+            onChange={(e) =>
+              form.setValue("allowPublicUpload", e.target.checked)
+            }
+          />
+          <Checkbox
+            label="Allow versioning"
+            checked={Boolean(form.values.allowVersioning)}
+            onChange={(e) => form.setValue("allowVersioning", e.target.checked)}
           />
         </div>
         <Button type="submit" fullWidth>

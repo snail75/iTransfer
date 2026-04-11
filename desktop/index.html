@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mediapult Transfer</title>
+  </head>
+  <body>
+    <main id="app">
+      <section class="panel">
+        <header>
+          <div>
+            <p class="eyebrow">Mediapult Transfer</p>
+            <h1>Drop files to upload</h1>
+          </div>
+          <button id="settings-toggle" class="gear-button" type="button" aria-label="Open settings">
+            <span></span>
+          </button>
+        </header>
+
+        <nav class="top-tabs" aria-label="App sections">
+          <button id="share-files-tab" class="top-tab active" type="button">Share Files</button>
+          <button id="share-history-tab" class="top-tab" type="button">Sent History</button>
+        </nav>
+
+        <form id="settings" class="settings" hidden>
+          <div class="settings-header">
+            <p class="pane-title">Settings</p>
+            <button id="settings-close" type="button" aria-label="Close settings">Close</button>
+          </div>
+
+          <section id="settings-pane" class="menu-pane">
+            <label>
+              Server URL
+              <input id="server-url" name="serverUrl" type="url" placeholder="https://transfer.example.com" />
+            </label>
+            <label>
+              API token
+              <input id="api-token" name="apiToken" type="password" placeholder="mtp..." autocomplete="off" />
+            </label>
+            <p class="info-line" id="server-max-size">Server upload limit is loaded after saving the server URL.</p>
+            <div class="actions">
+              <button id="save-settings" type="submit">Save</button>
+              <button id="clear-token" type="button">Clear token</button>
+            </div>
+          </section>
+        </form>
+
+        <section id="upload-pane" class="content-pane">
+          <section class="upload-options">
+            <label>
+              Download available
+              <select id="expiration" name="expiration">
+                <option value="1-days">1 day</option>
+                <option value="1-weeks">1 week</option>
+                <option value="1-months">1 month</option>
+                <option value="1-years">1 year</option>
+                <option value="never">Always</option>
+              </select>
+            </label>
+            <label class="checkbox-label">
+              <input id="allow-public-upload" name="allowPublicUpload" type="checkbox" />
+              Allow uploads back to this link
+            </label>
+            <label class="checkbox-label">
+              <input id="allow-versioning" name="allowVersioning" type="checkbox" />
+              Allow versioning
+            </label>
+          </section>
+
+          <section id="drop-zone" class="drop-zone" tabindex="0">
+            <p class="drop-title">Drop files here</p>
+            <p class="drop-subtitle">A share link is copied when the upload completes.</p>
+            <input id="file-picker" type="file" multiple />
+            <button id="choose-files" type="button">Choose files</button>
+          </section>
+
+          <section class="status">
+            <p id="message">Configure the server URL and API token before the first upload.</p>
+            <progress id="progress" max="100" value="0"></progress>
+            <p id="upload-speed" class="upload-speed">0 KB/s</p>
+            <a id="last-link" href="#" hidden>Open last share</a>
+          </section>
+        </section>
+
+        <section id="links-pane" class="content-pane history-pane" hidden>
+          <div class="actions">
+            <p class="pane-title">Your links</p>
+            <button id="see-links-web" type="button">See on Webpage</button>
+            <button id="refresh-links" type="button">Refresh</button>
+          </div>
+          <input id="links-search" type="search" placeholder="Search links" />
+          <div id="links-list" class="links-list"></div>
+          <p id="links-message" class="info-line">Open Sent History to load your shares.</p>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

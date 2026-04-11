@@ -9,6 +9,8 @@ export type Share = {
   expiration: Date;
   size: number;
   hasPassword: boolean;
+  allowPublicUpload: boolean;
+  allowVersioning: boolean;
 };
 
 export type CompletedShare = Share & {
@@ -26,6 +28,8 @@ export type CreateShare = {
   description?: string;
   recipients: string[];
   expiration: string;
+  allowPublicUpload?: boolean;
+  allowVersioning?: boolean;
   security: ShareSecurity;
 };
 

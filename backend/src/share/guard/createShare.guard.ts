@@ -1,4 +1,5 @@
 import { ExecutionContext, Injectable } from "@nestjs/common";
+import { ApiTokenService } from "src/apiToken/apiToken.service";
 import { JwtGuard } from "src/auth/guard/jwt.guard";
 import { ConfigService } from "src/config/config.service";
 import { ReverseShareService } from "src/reverseShare/reverseShare.service";
@@ -7,9 +8,10 @@ import { ReverseShareService } from "src/reverseShare/reverseShare.service";
 export class CreateShareGuard extends JwtGuard {
   constructor(
     configService: ConfigService,
+    apiTokenService: ApiTokenService,
     private reverseShareService: ReverseShareService,
   ) {
-    super(configService);
+    super(configService, apiTokenService);
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

@@ -3,8 +3,8 @@
 
 general:
   #Name of the application
-  appName: Swiss DataShare
-  #On which URL Swiss DataShare is available
+  appName: Mediapult Transfer
+  #On which URL Mediapult Transfer is available
   appUrl: http://localhost:3000
   #Whether to set the secure flag on cookies. If enabled, the site will not function when accessed over HTTP.
   secureCookies: "false"
@@ -19,6 +19,8 @@ share:
   allowUnauthenticatedShares: "false"
   #Maximum share expiration. Set to 0 to allow unlimited expiration.
   maxExpiration: 0 days
+  #Default share expiration used by API clients when no expiration is provided.
+  defaultExpiration: 7 days
   #Default length for the generated ID of a share. This value is also used to generate links for reverse shares. A value below 8 is not considered secure.
   shareIdLength: "8"
   #Maximum share size
@@ -29,11 +31,14 @@ share:
   chunkSize: "10000000"
   #The share creation modal automatically appears when a user selects files, eliminating the need to manually click the button.
   autoOpenShareModal: "false"
+storage:
+  #Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.
+  localUploadPath: ""
 cache:
-  #Normally Swiss DataShare caches information in memory. If you run multiple instances of Swiss DataShare, you need to enable Redis caching to share the cache between the instances.
+  #Normally Mediapult Transfer caches information in memory. If you run multiple instances of Mediapult Transfer, you need to enable Redis caching to share the cache between the instances.
   redis-enabled: "false"
   #Url to connect to the Redis instance used for caching.
-  redis-url: redis://swiss-datashare-redis:6379
+  redis-url: redis://mediapult-transfer-redis:6379
   #Time in second to keep information inside the cache.
   ttl: "60"
   #Maximum number of items inside the cache.
@@ -64,7 +69,7 @@ email:
     Note: {desc}
 
 
-    Shared securely with Swiss DataShare
+    Shared securely with Mediapult Transfer
   #Subject of the sent email when someone created a share with your reverse share link.
   reverseShareSubject: Reverse share link used
   #Message which gets sent when someone created a share with your reverse share link. {shareUrl} will be replaced with the creator's name and the share URL.
@@ -73,9 +78,9 @@ email:
 
     A share was just created with your reverse share link: {shareUrl}
 
-    Shared securely with Swiss DataShare
+    Shared securely with Mediapult Transfer
   #Subject of the sent email when a user requests a password reset.
-  resetPasswordSubject: Swiss DataShare password reset
+  resetPasswordSubject: Mediapult Transfer password reset
   #Message which gets sent when a user requests a password reset. {url} will be replaced with the reset password URL.
   resetPasswordMessage: >-
     Hey!
@@ -87,22 +92,22 @@ email:
     The link expires in an hour.
 
 
-    Swiss DataShare
+    Mediapult Transfer
   #Subject of the sent email when an admin invites a user.
-  inviteSubject: Swiss DataShare invite
+  inviteSubject: Mediapult Transfer invite
   #Message which gets sent when an admin invites a user. {url} will be replaced with the invite URL, {email} with the email and {password} with the users password.
   inviteMessage: >-
     Hey!
 
 
-    You were invited to Swiss DataShare. Click this link to accept the invite:
+    You were invited to Mediapult Transfer. Click this link to accept the invite:
     {url}
 
 
     You can use the email "{email}" and the password "{password}" to sign in.
 
 
-    Swiss DataShare
+    Mediapult Transfer
 smtp:
   #Whether SMTP is enabled. Only set this to true if you entered the host, port, email, user and password of your SMTP server.
   enabled: "false"

@@ -3,7 +3,7 @@ id: introduction
 ---
 
 # Introduction
-Swiss DataShare is self-hosted file sharing platform and an alternative for WeTransfer.
+Mediapult Transfer is self-hosted file sharing platform and an alternative for WeTransfer.
 
 ## Features
 
@@ -16,8 +16,8 @@ Swiss DataShare is self-hosted file sharing platform and an alternative for WeTr
 
 And more!
 
-## Get to know Swiss DataShare
+## Get to know Mediapult Transfer
 
-Swiss DataShare is actively maintained and developed by Swissmakers GmbH.
+Mediapult Transfer is actively maintained and developed by Mediapult.
 
 <img src="https://user-images.githubusercontent.com/58886915/225038319-b2ef742c-3a74-4eb6-9689-4207a36842a4.png" width="700"/>

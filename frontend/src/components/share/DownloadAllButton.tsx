@@ -5,7 +5,13 @@ import shareService from "../../services/share.service";
 import toast from "../../utils/toast.util";
 import { Button } from "../ui";
 
-const DownloadAllButton = ({ shareId }: { shareId: string }) => {
+const DownloadAllButton = ({
+  shareId,
+  zipVersion,
+}: {
+  shareId: string;
+  zipVersion?: string;
+}) => {
   const [isZipReady, setIsZipReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslate();
@@ -14,10 +20,11 @@ const DownloadAllButton = ({ shareId }: { shareId: string }) => {
     setIsLoading(true);
     await shareService
       .downloadFile(shareId, "zip")
-      .then(() => setIsLoading(false));
+      .finally(() => setIsLoading(false));
   };
 
   useEffect(() => {
+    setIsZipReady(false);
     shareService
       .getMetaData(shareId)
       .then((share) => setIsZipReady(share.isZipReady))
@@ -35,7 +42,7 @@ const DownloadAllButton = ({ shareId }: { shareId: string }) => {
     return () => {
       clearInterval(timer);
     };
-  }, [shareId]);
+  }, [shareId, zipVersion]);
 
   return (
     <Button

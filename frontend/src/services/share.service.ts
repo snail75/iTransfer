@@ -48,6 +48,32 @@ const remove = async (id: string) => {
   await api.delete(`shares/${id}`);
 };
 
+const updateExpiration = async (id: string, expiration: string) => {
+  return (await api.patch(`shares/${id}/expiration`, { expiration })).data;
+};
+
+const updateName = async (id: string, name?: string) => {
+  return (await api.patch(`shares/${id}/name`, { name })).data;
+};
+
+const updatePublicUpload = async (
+  id: string,
+  allowPublicUpload: boolean,
+) => {
+  return (
+    await api.patch(`shares/${id}/public-upload`, { allowPublicUpload })
+  ).data;
+};
+
+const updateVersioning = async (
+  id: string,
+  allowVersioning: boolean,
+) => {
+  return (
+    await api.patch(`shares/${id}/versioning`, { allowVersioning })
+  ).data;
+};
+
 const getMyShares = async (): Promise<MyShare[]> => {
   return (await api.get("shares")).data;
 };
@@ -153,6 +179,10 @@ export default {
   getMetaData,
   doesFileSupportPreview,
   getMyShares,
+  updateExpiration,
+  updateName,
+  updatePublicUpload,
+  updateVersioning,
   isShareIdAvailable,
   downloadFile,
   removeFile,

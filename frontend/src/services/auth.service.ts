@@ -2,6 +2,17 @@ import { getCookie } from "cookies-next";
 import * as jose from "jose";
 import api from "./api.service";
 
+export type ApiToken = {
+  id: string;
+  name: string;
+  createdAt: string;
+  lastUsedAt?: string;
+};
+
+export type CreatedApiToken = ApiToken & {
+  token: string;
+};
+
 const signIn = async (emailOrUsername: string, password: string) => {
   const emailOrUsernameBody = emailOrUsername.includes("@")
     ? { email: emailOrUsername }
@@ -96,6 +107,18 @@ const getOAuthStatus = () => {
   return api.get("/oauth/status");
 };
 
+const listApiTokens = async (): Promise<ApiToken[]> => {
+  return (await api.get("/auth/apiTokens")).data;
+};
+
+const createApiToken = async (name: string): Promise<CreatedApiToken> => {
+  return (await api.post("/auth/apiTokens", { name })).data;
+};
+
+const deleteApiToken = async (id: string) => {
+  await api.delete(`/auth/apiTokens/${id}`);
+};
+
 export default {
   signIn,
   signInTotp,
@@ -110,4 +133,7 @@ export default {
   disableTOTP,
   getAvailableOAuth,
   getOAuthStatus,
+  listApiTokens,
+  createApiToken,
+  deleteApiToken,
 };

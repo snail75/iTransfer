@@ -63,6 +63,14 @@ const showShareInformationsModal = (
           </b>
           {formattedExpiration}
         </p>
+        <p className="text-sm">
+          <b>Allow uploads: </b>
+          {share.allowPublicUpload ? "Yes" : "No"}
+        </p>
+        <p className="text-sm">
+          <b>Allow versioning: </b>
+          {share.allowVersioning ? "Yes" : "No"}
+        </p>
         <hr className="border-gray-200 dark:border-gray-700" />
         <CopyTextField link={link} />
         <hr className="border-gray-200 dark:border-gray-700" />
@@ -80,10 +88,20 @@ const showShareInformationsModal = (
               {formattedShareSize}
             </span>
           )}
-          <div className={share.size / maxShareSize < 0.1 ? "flex-1 max-w-[70%]" : "flex-1 max-w-[80%]"}>
+          <div
+            className={
+              share.size / maxShareSize < 0.1
+                ? "flex-1 max-w-[70%]"
+                : "flex-1 max-w-[80%]"
+            }
+          >
             <Progress
               value={shareSizeProgress}
-              label={share.size / maxShareSize >= 0.1 ? formattedShareSize : undefined}
+              label={
+                share.size / maxShareSize >= 0.1
+                  ? formattedShareSize
+                  : undefined
+              }
               size="xl"
             />
           </div>

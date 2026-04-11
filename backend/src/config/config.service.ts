@@ -9,11 +9,12 @@ import { Config } from "@prisma/client";
 import * as argon from "argon2";
 import { EventEmitter } from "events";
 import * as fs from "fs";
+import * as path from "path";
 import { PrismaService } from "src/prisma/prisma.service";
 import { stringToTimespan } from "src/utils/date.util";
 import { parse as yamlParse } from "yaml";
 import { YamlConfig } from "../../prisma/seed/config.seed";
-import { CONFIG_FILE } from "src/constants";
+import { CONFIG_FILE, SHARE_DIRECTORY } from "src/constants";
 
 /**
  * ConfigService extends EventEmitter to allow listening for config updates,
@@ -202,6 +203,83 @@ export class ConfigService extends EventEmitter {
     return updatedVariable;
   }
 
+  async migrateLocalSharesToConfiguredStoragePath() {
+    const configuredPath = this.get("storage.localUploadPath");
+    const targetRoot = path.resolve(configuredPath || SHARE_DIRECTORY);
+
+    if (configuredPath) {
+      this.validateConfigVariable("storage.localUploadPath", configuredPath);
+    } else {
+      fs.mkdirSync(targetRoot, { recursive: true });
+      fs.accessSync(targetRoot, fs.constants.W_OK);
+    }
+
+    const shares = await this.prisma.share.findMany({
+      where: { storageProvider: "LOCAL" },
+      include: { files: true },
+    });
+
+    const moves = shares.map((share) => {
+      const sourceRoot = path.resolve(
+        share.localStoragePath || SHARE_DIRECTORY,
+      );
+      const sourceDirectory = path.join(sourceRoot, share.id);
+      const targetDirectory = path.join(targetRoot, share.id);
+
+      return {
+        share,
+        sourceRoot,
+        sourceDirectory,
+        targetDirectory,
+        needsMove: !this.arePathsEqual(sourceDirectory, targetDirectory),
+      };
+    });
+
+    for (const move of moves) {
+      if (!move.needsMove) continue;
+
+      if (!fs.existsSync(move.sourceDirectory)) {
+        if (move.share.files.length > 0) {
+          throw new BadRequestException(
+            `Cannot move share ${move.share.id}: source directory is missing`,
+          );
+        }
+        continue;
+      }
+
+      if (fs.existsSync(move.targetDirectory)) {
+        throw new BadRequestException(
+          `Cannot move share ${move.share.id}: target directory already exists`,
+        );
+      }
+    }
+
+    let movedShares = 0;
+    let updatedShares = 0;
+
+    for (const move of moves) {
+      if (move.needsMove && fs.existsSync(move.sourceDirectory)) {
+        await this.moveDirectory(move.sourceDirectory, move.targetDirectory);
+        movedShares += 1;
+      }
+
+      if (!this.arePathsEqual(move.sourceRoot, targetRoot)) {
+        await this.prisma.share.update({
+          where: { id: move.share.id },
+          data: { localStoragePath: targetRoot },
+        });
+        updatedShares += 1;
+      }
+    }
+
+    return {
+      targetPath: targetRoot,
+      totalShares: shares.length,
+      movedShares,
+      updatedShares,
+    };
+  }
+
   validateConfigVariable(key: string, value: string | number | boolean) {
     const validations = [
       {
@@ -219,14 +297,59 @@ export class ConfigService extends EventEmitter {
 
     const validation = validations.find((validation) => validation.key == key);
     if (validation) {
-      const numValue = typeof value === 'number' ? value : parseInt(String(value), 10);
+      const numValue =
+        typeof value === "number" ? value : parseInt(String(value), 10);
       if (!validation.condition(numValue)) {
         throw new BadRequestException(validation.message);
+      }
+    }
+
+    if (key == "storage.localUploadPath" && value) {
+      const localUploadPath = String(value).trim();
+      if (!path.isAbsolute(localUploadPath)) {
+        throw new BadRequestException("Local upload path must be absolute");
+      }
+      const parsedPath = path.parse(localUploadPath);
+      if (localUploadPath == parsedPath.root) {
+        throw new BadRequestException(
+          "Local upload path cannot be a filesystem root",
+        );
+      }
+
+      try {
+        fs.mkdirSync(localUploadPath, { recursive: true });
+        fs.accessSync(localUploadPath, fs.constants.W_OK);
+      } catch {
+        throw new BadRequestException("Local upload path must be writable");
       }
     }
   }
 
   isEditAllowed(): boolean {
     return this.yamlConfig === undefined || this.yamlConfig === null;
+  }
+
+  private arePathsEqual(firstPath: string, secondPath: string) {
+    return (
+      path.resolve(firstPath).toLowerCase() ==
+      path.resolve(secondPath).toLowerCase()
+    );
+  }
+
+  private async moveDirectory(source: string, target: string) {
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+
+    try {
+      await fs.promises.rename(source, target);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code != "EXDEV") throw error;
+
+      await fs.promises.cp(source, target, {
+        recursive: true,
+        errorOnExist: true,
+        force: false,
+      });
+      await fs.promises.rm(source, { recursive: true, force: true });
+    }
   }
 }

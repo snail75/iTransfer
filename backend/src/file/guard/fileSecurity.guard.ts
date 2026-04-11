@@ -10,6 +10,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { ShareSecurityGuard } from "src/share/guard/shareSecurity.guard";
 import { ShareService } from "src/share/share.service";
 import { ConfigService } from "src/config/config.service";
+import { ApiTokenService } from "src/apiToken/apiToken.service";
 
 @Injectable()
 export class FileSecurityGuard extends ShareSecurityGuard {
@@ -17,8 +18,9 @@ export class FileSecurityGuard extends ShareSecurityGuard {
     private _shareService: ShareService,
     private _prisma: PrismaService,
     _config: ConfigService,
+    _apiTokenService: ApiTokenService,
   ) {
-    super(_shareService, _prisma, _config);
+    super(_shareService, _prisma, _config, _apiTokenService);
   }
 
   async canActivate(context: ExecutionContext) {

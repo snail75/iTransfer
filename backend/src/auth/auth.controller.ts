@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
+  Get,
   HttpCode,
   Param,
   Patch,
@@ -14,6 +16,12 @@ import {
 import { Throttle } from "@nestjs/throttler";
 import { User } from "@prisma/client";
 import { Request, Response } from "express";
+import { ApiTokenService } from "src/apiToken/apiToken.service";
+import {
+  ApiTokenDTO,
+  CreatedApiTokenDTO,
+  CreateApiTokenDTO,
+} from "src/apiToken/apiToken.dto";
 import { ConfigService } from "src/config/config.service";
 import { AuthService } from "./auth.service";
 import { AuthTotpService } from "./authTotp.service";
@@ -26,6 +34,7 @@ import { ResetPasswordDTO } from "./dto/resetPassword.dto";
 import { TokenDTO } from "./dto/token.dto";
 import { UpdatePasswordDTO } from "./dto/updatePassword.dto";
 import { VerifyTotpDTO } from "./dto/verifyTotp.dto";
+import { CookieJwtGuard } from "./guard/cookieJwt.guard";
 import { JwtGuard } from "./guard/jwt.guard";
 
 @Controller("auth")
@@ -34,6 +43,7 @@ export class AuthController {
     private authService: AuthService,
     private authTotpService: AuthTotpService,
     private config: ConfigService,
+    private apiTokenService: ApiTokenService,
   ) {}
 
   @Post("signUp")
@@ -210,5 +220,29 @@ export class AuthController {
   async disableTotp(@GetUser() user: User, @Body() body: VerifyTotpDTO) {
     // Note: We use VerifyTotpDTO here because it has both fields we need: password and totp code
     return this.authTotpService.disableTotp(user, body.password, body.code);
+  }
+
+  @Get("apiTokens")
+  @UseGuards(CookieJwtGuard)
+  async listApiTokens(@GetUser() user: User) {
+    return new ApiTokenDTO().fromList(await this.apiTokenService.list(user.id));
+  }
+
+  @Post("apiTokens")
+  @UseGuards(CookieJwtGuard)
+  async createApiToken(
+    @GetUser() user: User,
+    @Body() body: CreateApiTokenDTO,
+  ) {
+    return new CreatedApiTokenDTO().from(
+      await this.apiTokenService.create(user.id, body.name),
+    );
+  }
+
+  @Delete("apiTokens/:id")
+  @HttpCode(204)
+  @UseGuards(CookieJwtGuard)
+  async deleteApiToken(@GetUser() user: User, @Param("id") id: string) {
+    await this.apiTokenService.remove(user.id, id);
   }
 }

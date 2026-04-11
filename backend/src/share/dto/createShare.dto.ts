@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
 import {
+  IsBoolean,
   IsEmail,
   IsOptional,
   IsString,
@@ -23,11 +24,20 @@ export class CreateShareDTO {
   name: string;
 
   @IsString()
+  @IsOptional()
   expiration: string;
 
   @MaxLength(512)
   @IsOptional()
   description: string;
+
+  @IsBoolean()
+  @IsOptional()
+  allowPublicUpload?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  allowVersioning?: boolean;
 
   @IsEmail({}, { each: true })
   recipients: string[];

@@ -1,5 +1,5 @@
 {
-  "name": "swiss-datashare-backend",
+  "name": "mediapult-transfer-backend",
   "version": "1.13.0",
   "scripts": {
     "build": "nest build",

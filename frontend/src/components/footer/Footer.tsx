@@ -29,11 +29,11 @@ const Footer = () => {
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Powered by{" "}
               <Link
-                href="https://github.com/swissmakers/swiss-datashare"
+                href="https://github.com/mediapult/mediapult-transfer"
                 target="_blank"
                 className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
               >
-                Swiss DataShare
+                Mediapult Transfer
               </Link>
             </p>
           </div>

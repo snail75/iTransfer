@@ -1,5 +1,5 @@
 import { Expose, plainToClass } from "class-transformer";
-import { IsEmail, Length, Matches, MinLength } from "class-validator";
+import { IsEmail, IsOptional, Length, Matches, MinLength } from "class-validator";
 
 export class UserDTO {
   @Expose()
@@ -24,6 +24,10 @@ export class UserDTO {
 
   @Expose()
   isAdmin: boolean;
+
+  @Expose()
+  @IsOptional()
+  storageQuotaBytes?: string | null;
 
   @Expose()
   isLdap: boolean;

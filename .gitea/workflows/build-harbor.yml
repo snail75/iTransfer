@@ -28,13 +28,13 @@ jobs:
           REG:  ${{ secrets.HARBOR_REGISTRY }}
           PROJ: ${{ secrets.HARBOR_PROJECT }}
         run: |
-          podman build -t $REG/$PROJ/swiss-datashare:${{ github.sha }} .
-          podman tag  $REG/$PROJ/swiss-datashare:${{ github.sha }} $REG/$PROJ/swiss-datashare:latest
+          podman build -t $REG/$PROJ/mediapult-transfer:${{ github.sha }} .
+          podman tag  $REG/$PROJ/mediapult-transfer:${{ github.sha }} $REG/$PROJ/mediapult-transfer:latest
 
       - name: Push
         env:
           REG:  ${{ secrets.HARBOR_REGISTRY }}
           PROJ: ${{ secrets.HARBOR_PROJECT }}
         run: |
-          podman push $REG/$PROJ/swiss-datashare:${{ github.sha }}
-          podman push $REG/$PROJ/swiss-datashare:latest
+          podman push $REG/$PROJ/mediapult-transfer:${{ github.sha }}
+          podman push $REG/$PROJ/mediapult-transfer:latest

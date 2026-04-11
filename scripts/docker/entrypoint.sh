@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # Migrate database from old name to new name if needed
-if [ -f /opt/app/backend/data/pingvin-share.db ] && [ ! -f /opt/app/backend/data/swiss-datashare.db ]; then
-    echo "Migrating database from pingvin-share.db to swiss-datashare.db..."
-    cp /opt/app/backend/data/pingvin-share.db /opt/app/backend/data/swiss-datashare.db 2>/dev/null || {
+if [ -f /opt/app/backend/data/pingvin-share.db ] && [ ! -f /opt/app/backend/data/mediapult-transfer.db ]; then
+    echo "Migrating database from pingvin-share.db to mediapult-transfer.db..."
+    cp /opt/app/backend/data/pingvin-share.db /opt/app/backend/data/mediapult-transfer.db 2>/dev/null || {
         echo "Warning: Could not migrate database (permission issue or mounted volume)"
     }
 fi

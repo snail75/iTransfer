@@ -15,6 +15,15 @@ const updateMany = async (data: UpdateConfig[]): Promise<AdminConfig[]> => {
   return (await api.patch("/configs/admin", data)).data;
 };
 
+const migrateLocalSharesToConfiguredStoragePath = async (): Promise<{
+  targetPath: string;
+  totalShares: number;
+  movedShares: number;
+  updatedShares: number;
+}> => {
+  return (await api.post("/configs/admin/storage/migrate")).data;
+};
+
 const get = (key: string, configVariables: Config[]): any => {
   if (!configVariables || configVariables.length === 0) {
     // During static generation, config might not be loaded yet
@@ -51,12 +60,16 @@ const sendTestEmail = async (email: string) => {
 };
 
 const isNewReleaseAvailable = async () => {
-  const response = (
-    await axios.get(
-      "https://api.github.com/repos/swissmakers/swiss-datashare/releases/latest",
-    )
-  ).data;
-  return response.tag_name.replace("v", "") != process.env.VERSION;
+  try {
+    const response = (
+      await axios.get(
+        "https://api.github.com/repos/mediapult/mediapult-transfer/releases/latest",
+      )
+    ).data;
+    return response.tag_name.replace("v", "") != process.env.VERSION;
+  } catch {
+    return false;
+  }
 };
 
 const changeLogo = async (file: File) => {
@@ -69,6 +82,7 @@ export default {
   list,
   getByCategory,
   updateMany,
+  migrateLocalSharesToConfiguredStoragePath,
   get,
   finishSetup,
   sendTestEmail,

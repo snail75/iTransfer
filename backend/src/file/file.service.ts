@@ -36,9 +36,20 @@ export class FileService {
       name: string;
     },
     shareId: string,
+    allowCompletedShareUpload = false,
+    allowVersioning = false,
+    allowPublicUpload = false,
   ) {
     const storageService = this.getStorageService();
-    return storageService.create(data, chunk, file, shareId);
+    return storageService.create(
+      data,
+      chunk,
+      file,
+      shareId,
+      allowCompletedShareUpload,
+      allowVersioning,
+      allowPublicUpload,
+    );
   }
 
   async get(shareId: string, fileId: string): Promise<File> {
@@ -50,17 +61,26 @@ export class FileService {
   }
 
   async remove(shareId: string, fileId: string) {
-    const storageService = this.getStorageService();
+    const share = await this.prisma.share.findFirst({
+      where: { id: shareId },
+    });
+    const storageService = this.getStorageService(share.storageProvider);
     return storageService.remove(shareId, fileId);
   }
 
   async deleteAllFiles(shareId: string) {
-    const storageService = this.getStorageService();
+    const share = await this.prisma.share.findFirst({
+      where: { id: shareId },
+    });
+    const storageService = this.getStorageService(share?.storageProvider);
     return storageService.deleteAllFiles(shareId);
   }
 
   async getZip(shareId: string): Promise<Readable> {
-    const storageService = this.getStorageService();
+    const share = await this.prisma.share.findFirst({
+      where: { id: shareId },
+    });
+    const storageService = this.getStorageService(share.storageProvider);
     return await storageService.getZip(shareId);
   }
 
@@ -83,6 +103,9 @@ export interface File {
     mimeType: string | false;
     name: string;
     shareId: string;
+    scanStatus?: string;
+    scanCheckedAt?: Date;
+    scanMessage?: string;
   };
   file: Readable;
 }

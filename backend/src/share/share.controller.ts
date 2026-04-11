@@ -5,12 +5,13 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   Post,
   Req,
   Res,
   UseGuards,
 } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
+import { JwtService, JwtSignOptions } from "@nestjs/jwt";
 import { Throttle } from "@nestjs/throttler";
 import { User } from "@prisma/client";
 import { Request, Response } from "express";
@@ -18,23 +19,29 @@ import * as moment from "moment";
 import { GetUser } from "src/auth/decorator/getUser.decorator";
 import { AdministratorGuard } from "src/auth/guard/isAdmin.guard";
 import { JwtGuard } from "src/auth/guard/jwt.guard";
+import { ConfigService } from "src/config/config.service";
 import { AdminShareDTO } from "./dto/adminShare.dto";
 import { CreateShareDTO } from "./dto/createShare.dto";
+import { CompletedShareDTO } from "./dto/shareComplete.dto";
 import { MyShareDTO } from "./dto/myShare.dto";
 import { ShareDTO } from "./dto/share.dto";
 import { ShareMetaDataDTO } from "./dto/shareMetaData.dto";
 import { SharePasswordDto } from "./dto/sharePassword.dto";
+import { UpdateShareExpirationDTO } from "./dto/updateShareExpiration.dto";
+import { UpdateShareNameDTO } from "./dto/updateShareName.dto";
+import { UpdateSharePublicUploadDTO } from "./dto/updateSharePublicUpload.dto";
+import { UpdateShareVersioningDTO } from "./dto/updateShareVersioning.dto";
 import { CreateShareGuard } from "./guard/createShare.guard";
 import { ShareOwnerGuard } from "./guard/shareOwner.guard";
 import { ShareSecurityGuard } from "./guard/shareSecurity.guard";
 import { ShareTokenSecurity } from "./guard/shareTokenSecurity.guard";
 import { ShareService } from "./share.service";
-import { CompletedShareDTO } from "./dto/shareComplete.dto";
 @Controller("shares")
 export class ShareController {
   constructor(
     private shareService: ShareService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   @Get("all")
@@ -76,12 +83,15 @@ export class ShareController {
   async create(
     @Body() body: CreateShareDTO,
     @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
     @GetUser() user: User,
   ) {
     const { reverse_share_token } = request.cookies;
-    return new ShareDTO().from(
-      await this.shareService.create(body, user, reverse_share_token),
-    );
+    const share = await this.shareService.create(body, user, reverse_share_token);
+
+    if (!share.creatorId) this.setAnonymousShareOwnerCookie(response, share);
+
+    return new ShareDTO().from(share);
   }
 
   @Post(":id/complete")
@@ -98,6 +108,48 @@ export class ShareController {
   @UseGuards(ShareOwnerGuard)
   async revertComplete(@Param("id") id: string) {
     return new ShareDTO().from(await this.shareService.revertComplete(id));
+  }
+
+  @Patch(":id/expiration")
+  @UseGuards(ShareOwnerGuard)
+  async updateExpiration(
+    @Param("id") id: string,
+    @Body() body: UpdateShareExpirationDTO,
+  ) {
+    return new ShareDTO().from(
+      await this.shareService.updateExpiration(id, body.expiration),
+    );
+  }
+
+  @Patch(":id/name")
+  @UseGuards(ShareOwnerGuard)
+  async updateName(
+    @Param("id") id: string,
+    @Body() body: UpdateShareNameDTO,
+  ) {
+    return new ShareDTO().from(await this.shareService.updateName(id, body.name));
+  }
+
+  @Patch(":id/public-upload")
+  @UseGuards(ShareOwnerGuard)
+  async updatePublicUpload(
+    @Param("id") id: string,
+    @Body() body: UpdateSharePublicUploadDTO,
+  ) {
+    return new ShareDTO().from(
+      await this.shareService.updatePublicUpload(id, body.allowPublicUpload),
+    );
+  }
+
+  @Patch(":id/versioning")
+  @UseGuards(ShareOwnerGuard)
+  async updateVersioning(
+    @Param("id") id: string,
+    @Body() body: UpdateShareVersioningDTO,
+  ) {
+    return new ShareDTO().from(
+      await this.shareService.updateVersioning(id, body.allowVersioning),
+    );
   }
 
   @Delete(":id")
@@ -170,5 +222,37 @@ export class ShareController {
         .slice(0, -10)
         .forEach((cookie) => response.clearCookie(cookie.key));
     }
+  }
+
+  private setAnonymousShareOwnerCookie(
+    response: Response,
+    share: { id: string; createdAt: Date; expiration: Date },
+  ) {
+    const tokenPayload = {
+      shareId: share.id,
+      shareCreatedAt: moment(share.createdAt).unix(),
+      tokenType: "shareOwner",
+    };
+    const tokenOptions: JwtSignOptions = {
+      secret: this.configService.get("internal.jwtSecret"),
+    };
+
+    if (!moment(share.expiration).isSame(0)) {
+      tokenOptions.expiresIn = moment(share.expiration).diff(
+        new Date(),
+        "seconds",
+      );
+    }
+
+    response.cookie(
+      `share_${share.id}_owner`,
+      this.jwtService.sign(tokenPayload, tokenOptions),
+      {
+        path: "/api/shares",
+        httpOnly: true,
+        sameSite: "strict",
+        secure: this.configService.get("general.secureCookies"),
+      },
+    );
   }
 }

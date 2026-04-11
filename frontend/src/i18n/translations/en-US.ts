@@ -19,7 +19,7 @@ export default {
   "home.description":
     "Do you really want to give your personal files in the hand of third parties like WeTransfer?",
   "home.bullet.a.name": "Self-Hosted",
-  "home.bullet.a.description": "Host Swiss DataShare on your own machine.",
+  "home.bullet.a.description": "Host Mediapult Transfer on your own machine.",
   "home.bullet.b.name": "Privacy",
   "home.bullet.b.description":
     "Your files are yours and will never be accessed by third parties.",
@@ -127,6 +127,17 @@ export default {
   "account.modal.totp.verify": "Verify",
   "account.notify.totp.disable": "TOTP disabled successfully",
   "account.notify.totp.enable": "TOTP enabled successfully",
+  "account.card.api-tokens.title": "Desktop API tokens",
+  "account.card.api-tokens.description":
+    "Create tokens for desktop apps. The token is shown only once.",
+  "account.card.api-tokens.created":
+    "Copy this token now. It will not be shown again.",
+  "account.card.api-tokens.create": "Create token",
+  "account.card.api-tokens.name-placeholder": "Desktop app",
+  "account.card.api-tokens.last-used": "Last used: {date}",
+  "account.card.api-tokens.never-used": "Never used",
+  "account.notify.api-token.created": "API token created",
+  "account.notify.api-token.deleted": "API token deleted",
 
   "account.card.language.title": "Language",
   "account.card.language.description":
@@ -419,9 +430,12 @@ export default {
   // /admin/config
   "admin.config.config-file-warning.title": "Configuration file present",
   "admin.config.config-file-warning.description":
-    "As you have a configured Swiss DataShare with a configuration file, you can't change the configuration through the UI.",
+    "As you have a configured Mediapult Transfer with a configuration file, you can't change the configuration through the UI.",
 
   "admin.config.title": "Configuration",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description":
+    "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "General",
   "admin.config.category.share": "Share",
   "admin.config.category.cache": "Cache",
@@ -433,7 +447,7 @@ export default {
   "admin.config.general.app-name.description": "Name of the application",
   "admin.config.general.app-url": "App URL",
   "admin.config.general.app-url.description":
-    "On which URL Swiss DataShare is available",
+    "On which URL Mediapult Transfer is available",
   "admin.config.general.secure-cookies": "Secure cookies",
   "admin.config.general.secure-cookies.description":
     "Whether to set the secure flag on cookies. If enabled, the site will not function when accessed over HTTP.",
@@ -456,7 +470,7 @@ export default {
     "Maximum number of items inside the cache.",
   "admin.config.cache.redis-enabled": "Redis enabled",
   "admin.config.cache.redis-enabled.description":
-    "Normally Swiss DataShare caches information in memory. If you run multiple instances of Swiss DataShare, you need to enable Redis caching to share the cache between the instances.",
+    "Normally Mediapult Transfer caches information in memory. If you run multiple instances of Mediapult Transfer, you need to enable Redis caching to share the cache between the instances.",
   "admin.config.cache.redis-url": "Redis URL",
   "admin.config.cache.redis-url.description":
     "Url to connect to the Redis instance used for caching.",
@@ -500,11 +514,25 @@ export default {
   "admin.config.share.max-expiration": "Max expiration",
   "admin.config.share.max-expiration.description":
     "Maximum share expiration. Set to 0 to allow unlimited expiration.",
+  "admin.config.share.default-expiration": "Default expiration",
+  "admin.config.share.default-expiration.description":
+    "Default share expiration used by API clients when no expiration is provided.",
   "admin.config.share.share-id-length": "Default share ID length",
   "admin.config.share.share-id-length.description":
     "Default length for the generated ID of a share. This value is also used to generate links for reverse shares. A value below 8 is not considered secure.",
   "admin.config.share.max-size": "Max size",
   "admin.config.share.max-size.description": "Maximum share size",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description":
+    "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description":
+    "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm":
+    "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success":
+    "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Zip compression level",
   "admin.config.share.zip-compression-level.description":
     "Adjust the level to balance between file size and compression speed. Valid values range from 0 to 9, with 0 being no compression and 9 being maximum compression. ",
@@ -659,6 +687,7 @@ export default {
   "admin.config.notify.no-changes": "No changes to save.",
 
   "admin.config.category.s3": "S3",
+  "admin.config.category.storage": "Storage",
   "admin.config.s3.enabled": "Enabled",
   "admin.config.s3.enabled.description":
     "Whether S3 should be used to store the shared files instead of the local file system.",
@@ -734,6 +763,7 @@ export default {
   "common.button.create": "Create",
   "common.button.submit": "Submit",
   "common.button.delete": "Delete",
+  "common.button.copy": "Copy",
   "common.button.cancel": "Cancel",
   "common.button.confirm": "Confirm",
   "common.button.disable": "Disable",

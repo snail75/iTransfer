@@ -16,8 +16,11 @@ import { EmailService } from "src/email/email.service";
 import { FileService } from "src/file/file.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ReverseShareService } from "src/reverseShare/reverseShare.service";
+import {
+  getConfiguredLocalStorageRoot,
+  resolveShareDirectory,
+} from "src/storage/localStoragePath.util";
 import { parseRelativeDateToAbsolute } from "src/utils/date.util";
-import { SHARE_DIRECTORY } from "../constants";
 import { CreateShareDTO } from "./dto/createShare.dto";
 
 @Injectable()
@@ -52,28 +55,22 @@ export class ShareService {
     if (reverseShare) {
       expirationDate = reverseShare.shareExpiration;
     } else {
-      const parsedExpiration = parseRelativeDateToAbsolute(share.expiration);
-
-      const expiresNever = moment(0).toDate() == parsedExpiration;
-
-      const maxExpiration = this.config.get("share.maxExpiration");
-      if (
-        maxExpiration.value !== 0 &&
-        (expiresNever ||
-          parsedExpiration >
-            moment().add(maxExpiration.value, maxExpiration.unit).toDate())
-      ) {
-        throw new BadRequestException(
-          "Expiration date exceeds maximum expiration date",
-        );
-      }
-
-      expirationDate = parsedExpiration;
+      expirationDate = this.resolveExpirationDate(share.expiration);
     }
 
-    fs.mkdirSync(`${SHARE_DIRECTORY}/${share.id}`, {
-      recursive: true,
-    });
+    const storageProvider = this.configService.get("s3.enabled")
+      ? "S3"
+      : "LOCAL";
+    const localStoragePath =
+      storageProvider == "LOCAL"
+        ? getConfiguredLocalStorageRoot(this.configService)
+        : null;
+
+    if (storageProvider == "LOCAL") {
+      fs.mkdirSync(`${localStoragePath}/${share.id}`, {
+        recursive: true,
+      });
+    }
 
     const shareTuple = await this.prisma.share.create({
       data: {
@@ -86,7 +83,8 @@ export class ShareService {
             ? share.recipients.map((email) => ({ email }))
             : [],
         },
-        storageProvider: this.configService.get("s3.enabled") ? "S3" : "LOCAL",
+        storageProvider,
+        localStoragePath,
       },
     });
 
@@ -106,15 +104,26 @@ export class ShareService {
   }
 
   async createZip(shareId: string) {
-    if (this.config.get("s3.enabled")) return;
+    const share = await this.prisma.share.findUnique({
+      where: { id: shareId },
+    });
+    if (!share || share.storageProvider == "S3") return;
 
-    const path = `${SHARE_DIRECTORY}/${shareId}`;
+    const path = resolveShareDirectory(share);
 
-    const files = await this.prisma.file.findMany({ where: { shareId } });
+    const files = await this.prisma.file.findMany({
+      where: {
+        shareId,
+        scanStatus: { in: ["CLEAN", "UNSCANNED"] },
+      },
+    });
+    const archivePath = `${path}/archive.zip`;
+    const nextArchivePath = `${path}/archive.zip.tmp`;
+
     const archive = archiver("zip", {
       zlib: { level: this.config.get("share.zipCompressionLevel") },
     });
-    const writeStream = fs.createWriteStream(`${path}/archive.zip`);
+    const writeStream = fs.createWriteStream(nextArchivePath);
 
     for (const file of files) {
       archive.append(fs.createReadStream(`${path}/${file.id}`), {
@@ -124,6 +133,11 @@ export class ShareService {
 
     archive.pipe(writeStream);
     await archive.finalize();
+    await new Promise<void>((resolve, reject) => {
+      writeStream.on("close", resolve);
+      writeStream.on("error", reject);
+    });
+    fs.renameSync(nextArchivePath, archivePath);
   }
 
   async complete(id: string, reverseShareToken?: string) {
@@ -174,8 +188,9 @@ export class ShareService {
       );
     }
 
-    // Check if any file is malicious with ClamAV
-    void this.clamScanService.checkAndRemove(share.id);
+    if (share.storageProvider == "LOCAL") {
+      void this.clamScanService.checkAndRemove(share.id);
+    }
 
     if (share.reverseShare) {
       await this.prisma.reverseShare.update({
@@ -200,6 +215,60 @@ export class ShareService {
       where: { id },
       data: { uploadLocked: false, isZipReady: false },
     });
+  }
+
+  async updateExpiration(id: string, expiration?: string) {
+    return this.prisma.share.update({
+      where: { id },
+      data: { expiration: this.resolveExpirationDate(expiration) },
+    });
+  }
+
+  async updateName(id: string, name?: string) {
+    return this.prisma.share.update({
+      where: { id },
+      data: { name: name?.trim() || null },
+    });
+  }
+
+  async updatePublicUpload(id: string, allowPublicUpload: boolean) {
+    return this.prisma.share.update({
+      where: { id },
+      data: { allowPublicUpload },
+    });
+  }
+
+  async updateVersioning(id: string, allowVersioning: boolean) {
+    return this.prisma.share.update({
+      where: { id },
+      data: { allowVersioning },
+    });
+  }
+
+  private resolveExpirationDate(expiration?: string) {
+    const parsedExpiration = expiration
+      ? parseRelativeDateToAbsolute(expiration)
+      : (() => {
+          const defaultExpiration = this.config.get("share.defaultExpiration");
+          return defaultExpiration.value === 0
+            ? moment(0).toDate()
+            : moment().add(defaultExpiration.value, defaultExpiration.unit).toDate();
+        })();
+
+    const expiresNever = moment(0).isSame(parsedExpiration);
+    const maxExpiration = this.config.get("share.maxExpiration");
+    if (
+      maxExpiration.value !== 0 &&
+      (expiresNever ||
+        parsedExpiration >
+          moment().add(maxExpiration.value, maxExpiration.unit).toDate())
+    ) {
+      throw new BadRequestException(
+        "Expiration date exceeds maximum expiration date",
+      );
+    }
+
+    return parsedExpiration;
   }
 
   async getShares() {
@@ -253,6 +322,9 @@ export class ShareService {
       where: { id },
       include: {
         files: {
+          where: {
+            scanStatus: { in: ["CLEAN", "UNSCANNED"] },
+          },
           orderBy: {
             name: "asc",
           },
@@ -262,11 +334,11 @@ export class ShareService {
       },
     });
 
-    if (share.removedReason)
-      throw new NotFoundException(share.removedReason, "share_removed");
-
     if (!share || !share.uploadLocked)
       throw new NotFoundException("Share not found");
+
+    if (share.removedReason)
+      throw new NotFoundException(share.removedReason, "share_removed");
     return {
       ...share,
       hasPassword: !!share.security?.password,
@@ -276,10 +348,23 @@ export class ShareService {
   async getMetaData(id: string) {
     const share = await this.prisma.share.findUnique({
       where: { id },
+      include: {
+        files: {
+          where: {
+            scanStatus: { in: ["CLEAN", "UNSCANNED"] },
+          },
+        },
+      },
     });
 
     if (!share || !share.uploadLocked)
       throw new NotFoundException("Share not found");
+
+    if (!share.isZipReady && share.files.length > 1) {
+      void this.createZip(id).then(() =>
+        this.prisma.share.update({ where: { id }, data: { isZipReady: true } }),
+      );
+    }
 
     return share;
   }

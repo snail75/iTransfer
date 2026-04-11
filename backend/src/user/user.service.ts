@@ -33,6 +33,7 @@ export class UserSevice {
 
   async create(dto: CreateUserDTO) {
     let hash: string;
+    dto.storageQuotaBytes = this.normalizeStorageQuota(dto.storageQuotaBytes);
 
     // The password can be undefined if the user is invited by an admin
     if (!dto.password) {
@@ -65,6 +66,7 @@ export class UserSevice {
   async update(id: string, user: UpdateUserDto) {
     try {
       const hash = user.password && (await argon.hash(user.password));
+      user.storageQuotaBytes = this.normalizeStorageQuota(user.storageQuotaBytes);
 
       return await this.prisma.user.update({
         where: { id },
@@ -226,5 +228,14 @@ export class UserSevice {
         }
       }
     }
+  }
+
+  private normalizeStorageQuota(storageQuotaBytes?: string | null) {
+    if (!storageQuotaBytes || parseInt(storageQuotaBytes) <= 0) return null;
+    const quota = parseInt(storageQuotaBytes);
+    if (!Number.isFinite(quota)) {
+      throw new BadRequestException("Storage quota must be a number of bytes");
+    }
+    return quota.toString();
   }
 }

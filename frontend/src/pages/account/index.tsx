@@ -6,9 +6,10 @@ import Meta from "../../components/Meta";
 import LanguagePicker from "../../components/account/LanguagePicker";
 import ThemeSwitcher from "../../components/account/ThemeSwitcher";
 import showEnableTotpModal from "../../components/account/showEnableTotpModal";
+import { useClipboard } from "../../hooks/useClipboard";
 import useTranslate from "../../hooks/useTranslate.hook";
 import useUser from "../../hooks/user.hook";
-import authService from "../../services/auth.service";
+import authService, { ApiToken } from "../../services/auth.service";
 import userService from "../../services/user.service";
 import { getOAuthIcon, getOAuthUrl, unlinkOAuth } from "../../utils/oauth.util";
 import toast from "../../utils/toast.util";
@@ -29,6 +30,10 @@ const Account = () => {
   const { user, refreshUser } = useUser();
   const modals = useModals();
   const t = useTranslate();
+  const clipboard = useClipboard();
+  const [apiTokens, setApiTokens] = useState<ApiToken[]>([]);
+  const [apiTokenName, setApiTokenName] = useState("Desktop app");
+  const [newApiToken, setNewApiToken] = useState<string | null>(null);
 
   const accountValidationSchema = yup.object().shape({
     email: yup.string().email(t("common.error.invalid-email")),
@@ -117,6 +122,13 @@ const Account = () => {
       .catch(toast.axiosError);
   };
 
+  const refreshApiTokens = () => {
+    authService
+      .listApiTokens()
+      .then(setApiTokens)
+      .catch(toast.axiosError);
+  };
+
   useEffect(() => {
     authService
       .getAvailableOAuth()
@@ -125,6 +137,7 @@ const Account = () => {
       })
       .catch(toast.axiosError);
     refreshOAuthStatus();
+    refreshApiTokens();
   }, []);
 
   return (
@@ -362,6 +375,91 @@ const Account = () => {
               )}
             </Tabs.Panel>
           </Tabs>
+        </Card>
+
+        <Card padding="lg" className="mb-6">
+          <h3 className="text-lg font-semibold mb-2 text-text dark:text-text-dark">
+            <FormattedMessage id="account.card.api-tokens.title" />
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <FormattedMessage id="account.card.api-tokens.description" />
+          </p>
+          {newApiToken && (
+            <div className="mb-4 rounded-lg border border-yellow-300 bg-yellow-50 p-3 dark:border-yellow-800 dark:bg-yellow-900/20">
+              <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100 mb-2">
+                <FormattedMessage id="account.card.api-tokens.created" />
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Input readOnly value={newApiToken} />
+                <Button
+                  type="button"
+                  onClick={() => clipboard.copy(newApiToken)}
+                >
+                  <FormattedMessage id="common.button.copy" />
+                </Button>
+              </div>
+            </div>
+          )}
+          <form
+            className="flex flex-col sm:flex-row gap-3 mb-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              authService
+                .createApiToken(apiTokenName)
+                .then((token) => {
+                  setNewApiToken(token.token);
+                  setApiTokenName("Desktop app");
+                  refreshApiTokens();
+                  toast.success(t("account.notify.api-token.created"));
+                })
+                .catch(toast.axiosError);
+            }}
+          >
+            <Input
+              value={apiTokenName}
+              onChange={(event) => setApiTokenName(event.target.value)}
+              placeholder={t("account.card.api-tokens.name-placeholder")}
+            />
+            <Button type="submit">
+              <FormattedMessage id="account.card.api-tokens.create" />
+            </Button>
+          </form>
+          <div className="space-y-2">
+            {apiTokens.map((token) => (
+              <div
+                key={token.id}
+                className="flex flex-col sm:flex-row justify-between gap-2 rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+              >
+                <div>
+                  <p className="font-medium text-text dark:text-text-dark">
+                    {token.name}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {token.lastUsedAt
+                      ? t("account.card.api-tokens.last-used", {
+                          date: new Date(token.lastUsedAt).toLocaleString(),
+                        })
+                      : t("account.card.api-tokens.never-used")}
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="danger"
+                  onClick={() =>
+                    authService
+                      .deleteApiToken(token.id)
+                      .then(() => {
+                        refreshApiTokens();
+                        toast.success(t("account.notify.api-token.deleted"));
+                      })
+                      .catch(toast.axiosError)
+                  }
+                >
+                  <FormattedMessage id="common.button.delete" />
+                </Button>
+              </div>
+            ))}
+          </div>
         </Card>
 
         <Card padding="lg" className="mb-6">

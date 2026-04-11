@@ -1,0 +1,1 @@
+ALTER TABLE "Share" ADD COLUMN "allowPublicUpload" BOOLEAN NOT NULL DEFAULT false;

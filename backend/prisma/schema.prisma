@@ -16,10 +16,12 @@ model User {
   email    String  @unique
   password String?
   isAdmin  Boolean @default(false)
+  storageQuotaBytes String?
   ldapDN   String? @unique
 
   shares        Share[]
   refreshTokens RefreshToken[]
+  apiTokens     ApiToken[]
   loginTokens   LoginToken[]
   reverseShares ReverseShare[]
 
@@ -42,6 +44,17 @@ model RefreshToken {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   oauthIDToken  String? // prefixed with the ID of the issuing OAuth provider, separated by a colon
+}
+
+model ApiToken {
+  id         String    @id @default(uuid())
+  name       String
+  tokenHash  String    @unique
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model LoginToken {
@@ -80,6 +93,8 @@ model Share {
 
   name          String?
   uploadLocked  Boolean  @default(false)
+  allowPublicUpload Boolean @default(false)
+  allowVersioning Boolean @default(false)
   isZipReady    Boolean  @default(false)
   views         Int      @default(0)
   expiration    DateTime
@@ -96,6 +111,7 @@ model Share {
   recipients ShareRecipient[]
   files      File[]
   storageProvider String @default("LOCAL")
+  localStoragePath String?
 }
 
 model ReverseShare {
@@ -130,6 +146,9 @@ model File {
 
   name String
   size String
+  scanStatus String @default("UNSCANNED")
+  scanCheckedAt DateTime?
+  scanMessage String?
 
   shareId String
   share   Share  @relation(fields: [shareId], references: [id], onDelete: Cascade)

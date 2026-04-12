@@ -106,7 +106,7 @@ export default function Home() {
                 </Button>
                 <Button
                   as={Link}
-                  href="https://github.com/mediapult/mediapult-transfer"
+                  href="https://github.com/snail75/iTransfer"
                   target="_blank"
                   variant="outline"
                   size="lg"

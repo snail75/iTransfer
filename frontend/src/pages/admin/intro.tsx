@@ -18,7 +18,7 @@ const Intro = () => {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://github.com/mediapult/mediapult-transfer"
+              href="https://github.com/snail75/iTransfer"
               className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 underline"
             >
               Mediapult

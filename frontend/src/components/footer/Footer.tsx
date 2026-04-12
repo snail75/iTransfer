@@ -29,7 +29,7 @@ const Footer = () => {
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Powered by{" "}
               <Link
-                href="https://github.com/mediapult/mediapult-transfer"
+                href="https://github.com/snail75/iTransfer"
                 target="_blank"
                 className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
               >

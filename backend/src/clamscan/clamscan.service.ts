@@ -8,7 +8,7 @@ import * as NodeClam from "clamscan";
 import * as fs from "fs";
 import { PrismaService } from "src/prisma/prisma.service";
 import { resolveShareDirectory } from "src/storage/localStoragePath.util";
-import { CLAMAV_HOST, CLAMAV_PORT } from "../constants";
+import { CLAMAV_HOST, CLAMAV_PORT, CLAMAV_REQUIRED } from "../constants";
 
 const clamscanConfig = {
   clamdscan: {
@@ -102,21 +102,39 @@ export class ClamScanService {
     const clamScan = await this.ClamScan;
 
     if (!clamScan) {
-      if (process.env.NODE_ENV == "development") {
+      if (CLAMAV_REQUIRED) {
+        throw new ServiceUnavailableException("ClamAV is not active");
+      }
+
+      this.logger.warn(
+        `Skipping virus scan for ${fileName} because ClamAV is not active.`,
+      );
+      return {
+        scanStatus: "UNSCANNED",
+        scanCheckedAt: new Date(),
+        scanMessage: "ClamAV is not active.",
+      };
+    }
+
+    let scanResult: { isInfected: boolean };
+    try {
+      scanResult = await clamScan.isInfected(filePath);
+    } catch {
+      if (!CLAMAV_REQUIRED) {
+        this.logger.warn(
+          `Skipping virus scan for ${fileName} because ClamAV scan failed.`,
+        );
         return {
           scanStatus: "UNSCANNED",
           scanCheckedAt: new Date(),
-          scanMessage: "ClamAV is not active in development mode.",
+          scanMessage: "ClamAV scan failed.",
         };
       }
-      throw new ServiceUnavailableException("ClamAV is not active");
+
+      throw new ServiceUnavailableException("ClamAV scan failed");
     }
 
-    const { isInfected } = await clamScan.isInfected(filePath).catch(() => {
-      throw new ServiceUnavailableException("ClamAV scan failed");
-    });
-
-    if (isInfected) {
+    if (scanResult.isInfected) {
       throw new BadRequestException(`Malware detected in ${fileName}`);
     }
 

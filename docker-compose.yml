@@ -10,6 +10,7 @@ services:
       DATA_DIRECTORY: /app/data
       DATABASE_URL: file:/app/data/mediapult-transfer.db
       UPLOAD_DIRECTORY: /app/data/uploads/shares
+      CLAMAV_REQUIRED: "false"
     volumes:
       - /mnt/itransfer_data:/app/data
     command:

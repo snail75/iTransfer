@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 
 import { ScheduleModule } from "@nestjs/schedule";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 import { AuthModule } from "./auth/auth.module";
 
 import { APP_GUARD } from "@nestjs/core";
@@ -21,6 +23,11 @@ import { UserModule } from "./user/user.module";
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "client"),
+      serveRoot: "/",
+      exclude: ["/api/{*splat}"],
+    }),
     ConfigModule,
     ApiTokenModule,
     AuthModule,

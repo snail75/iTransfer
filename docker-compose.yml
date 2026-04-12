@@ -53,7 +53,7 @@ services:
         rm -rf /app/src &&
         git clone --depth 1 --branch codex/docker-backend-stabilisierung https://github.com/snail75/iTransfer.git /app/src &&
         cd /app/src/frontend &&
-        npm ci &&
+        npm ci --include=dev &&
         npm run build &&
         mkdir -p .next/standalone/.next &&
         cp -r .next/static .next/standalone/.next/static &&

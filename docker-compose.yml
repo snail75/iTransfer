@@ -1,17 +1,58 @@
 services:
-  mediapult-transfer:
-    image: itransfer-backend:latest
-    # Build the local image with: docker build -t itransfer-backend .
+  itransfer-backend:
+    image: node:22-alpine
+    container_name: itransfer-backend
     restart: unless-stopped
-    ports:
-      - 3000:3000
+    working_dir: /app
     environment:
-      PORT: 3000
-      DATA_DIRECTORY: /data
-      UPLOAD_DIRECTORY: /data/uploads/shares
-      DATABASE_URL: file:/data/mediapult-transfer.db?connection_limit=1
+      NODE_ENV: docker
+      PORT: "8080"
+      DATA_DIRECTORY: /app/data
+      DATABASE_URL: file:/app/data/mediapult-transfer.db
+      UPLOAD_DIRECTORY: /app/data/uploads/shares
     volumes:
-      - "./data:/data:Z"
-  #      - "./config.yaml:/opt/app/config.yaml:ro,Z" # Add this line, if you want to configure mediapult-transfer via config file and not via UI
+      - /mnt/itransfer_data:/app/data
+    command: >
+      sh -c "
+        apk add --no-cache git python3 make g++ openssl &&
+        rm -rf /app/src &&
+        git clone --depth 1 --branch codex/docker-backend-stabilisierung https://github.com/snail75/iTransfer.git /app/src &&
+        cd /app/src/backend &&
+        npm ci &&
+        npx prisma generate &&
+        npm run build &&
+        npx prisma db push --skip-generate &&
+        npx prisma db seed &&
+        node dist/src/main.js
+      "
 
-  # To add ClamAV, extend this compose file with a ClamAV service and set CLAMAV_HOST.
+  itransfer-frontend:
+    image: node:22-alpine
+    container_name: itransfer-frontend
+    restart: unless-stopped
+    working_dir: /app
+    depends_on:
+      - itransfer-backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: docker
+      API_URL: http://itransfer-backend:8080
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+    volumes:
+      - /mnt/itransfer_data:/app/data
+    command: >
+      sh -c "
+        apk add --no-cache git python3 make g++ openssl &&
+        rm -rf /app/src &&
+        git clone --depth 1 --branch codex/docker-backend-stabilisierung https://github.com/snail75/iTransfer.git /app/src &&
+        cd /app/src/frontend &&
+        npm ci &&
+        npm run build &&
+        mkdir -p .next/standalone/.next &&
+        cp -r .next/static .next/standalone/.next/static &&
+        cp -r public .next/standalone/public &&
+        cd /app/src/frontend/.next/standalone &&
+        node server.js
+      "

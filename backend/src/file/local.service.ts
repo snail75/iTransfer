@@ -28,7 +28,7 @@ export class LocalFileService {
   async create(
     data: string,
     chunk: { index: number; total: number },
-    file: { id?: string; name: string },
+    file: { id?: string; name: string; replaceFileId?: string },
     shareId: string,
     allowCompletedShareUpload = false,
     allowVersioning = false,
@@ -51,7 +51,11 @@ export class LocalFileService {
       throw new BadRequestException("Share is already completed");
 
     const versionedFiles = allowVersioning
-      ? share.files.filter((savedFile) => savedFile.name === file.name)
+      ? share.files.filter((savedFile) =>
+          file.replaceFileId
+            ? savedFile.id === file.replaceFileId
+            : savedFile.name === file.name,
+        )
       : [];
     const versionedFileSize = versionedFiles.reduce(
       (n, { size }) => n + parseInt(size),
@@ -171,7 +175,7 @@ export class LocalFileService {
         await this.prisma.file.deleteMany({
           where: {
             shareId,
-            name: file.name,
+            id: { in: versionedFiles.map((savedFile) => savedFile.id) },
           },
         });
       }

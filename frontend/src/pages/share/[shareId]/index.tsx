@@ -113,6 +113,7 @@ const Share = ({ shareId }: { shareId: string }) => {
   const uploadFileToShare = async (
     file: File,
     uploadName: string,
+    replaceFileId?: string,
     onProgress?: (progress: number) => void,
   ) => {
     if (!share) return;
@@ -130,7 +131,7 @@ const Share = ({ shareId }: { shareId: string }) => {
         const response = await shareService.uploadFile(
           share.id,
           blob,
-          { id: fileId, name: uploadName },
+          { id: fileId, name: uploadName, replaceFileId },
           chunkIndex,
           chunks,
         );
@@ -149,7 +150,7 @@ const Share = ({ shareId }: { shareId: string }) => {
     }
   };
 
-  const replaceFileVersion = (fileToReplace: { name: string }) => {
+  const replaceFileVersion = (fileToReplace: { id: string; name: string }) => {
     const input = document.createElement("input");
     input.type = "file";
     input.onchange = async () => {
@@ -158,7 +159,7 @@ const Share = ({ shareId }: { shareId: string }) => {
 
       setIsUploadingBack(true);
       try {
-        await uploadFileToShare(file, fileToReplace.name);
+        await uploadFileToShare(file, file.name, fileToReplace.id);
         toast.success("File version replaced");
         await getFiles();
       } catch (e) {
@@ -178,7 +179,7 @@ const Share = ({ shareId }: { shareId: string }) => {
     try {
       for (let fileIndex = 0; fileIndex < uploadingFiles.length; fileIndex++) {
         const file = uploadingFiles[fileIndex];
-        await uploadFileToShare(file, file.name, (progress) => {
+        await uploadFileToShare(file, file.name, undefined, (progress) => {
           setUploadingFiles((files) =>
             files.map((current, index) =>
               index === fileIndex

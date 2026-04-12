@@ -33,6 +33,7 @@ export class FileController {
     query: {
       id: string;
       name: string;
+      replaceFileId?: string;
       chunkIndex: string;
       totalChunks: string;
     },
@@ -40,13 +41,13 @@ export class FileController {
     @Param("shareId") shareId: string,
     @Req() request: Request,
   ) {
-    const { id, name, chunkIndex, totalChunks } = query;
+    const { id, name, replaceFileId, chunkIndex, totalChunks } = query;
 
     // Data can be empty if the file is empty
     return await this.fileService.create(
       body,
       { index: parseInt(chunkIndex), total: parseInt(totalChunks) },
-      { id, name },
+      { id, name, replaceFileId },
       shareId,
       request["allowCompletedShareUpload"] === true,
       request["allowVersioning"] === true,

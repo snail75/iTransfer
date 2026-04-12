@@ -47,7 +47,7 @@ export class S3FileService {
   async create(
     data: string,
     chunk: { index: number; total: number },
-    file: { id?: string; name: string },
+    file: { id?: string; name: string; replaceFileId?: string },
     shareId: string,
     allowCompletedShareUpload = false,
     allowVersioning = false,
@@ -67,11 +67,19 @@ export class S3FileService {
     if (share?.uploadLocked && !allowCompletedShareUpload)
       throw new BadRequestException("Share is already completed");
 
+    const versionedFiles = allowVersioning
+      ? share?.files.filter((savedFile) =>
+          file.replaceFileId
+            ? savedFile.id === file.replaceFileId
+            : savedFile.name === file.name,
+        ) || []
+      : [];
+
     if (
       share?.uploadLocked &&
       allowVersioning &&
       !allowPublicUpload &&
-      !share.files.some((savedFile) => savedFile.name === file.name)
+      versionedFiles.length === 0
     ) {
       throw new BadRequestException("Versioning requires an existing file name");
     }
@@ -172,11 +180,28 @@ export class S3FileService {
     if (isLastChunk) {
       const fileSize: number = await this.getFileSize(shareId, file.name);
 
-      if (allowVersioning) {
+      if (versionedFiles.length > 0) {
+        const oldKeysToDelete = versionedFiles
+          .filter((savedFile) => savedFile.name !== file.name)
+          .map((savedFile) => ({
+            Key: `${this.getS3Path()}${shareId}/${savedFile.name}`,
+          }));
+
+        if (oldKeysToDelete.length > 0) {
+          await s3Instance.send(
+            new DeleteObjectsCommand({
+              Bucket: bucketName,
+              Delete: {
+                Objects: oldKeysToDelete,
+              },
+            }),
+          );
+        }
+
         await this.prisma.file.deleteMany({
           where: {
             shareId,
-            name: file.name,
+            id: { in: versionedFiles.map((savedFile) => savedFile.id) },
           },
         });
       }

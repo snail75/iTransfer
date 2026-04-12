@@ -10,6 +10,7 @@ import * as crypto from "crypto";
 import { createReadStream } from "fs";
 import * as fs from "fs/promises";
 import * as mime from "mime-types";
+import * as archiver from "archiver";
 import { ClamScanService } from "src/clamscan/clamscan.service";
 import { ConfigService } from "src/config/config.service";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -247,21 +248,36 @@ export class LocalFileService {
   }
 
   async getZip(shareId: string): Promise<Readable> {
-    const share = await this.prisma.share.findUnique({ where: { id: shareId } });
-    if (!share) throw new NotFoundException("Share not found");
-    return new Promise((resolve, reject) => {
-      const zipStream = createReadStream(
-        `${resolveShareDirectory(share)}/archive.zip`,
-      );
-
-      zipStream.on("error", (err) => {
-        reject(new InternalServerErrorException(err));
-      });
-
-      zipStream.on("open", () => {
-        resolve(zipStream);
-      });
+    const share = await this.prisma.share.findUnique({
+      where: { id: shareId },
+      include: {
+        files: {
+          where: {
+            scanStatus: { in: ["CLEAN", "UNSCANNED"] },
+          },
+        },
+      },
     });
+    if (!share) throw new NotFoundException("Share not found");
+
+    const shareDirectory = resolveShareDirectory(share);
+    const compressionLevel = this.config.get("share.zipCompressionLevel");
+    const archive = archiver("zip", {
+      zlib: { level: parseInt(compressionLevel) },
+    });
+
+    archive.on("error", (err) => {
+      archive.destroy(new InternalServerErrorException(err));
+    });
+
+    for (const file of share.files) {
+      archive.append(createReadStream(`${shareDirectory}/${file.id}`), {
+        name: file.name,
+      });
+    }
+
+    void archive.finalize();
+    return archive;
   }
 
   private async getUserStorageUsageBytes(userId?: string | null) {

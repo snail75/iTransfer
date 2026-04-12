@@ -204,7 +204,7 @@ export class ShareController {
       .filter(([key]) => key.startsWith("share_") && key.endsWith("_token"))
       .map(([key, value]) => ({
         key,
-        payload: this.jwtService.decode(value),
+        payload: this.jwtService.decode(value as string),
       }));
 
     const expiredTokens = shareTokenCookies.filter(

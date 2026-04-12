@@ -74,7 +74,7 @@ export class ConfigController {
         validators: [new FileTypeValidator({ fileType: "image/png" })],
       }),
     )
-    file: Express.Multer.File,
+    file: { buffer: Buffer },
   ) {
     return await this.logoService.create(file.buffer);
   }

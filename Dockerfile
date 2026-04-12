@@ -1,91 +1,39 @@
-# Shared build base container
-FROM node:22-alpine AS build-base
-RUN npm install -g npm@latest && apk add --no-cache python3 openssl
-# Configure npm with longer timeouts and retries
-RUN npm config set fetch-timeout 600000 && \
-    npm config set fetch-retries 5 && \
-    npm config set fetch-retry-mintimeout 20000 && \
-    npm config set fetch-retry-maxtimeout 120000
-WORKDIR /opt/app
+FROM node:22-alpine AS build
 
-# Frontend dependencies
-FROM build-base AS frontend-dependencies
-WORKDIR /opt/app/frontend
-COPY frontend/package.json frontend/package-lock.json ./
-# Try npm ci first (suppress errors), if it fails use npm install with retries
-RUN (npm ci --prefer-offline --no-audit --progress=false --include=optional 2>/dev/null || true) && \
-    (npm list --depth=0 >/dev/null 2>&1 || \
-     (echo "npm ci failed, using npm install (including optional dependencies)..." && \
-      npm install --no-audit --progress=false --include=optional || \
-      (echo "First npm install attempt failed, retrying..." && \
-       sleep 5 && \
-       npm install --no-audit --progress=false --include=optional || \
-       (echo "Second npm install attempt failed, retrying one more time..." && \
-        sleep 10 && \
-        npm install --no-audit --progress=false --include=optional))))
-
-# Frontend builder
-FROM build-base AS frontend-builder
-WORKDIR /opt/app/frontend
-COPY ./frontend .
-COPY --from=frontend-dependencies /opt/app/frontend/node_modules ./node_modules
-RUN npm run build
-
-# Backend dependencies
-FROM build-base AS backend-dependencies
 WORKDIR /opt/app/backend
+
+RUN apk add --no-cache g++ make openssl python3
+
 COPY backend/package.json backend/package-lock.json ./
-RUN (npm ci --prefer-offline --no-audit --progress=false --include=optional 2>/dev/null || true) && \
-    (npm list --depth=0 >/dev/null 2>&1 || \
-     (echo "npm ci failed, using npm install..." && \
-      npm install --no-audit --progress=false --include=optional || \
-      (echo "First npm install attempt failed, retrying..." && \
-       sleep 5 && \
-       npm install --no-audit --progress=false --include=optional || \
-       (echo "Second npm install attempt failed, retrying one more time..." && \
-        sleep 10 && \
-        npm install --no-audit --progress=false --include=optional))))
+RUN npm ci --no-audit --progress=false
 
-# Backend builder
-FROM build-base AS backend-builder
-WORKDIR /opt/app/backend
-COPY ./backend .
-COPY --from=backend-dependencies /opt/app/backend/node_modules ./node_modules
+COPY backend ./
 RUN npx prisma generate
-RUN npm run build && npm prune --production
+RUN npm run build
+RUN npm prune --omit=dev
 
-# Final combined image
-FROM node:22-alpine AS runner
-RUN npm install -g npm@latest
-ENV NODE_ENV=docker
+FROM node:22-alpine AS production
 
-RUN deluser --remove-home node 2>/dev/null || true
-
-RUN apk update --no-cache \
-    && apk upgrade --no-cache \
-    && apk add --no-cache curl caddy su-exec openssl
-
-WORKDIR /opt/app/frontend
-COPY --from=frontend-builder /opt/app/frontend/public ./public
-COPY --from=frontend-builder /opt/app/frontend/.next/standalone ./
-COPY --from=frontend-builder /opt/app/frontend/.next/static ./.next/static
-COPY --from=frontend-builder /opt/app/frontend/public/img /tmp/img
+ENV NODE_ENV=docker \
+    PORT=3000 \
+    DATA_DIRECTORY=/data \
+    UPLOAD_DIRECTORY=/data/uploads/shares \
+    DATABASE_URL=file:/data/mediapult-transfer.db?connection_limit=1
 
 WORKDIR /opt/app/backend
-COPY --from=backend-builder /opt/app/backend/node_modules ./node_modules
-COPY --from=backend-builder /opt/app/backend/dist ./dist
-COPY --from=backend-builder /opt/app/backend/prisma ./prisma
-COPY --from=backend-builder /opt/app/backend/package.json ./
-COPY --from=backend-builder /opt/app/backend/tsconfig.json ./
 
-WORKDIR /opt/app
+RUN apk add --no-cache openssl
 
-COPY ./reverse-proxy  /opt/app/reverse-proxy
-COPY ./scripts/docker ./scripts/docker
+COPY --from=build /opt/app/backend/node_modules ./node_modules
+COPY --from=build /opt/app/backend/dist ./dist
+COPY --from=build /opt/app/backend/prisma ./prisma
+COPY --from=build /opt/app/backend/package.json ./package.json
+COPY --from=build /opt/app/backend/package-lock.json ./package-lock.json
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh && mkdir -p /data
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=10s --timeout=3s CMD /bin/sh -c '(if [[ "$CADDY_DISABLED" = "true" ]]; then curl -fs http://localhost:${BACKEND_PORT:-8080}/api/health; else curl -fs http://localhost:3000/api/health; fi) || exit 1'
-
-ENTRYPOINT ["sh", "./scripts/docker/create-user.sh"]
-CMD ["sh", "./scripts/docker/entrypoint.sh"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["node", "dist/src/main.js"]

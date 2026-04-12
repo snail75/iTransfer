@@ -1,15 +1,17 @@
 services:
   mediapult-transfer:
-    image: mediapult-transfer:latest
-    # Build the local image with: docker build -t mediapult-transfer .
+    image: itransfer-backend:latest
+    # Build the local image with: docker build -t itransfer-backend .
     restart: unless-stopped
     ports:
       - 3000:3000
     environment:
-      - TRUST_PROXY=false # Set to true if a reverse proxy is in front of the container
+      PORT: 3000
+      DATA_DIRECTORY: /data
+      UPLOAD_DIRECTORY: /data/uploads/shares
+      DATABASE_URL: file:/data/mediapult-transfer.db?connection_limit=1
     volumes:
-      - "./data:/opt/app/backend/data:Z"
-      - "./data/images:/opt/app/frontend/public/img:Z"
-  #      - "./config.yaml:/opt/app/config.yaml" # Add this line, if you want to configure mediapult-transfer via config file and not via UI
+      - "./data:/data:Z"
+  #      - "./config.yaml:/opt/app/config.yaml:ro,Z" # Add this line, if you want to configure mediapult-transfer via config file and not via UI
 
   # To add ClamAV, extend this compose file with a ClamAV service and set CLAMAV_HOST.

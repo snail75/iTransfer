@@ -5,8 +5,10 @@ services:
     ports:
       - 3005:3000
     environment:
-      - TRUST_PROXY=false
+      PORT: 3000
+      DATA_DIRECTORY: /data
+      UPLOAD_DIRECTORY: /data/uploads/shares
+      DATABASE_URL: file:/data/mediapult-transfer.db?connection_limit=1
     volumes:
-      - "./data:/opt/app/backend/data:Z"
-      - "./data/images:/opt/app/frontend/public/img:Z"
-#      - "./config.yaml:/opt/app/config.yaml"
+      - "./data:/data:Z"
+#      - "./config.yaml:/opt/app/config.yaml:ro,Z"

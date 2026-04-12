@@ -13,8 +13,14 @@ import * as path from "path";
 import { PrismaService } from "src/prisma/prisma.service";
 import { stringToTimespan } from "src/utils/date.util";
 import { parse as yamlParse } from "yaml";
-import { YamlConfig } from "../../prisma/seed/config.seed";
 import { CONFIG_FILE, SHARE_DIRECTORY } from "src/constants";
+import { getConfigVariableDefinition } from "./config-defaults";
+import type { YamlConfig } from "./config-defaults";
+
+type ConfigLookupVariable = Pick<
+  Config,
+  "category" | "name" | "type" | "defaultValue" | "value"
+>;
 
 /**
  * ConfigService extends EventEmitter to allow listening for config updates,
@@ -24,6 +30,7 @@ import { CONFIG_FILE, SHARE_DIRECTORY } from "src/constants";
 export class ConfigService extends EventEmitter {
   yamlConfig?: YamlConfig;
   logger = new Logger(ConfigService.name);
+  private missingConfigWarnings = new Set<string>();
 
   constructor(
     @Inject("CONFIG_VARIABLES") private configVariables: Config[],
@@ -95,20 +102,14 @@ export class ConfigService extends EventEmitter {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get(key: `${string}.${string}`): any {
-    const configVariable = this.configVariables.filter(
-      (variable) => `${variable.category}.${variable.name}` == key,
-    )[0];
+    const configVariable =
+      this.configVariables.find(
+        (variable) => `${variable.category}.${variable.name}` == key,
+      ) ?? this.getFallbackConfigVariable(key);
 
-    if (!configVariable) throw new Error(`Config variable ${key} not found`);
+    const value = configVariable.value ?? configVariable.defaultValue ?? "";
 
-    const value = configVariable.value ?? configVariable.defaultValue;
-
-    if (configVariable.type == "number" || configVariable.type == "filesize")
-      return parseInt(value);
-    if (configVariable.type == "boolean") return value == "true";
-    if (configVariable.type == "string" || configVariable.type == "text")
-      return value;
-    if (configVariable.type == "timespan") return stringToTimespan(value);
+    return this.parseConfigValue(configVariable.type, value);
   }
 
   async getByCategory(category: string) {
@@ -351,5 +352,79 @@ export class ConfigService extends EventEmitter {
       });
       await fs.promises.rm(source, { recursive: true, force: true });
     }
+  }
+
+  private getFallbackConfigVariable(key: string): ConfigLookupVariable {
+    const [category, name] = key.split(".");
+    const configVariable = getConfigVariableDefinition(key);
+
+    if (configVariable) {
+      this.warnMissingConfigFallback(
+        key,
+        "not found in database. Falling back to the built-in default.",
+      );
+
+      return {
+        category,
+        name,
+        type: configVariable.type,
+        defaultValue:
+          configVariable.defaultValue ??
+          this.defaultValueForType(configVariable.type),
+        value: configVariable.value?.toString() ?? null,
+      };
+    }
+
+    const type = this.inferFallbackType(key);
+    this.warnMissingConfigFallback(
+      key,
+      "is unknown. Falling back to a safe default.",
+    );
+
+    return {
+      category,
+      name,
+      type,
+      defaultValue: this.defaultValueForType(type),
+      value: null,
+    };
+  }
+
+  private parseConfigValue(type: string, value: string) {
+    if (type == "number" || type == "filesize") {
+      const parsedValue = parseInt(value, 10);
+      return Number.isNaN(parsedValue) ? 0 : parsedValue;
+    }
+    if (type == "boolean") return value == "true";
+    if (type == "string" || type == "text") return value;
+    if (type == "timespan") return stringToTimespan(value || "0 days");
+
+    return value;
+  }
+
+  private defaultValueForType(type: string) {
+    if (type == "boolean") return "false";
+    if (type == "number" || type == "filesize") return "0";
+    if (type == "timespan") return "0 days";
+    return "";
+  }
+
+  private inferFallbackType(key: string) {
+    if (
+      key.endsWith(".enabled") ||
+      key.endsWith("-enabled") ||
+      key.includes(".enable")
+    ) {
+      return "boolean";
+    }
+
+    return "string";
+  }
+
+  private warnMissingConfigFallback(key: string, reason: string) {
+    if (this.missingConfigWarnings.has(key)) return;
+
+    this.logger.warn(`Config variable ${key} ${reason}`);
+    this.missingConfigWarnings.add(key);
   }
 }

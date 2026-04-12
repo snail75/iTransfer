@@ -28,19 +28,21 @@ For installation specific configuration, you can use environment variables. The 
 
 #### Backend
 
-| Variable         | Default Value                                      | Description                                                                                              |
-| ---------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `BACKEND_PORT`   | `8080`                                             | The port on which the backend listens.                                                                   |
-| `DATABASE_URL`   | `file:../data/mediapult-transfer.db?connection_limit=1` | The URL of the SQLite database.                                                                          |
-| `DATA_DIRECTORY` | `./data`                                           | The directory where data is stored.                                                                      |
-| `CONFIG_FILE`    | `../config.yaml`                                   | Path to the configuration file                                                                           |
-| `CLAMAV_HOST`    | `127.0.0.1` or `clamav` when running with Docker/Podman   | The IP address of the ClamAV server. See the [ClamAV docs](integrations.md#clamav) for more information. |
-| `CLAMAV_PORT`    | `3310`                                             | The port number of the ClamAV server.                                                                    |
+| Variable                 | Default Value                                           | Description                                                                                              |
+| ------------------------ | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `PORT`                   | `3000`                                                  | The port on which the backend listens.                                                                   |
+| `BACKEND_PORT`           | empty                                                   | Legacy fallback for `PORT`.                                                                              |
+| `DATABASE_URL`           | `file:../data/mediapult-transfer.db?connection_limit=1` | The URL of the SQLite database.                                                                          |
+| `DATA_DIRECTORY`         | `./data`                                                | The directory where data is stored.                                                                      |
+| `UPLOAD_DIRECTORY`       | `${DATA_DIRECTORY}/uploads/shares`                      | The directory where local share files are stored. Use an absolute path for Docker volumes.                |
+| `CONFIG_FILE`            | `../config.yaml`                                        | Path to the configuration file.                                                                          |
+| `DESKTOP_CLIENT_ORIGINS` | Tauri and local desktop dev origins                     | Comma-separated origins that may call the API with bearer tokens from the desktop client.                 |
+| `CLAMAV_HOST`            | `127.0.0.1` or `clamav` when running with Docker/Podman  | The IP address of the ClamAV server. See the [ClamAV docs](integrations.md#clamav) for more information. |
+| `CLAMAV_PORT`            | `3310`                                                  | The port number of the ClamAV server.                                                                    |
 
 ## Local Storage Path
 
-Admins can set a local upload path in `/admin/config/storage`. The path must be absolute and writable by the backend process or container user. The setting applies only to new shares; existing shares keep their original path so existing links continue to work after updates.
-| `DESKTOP_CLIENT_ORIGINS` | Tauri and local desktop dev origins | Comma-separated origins that may call the API with bearer tokens from the desktop client. |
+Admins can set a local upload path in `/admin/config/storage`. The path must be absolute and writable by the backend process or container user. The setting applies only to new shares; existing shares keep their original path so existing links continue to work after updates. If the UI or YAML setting is empty, the backend uses `UPLOAD_DIRECTORY`.
 
 #### Frontend
 
@@ -51,11 +53,17 @@ Admins can set a local upload path in `/admin/config/storage`. The path must be 
 
 #### Docker/Podman specific
 
-Environment variables that are only available when running Mediapult Transfer with Docker or Podman.
+The root Dockerfile builds a backend-only image. Use a separate frontend or reverse proxy if you need the web UI.
 
-| Variable                      | Default Value | Description                                                                                                                                                                                                                                                                                                                                                                   |
-| ----------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `TRUST_PROXY`                 | `false`       | Whether Mediapult Transfer is behind a reverse proxy. If set to `true`, the `X-Forwarded-For` header is trusted.                                                                                                                                                                                                                                                                   |
-| `CADDY_DISABLED`              | `false`       | Configures if Mediapult Transfer is starting built-in Caddy. If set to `true`, Caddy will not be started. If disabled, you must configure your reverse proxy to correctly map all paths. Refer to the [official Caddyfile](https://github.com/mediapult/mediapult-transfer/blob/main/reverse-proxy/Caddyfile) for guidance.                                                            |
-| `PUID` and `PGID`             | `1000`        | The user and group ID of the user who should run Mediapult Transfer inside the container and owns the files that are mounted with the volume. You can get the `PUID` and `GUID` of your user on your host machine by using the command `id`. For more information see [this article](https://docs.linuxserver.io/general/understanding-puid-and-pgid/#using-the-variables). |
-| `NODE_TLS_REJECT_UNAUTHORIZED` | `1` (enabled) | Controls whether Node.js should reject connections to servers with self-signed or invalid certificates. Set to `0` to allow connections to services with self-signed certificates (e.g., LDAPS, proxy). **Warning**: Only use `0` in environments where you trust the network infrastructure. In secure environments, consider using proper certificate management instead. |
+Recommended Docker values for persistent SQLite and uploads:
+
+| Variable           | Recommended Value                                  | Description                                      |
+| ------------------ | -------------------------------------------------- | ------------------------------------------------ |
+| `PORT`             | `3000`                                             | The backend API port exposed by the container.   |
+| `DATA_DIRECTORY`   | `/data`                                            | Mount your persistent host or ZFS path here.     |
+| `UPLOAD_DIRECTORY` | `/data/uploads/shares`                             | Local share files live under this directory.     |
+| `DATABASE_URL`     | `file:/data/mediapult-transfer.db?connection_limit=1` | SQLite database path on the mounted volume.      |
+
+| Variable                       | Default Value | Description                                                                                                                                                                                                                                                                                                      |
+| ------------------------------ | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NODE_TLS_REJECT_UNAUTHORIZED` | `1` (enabled) | Controls whether Node.js should reject connections to servers with self-signed or invalid certificates. Set to `0` to allow connections to services with self-signed certificates (e.g., LDAPS, proxy). **Warning**: Only use `0` in environments where you trust the network infrastructure. |

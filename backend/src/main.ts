@@ -14,10 +14,10 @@ import * as fs from "fs";
 import { AppModule } from "./app.module";
 import { ConfigService } from "./config/config.service";
 import {
-  DATA_DIRECTORY,
   LOG_LEVEL_AVAILABLE,
   LOG_LEVEL_DEFAULT,
   LOG_LEVEL_ENV,
+  UPLOAD_TEMP_DIRECTORY,
 } from "./constants";
 
 function generateNestJsLogLevels(): LogLevel[] {
@@ -75,7 +75,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.set("trust proxy", true);
 
-  await fs.promises.mkdir(`${DATA_DIRECTORY}/uploads/_temp`, {
+  await fs.promises.mkdir(UPLOAD_TEMP_DIRECTORY, {
     recursive: true,
   });
 
@@ -91,9 +91,11 @@ async function bootstrap() {
     SwaggerModule.setup("api/swagger", app, document);
   }
 
-  await app.listen(
-    parseInt(process.env.BACKEND_PORT || process.env.PORT || "8080"),
+  const port = parseInt(
+    process.env.PORT || process.env.BACKEND_PORT || "3000",
+    10,
   );
+  await app.listen(port, "0.0.0.0");
 
   const logger = new Logger("UnhandledAsyncError");
   process.on("unhandledRejection", (e) => logger.error(e));

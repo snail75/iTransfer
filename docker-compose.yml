@@ -12,8 +12,11 @@ services:
       UPLOAD_DIRECTORY: /app/data/uploads/shares
     volumes:
       - /mnt/itransfer_data:/app/data
-    command: >
-      sh -c "
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -e
         apk add --no-cache git python3 make g++ openssl &&
         rm -rf /app/src &&
         git clone --depth 1 --branch codex/docker-backend-stabilisierung https://github.com/snail75/iTransfer.git /app/src &&
@@ -24,7 +27,6 @@ services:
         npx prisma db push --skip-generate &&
         npx prisma db seed &&
         node dist/src/main.js
-      "
 
   itransfer-frontend:
     image: node:22-alpine
@@ -36,14 +38,17 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NODE_ENV: docker
+      NODE_ENV: production
       API_URL: http://itransfer-backend:8080
       PORT: "3000"
       HOSTNAME: 0.0.0.0
     volumes:
       - /mnt/itransfer_data:/app/data
-    command: >
-      sh -c "
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -e
         apk add --no-cache git python3 make g++ openssl &&
         rm -rf /app/src &&
         git clone --depth 1 --branch codex/docker-backend-stabilisierung https://github.com/snail75/iTransfer.git /app/src &&
@@ -55,4 +60,3 @@ services:
         cp -r public .next/standalone/public &&
         cd /app/src/frontend/.next/standalone &&
         node server.js
-      "

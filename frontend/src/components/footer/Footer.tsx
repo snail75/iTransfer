@@ -23,20 +23,7 @@ const Footer = () => {
   return (
     <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="hidden sm:block"></div>
-          <div className="text-center">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Powered by{" "}
-              <Link
-                href="https://github.com/snail75/iTransfer"
-                target="_blank"
-                className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
-              >
-                Mediapult Transfer
-              </Link>
-            </p>
-          </div>
+        <div className="grid grid-cols-1 gap-4">
           <div className="text-center sm:text-right">
             {config.get("legal.enabled") && (
               <p className="text-xs text-gray-500 dark:text-gray-400">

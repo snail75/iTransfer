@@ -32,6 +32,7 @@ const Header = () => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentRoute, setCurrentRoute] = useState("");
+  const isPublicShareRoute = router.pathname === "/share/[shareId]";
 
   useEffect(() => {
     setCurrentRoute(router.pathname);
@@ -93,7 +94,7 @@ const Header = () => {
       label: t("navbar.signup"),
     });
 
-  const links = user ? authenticatedLinks : unauthenticatedLinks;
+  const links = isPublicShareRoute ? [] : user ? authenticatedLinks : unauthenticatedLinks;
 
   const NavLink = ({ link, label, component, onClick, isMobile = false }: NavLink & { onClick?: () => void; isMobile?: boolean }) => {
     if (component) {
@@ -203,17 +204,19 @@ const Header = () => {
           </div>
 
           {/* Mobile menu button */}
-          <button
-            type="button"
-            className="sm:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? (
-              <XMarkIcon className="h-6 w-6" />
-            ) : (
-              <Bars3Icon className="h-6 w-6" />
-            )}
-          </button>
+          {links.length > 0 && (
+            <button
+              type="button"
+              className="sm:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <XMarkIcon className="h-6 w-6" />
+              ) : (
+                <Bars3Icon className="h-6 w-6" />
+              )}
+            </button>
+          )}
         </div>
 
         {/* Mobile Navigation Backdrop */}

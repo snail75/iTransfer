@@ -231,6 +231,38 @@ export class ShareService {
     });
   }
 
+  async updatePassword(id: string, password?: string) {
+    if (!password) {
+      const share = await this.prisma.share.findUnique({
+        where: { id },
+        include: { security: true },
+      });
+      if (!share?.security) return share;
+
+      return this.prisma.share.update({
+        where: { id },
+        data: {
+          security: {
+            delete: true,
+          },
+        },
+      });
+    }
+
+    const passwordHash = await argon.hash(password);
+    return this.prisma.share.update({
+      where: { id },
+      data: {
+        security: {
+          upsert: {
+            create: { password: passwordHash },
+            update: { password: passwordHash },
+          },
+        },
+      },
+    });
+  }
+
   async updatePublicUpload(id: string, allowPublicUpload: boolean) {
     return this.prisma.share.update({
       where: { id },

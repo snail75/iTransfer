@@ -29,6 +29,7 @@ import { ShareMetaDataDTO } from "./dto/shareMetaData.dto";
 import { SharePasswordDto } from "./dto/sharePassword.dto";
 import { UpdateShareExpirationDTO } from "./dto/updateShareExpiration.dto";
 import { UpdateShareNameDTO } from "./dto/updateShareName.dto";
+import { UpdateSharePasswordDTO } from "./dto/updateSharePassword.dto";
 import { UpdateSharePublicUploadDTO } from "./dto/updateSharePublicUpload.dto";
 import { UpdateShareVersioningDTO } from "./dto/updateShareVersioning.dto";
 import { CreateShareGuard } from "./guard/createShare.guard";
@@ -128,6 +129,17 @@ export class ShareController {
     @Body() body: UpdateShareNameDTO,
   ) {
     return new ShareDTO().from(await this.shareService.updateName(id, body.name));
+  }
+
+  @Patch(":id/password")
+  @UseGuards(ShareOwnerGuard)
+  async updatePassword(
+    @Param("id") id: string,
+    @Body() body: UpdateSharePasswordDTO,
+  ) {
+    return new ShareDTO().from(
+      await this.shareService.updatePassword(id, body.password),
+    );
   }
 
   @Patch(":id/public-upload")

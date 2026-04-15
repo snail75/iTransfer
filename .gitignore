@@ -51,7 +51,9 @@ yarn-error.log*
 /docs/.cache-loader
 /config.yaml
 /desktop/dist/
+/desktop/run/
 /desktop/src-tauri/target/
+/run-logs/
 
 # Jetbrains specific (webstorm)
 .idea/**/**

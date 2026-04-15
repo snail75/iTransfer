@@ -14,11 +14,12 @@
       {
         "label": "main",
         "title": "Mediapult Transfer",
-        "width": 440,
-        "height": 600,
+        "width": 410,
+        "height": 645,
         "visible": false,
         "resizable": false,
-        "dragDropEnabled": false
+        "dragDropEnabled": false,
+        "decorations": false
       }
     ],
     "security": {

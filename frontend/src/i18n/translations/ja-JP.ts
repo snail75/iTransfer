@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "共有リンク",
   "account.shares.modal.delete.title": "共有を削除: {share}",
   "account.shares.modal.delete.description": "この共有を削除してもよろしいですか？",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "ファイルリクエスト",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "ファイルリクエストリンク",
   "account.reverseShares.modal.delete.title": "ファイルリクエストを削除",
   "account.reverseShares.modal.delete.description": "本当にこのファイルリクエストを削除しますか？削除すると、関連するファイルアップロードも削除されます。",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "管理画面",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "チェックされていない場合、ユーザーにパスワードを設定する為のリンクが記載されたメールを送信します。",
   "admin.users.modal.create.admin": "管理者権限",
   "admin.users.modal.create.admin.description": "チェックされている場合、ユーザーは管理画面にアクセスできるようになります。",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "共有管理",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "有効期限",
   "admin.shares.edit.delete.title": "共有を削除: {id}",
   "admin.shares.edit.delete.description": "この共有を削除してもよろしいですか？",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "アップロード",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "ファイル名",
   "upload.filelist.size": "サイズ",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "共有を作成",
   "upload.modal.link.error.invalid": "文字、数字、アンダースコア、ハイフンのみ使用できます",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "この共有は、{expiration} に期限切れとなります。",
   "upload.modal.completed.share-ready": "共有の準備ができました",
   "upload.modal.completed.notified-reverse-share-creator": "ファイルリクエストの作成者に通知しました。他の手段でこのリンクを手動で共有することもできます。",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "「{shareId}」が共有されました",
   "share.description": "あなたと共有したファイルをご確認ください！",
-  "share.fileCount": "{count, plural, =1 {# ファイル} other {# ファイル}} · {size} (圧縮により ZIP ファイルはより小さくなる場合があります)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "訪問者の上限を超えました",
   "share.error.visitor-limit-exceeded.description": "この共有からの訪問者の回数が制限を超えています。",
   "share.error.removed.title": "共有が削除されました",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "サイズ",
   "share.modal.file-preview.error.not-supported.title": "プレビューに対応していません",
   "share.modal.file-preview.error.not-supported.description": "このファイル形式のプレビューはサポートされていません。ファイルをダウンロードして表示してください。",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "編集 {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "構成ファイルがあります",
   "admin.config.config-file-warning.description": "設定ファイル設定で済みのMediapult TransferはUI を使用して設定を変更することはできません。",
   "admin.config.title": "設定",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "一般",
   "admin.config.category.share": "共有",
   "admin.config.category.cache": "キャッシュ",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "共有の生成されたIDのデフォルトの長さ。この値はファイルリクエストのリンクを生成するためにも使用されます。8未満の値は安全ではないと見なされます。",
   "admin.config.share.max-size": "最大ファイルサイズ",
   "admin.config.share.max-size.description": "最大ファイルサイズ",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Zip圧縮レベル",
   "admin.config.share.zip-compression-level.description": "ファイルサイズと圧縮速度のバランスを取るように、レベルを調整できます。有効な値は0～9の間で、0が無圧縮、9で最大限の圧縮となります。 ",
   "admin.config.share.chunk-size": "チャンクサイズ",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "S3バケットにアクセスするための秘密。",
   "admin.config.s3.use-checksum": "チェックサムを使用",
   "admin.config.s3.use-checksum.description": "チェックサムをサポートしていないバックエンド（例：B2）では無効にしてください。",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "法的事項",
   "admin.config.legal.enabled": "法的通知を有効にする",
   "admin.config.legal.enabled.description": "フッターにインプリントとプライバシーポリシーへのリンクを表示するか。",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "共有",
   "common.button.generate": "生成",
   "common.button.done": "完了",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "リンク",
   "common.text.navigate-to-link": "リンクを開く",
   "common.text.or": "または",

@@ -10,16 +10,21 @@ const API_TOKEN_PREFIX = "mtp";
 export class ApiTokenService {
   constructor(private prisma: PrismaService) {}
 
+  private formatToken(id: string, secret?: string | null) {
+    return secret ? `${API_TOKEN_PREFIX}.${id}.${secret}` : undefined;
+  }
+
   async create(userId: string, name: string) {
     const id = crypto.randomUUID();
     const secret = crypto.randomBytes(32).toString("base64url");
-    const token = `${API_TOKEN_PREFIX}.${id}.${secret}`;
+    const token = this.formatToken(id, secret);
 
     const apiToken = await this.prisma.apiToken.create({
       data: {
         id,
         name,
         tokenHash: await argon.hash(secret),
+        tokenSecret: secret,
         user: { connect: { id: userId } },
       },
     });
@@ -28,10 +33,29 @@ export class ApiTokenService {
   }
 
   async list(userId: string) {
-    return this.prisma.apiToken.findMany({
+    const tokens = await this.prisma.apiToken.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
     });
+
+    return tokens.map((token) => ({
+      ...token,
+      token: this.formatToken(token.id, token.tokenSecret),
+    }));
+  }
+
+  async rename(userId: string, id: string, name: string) {
+    const result = await this.prisma.apiToken.updateMany({
+      where: {
+        id,
+        userId,
+      },
+      data: {
+        name,
+      },
+    });
+
+    return result.count > 0;
   }
 
   async remove(userId: string, id: string) {

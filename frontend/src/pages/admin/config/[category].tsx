@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TbInfoCircle } from "react-icons/tb";
 import { FormattedMessage } from "react-intl";
@@ -33,7 +34,6 @@ export default function AdminConfigPage() {
   >([]);
 
   const [logo, setLogo] = useState<File | null>(null);
-  const [isMigratingStorage, setIsMigratingStorage] = useState(false);
 
   const isEditingAllowed = (): boolean => {
     return (
@@ -63,33 +63,6 @@ export default function AdminConfigPage() {
       void config.refresh();
     } else {
       toast.success(t("admin.config.notify.no-changes"));
-    }
-  };
-
-  const migrateStorage = async () => {
-    if (!window.confirm(t("admin.config.storage.migrate.confirm"))) return;
-
-    setIsMigratingStorage(true);
-    try {
-      if (updatedConfigVariables.length > 0) {
-        await configService.updateMany(updatedConfigVariables);
-        setUpdatedConfigVariables([]);
-        void config.refresh();
-      }
-
-      const result =
-        await configService.migrateLocalSharesToConfiguredStoragePath();
-
-      toast.success(
-        t("admin.config.storage.migrate.success", {
-          count: result.movedShares,
-          path: result.targetPath,
-        }),
-      );
-    } catch (error) {
-      toast.axiosError(error);
-    } finally {
-      setIsMigratingStorage(false);
     }
   };
 
@@ -211,11 +184,11 @@ export default function AdminConfigPage() {
                           <FormattedMessage id="admin.config.storage.migrate.description" />
                         </p>
                         <Button
+                          as={Link}
+                          href="/admin/system"
                           variant="secondary"
-                          onClick={migrateStorage}
-                          loading={isMigratingStorage}
                         >
-                          <FormattedMessage id="admin.config.storage.migrate.button" />
+                          <FormattedMessage id="admin.system.open" />
                         </Button>
                       </div>
                     </Alert>

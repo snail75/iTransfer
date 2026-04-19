@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "แชร์ลิงค์",
   "account.shares.modal.delete.title": "Delete share: {share}",
   "account.shares.modal.delete.description": "คุณต้องการลบแชร์นี้หรือไม่?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "รีเวิร์สแชร์ของฉัน",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "ลิงค์รีเวิร์สแชร์",
   "account.reverseShares.modal.delete.title": "ลบลิงค์รีเวิร์สแชร์",
   "account.reverseShares.modal.delete.description": "คุณต้องการลบลิงค์รีเวิร์สแชร์นี้หรือไม่? หากคุณทำเช่นนั้นแชร์ที่เกี่ยวข้องจะถูกลบด้วย",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "แผงควบคุมระบบ",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "หากไม่ติ๊กเลือก ผู้ใช้จะได้รับอีเมลพร้อมลิงก์เพื่อตั้งรหัสผ่านด้วยตนเอง",
   "admin.users.modal.create.admin": "สิทธิ์ของผู้ดูแลระบบ",
   "admin.users.modal.create.admin.description": "หากติ๊กเลือก ผู้ใช้จะสามารถเข้าถึงแผงควบคุมระบบได้",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Share management",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Expires on",
   "admin.shares.edit.delete.title": "Delete share: {id}",
   "admin.shares.edit.delete.description": "Do you really want to delete this share?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "อัปโหลด",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "ชื่อ",
   "upload.filelist.size": "ขนาด",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "สร้างการแชร์",
   "upload.modal.link.error.invalid": "สามารถใช้ได้เฉพาะตัวอักษร ตัวเลข ขีดล่าง และขีดเส้น",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "การแชร์นี้จะหมดอายุเมื่อวันที่ {expiration}",
   "upload.modal.completed.share-ready": "แชร์พร้อมใช้งาน",
   "upload.modal.completed.notified-reverse-share-creator": "We have notified the creator of the reverse share. You can also manually share this link with them through other means.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "แชร์ {shareId}",
   "share.description": "ดูสิ่งที่ฉันแชร์กับคุณ!",
-  "share.fileCount": "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "เกินขีดจำกัดผู้เข้าชม",
   "share.error.visitor-limit-exceeded.description": "การแชร์นี้ได้เกินขีดจำกัดผู้เข้าชมแล้ว",
   "share.error.removed.title": "การแชร์ถูกลบ",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "ขนาด",
   "share.modal.file-preview.error.not-supported.title": "ไม่รองรับการแสดงตัวอย่าง",
   "share.modal.file-preview.error.not-supported.description": "Previews are not supported for this type of files. Please download the file to view it.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Edit {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Configuration file present",
   "admin.config.config-file-warning.description": "As you have a configured Mediapult Transfer with a configuration file, you can't change the configuration through the UI.",
   "admin.config.title": "การตั้งค่า",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "ทั่วไป",
   "admin.config.category.share": "การแชร์",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Default length for the generated ID of a share. This value is also used to generate links for reverse shares. A value below 8 is not considered secure.",
   "admin.config.share.max-size": "ขนาดสูงสุด",
   "admin.config.share.max-size.description": "ขนาดสูงสุดของแชร์",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "ระดับการบีบอัดไฟล์ Zip",
   "admin.config.share.zip-compression-level.description": "ปรับระดับเพื่อปรับความสมดุลระหว่างขนาดไฟล์และความเร็วในการบีบอัด ค่าอยู่ระหว่าง 0-9 โดย 0 คือไม่มีการบีบอัดและ 9 คือการบีบอัดสูงสุด",
   "admin.config.share.chunk-size": "Chunk size",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "The secret which allows you to access the S3 bucket.",
   "admin.config.s3.use-checksum": "Use checksum",
   "admin.config.s3.use-checksum.description": "Turn off for backends that do not support checksum (e.g. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Legal",
   "admin.config.legal.enabled": "Enable legal notices",
   "admin.config.legal.enabled.description": "Whether to show a link to imprint and privacy policy in the footer.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "แชร์",
   "common.button.generate": "สุ่ม",
   "common.button.done": "เสร็จสิ้น",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "ลิงค์",
   "common.text.navigate-to-link": "Visit link",
   "common.text.or": "หรือ",

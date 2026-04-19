@@ -28,6 +28,8 @@ import { useForm } from "../../../hooks/useForm";
 import { ModalContextType } from "../../../contexts/ModalContext";
 import clsx from "clsx";
 
+const TRANSFER_NAME_MAX_LENGTH = 128;
+
 const showCreateUploadModal = (
   modals: ModalContextType,
   options: {
@@ -136,7 +138,10 @@ const CreateUploadModalBody = ({
       .string()
       .transform((value) => value || undefined)
       .min(3, t("common.error.too-short", { length: 3 }))
-      .max(30, t("common.error.too-long", { length: 30 })),
+      .max(
+        TRANSFER_NAME_MAX_LENGTH,
+        t("common.error.too-long", { length: TRANSFER_NAME_MAX_LENGTH }),
+      ),
     password: yup
       .string()
       .transform((value) => value || undefined)
@@ -356,14 +361,14 @@ const CreateUploadModalBody = ({
         )}
         <div className="space-y-3">
           <Checkbox
-            label="Allow uploads"
+            label={t("upload.modal.allow-uploads")}
             checked={Boolean(form.values.allowPublicUpload)}
             onChange={(e) =>
               form.setValue("allowPublicUpload", e.target.checked)
             }
           />
           <Checkbox
-            label="Allow versioning"
+            label={t("upload.modal.allow-versioning")}
             checked={Boolean(form.values.allowVersioning)}
             onChange={(e) => form.setValue("allowVersioning", e.target.checked)}
           />
@@ -379,6 +384,7 @@ const CreateUploadModalBody = ({
                   placeholder={t(
                     "upload.modal.accordion.name-and-description.name.placeholder",
                   )}
+                  maxLength={TRANSFER_NAME_MAX_LENGTH}
                   value={
                     typeof form.values.name === "string" ? form.values.name : ""
                   }
@@ -532,7 +538,10 @@ const SimplifiedCreateUploadModalModal = ({
       .string()
       .transform((value) => value || undefined)
       .min(3, t("common.error.too-short", { length: 3 }))
-      .max(30, t("common.error.too-long", { length: 30 })),
+      .max(
+        TRANSFER_NAME_MAX_LENGTH,
+        t("common.error.too-long", { length: TRANSFER_NAME_MAX_LENGTH }),
+      ),
   });
 
   const form = useForm({
@@ -595,6 +604,7 @@ const SimplifiedCreateUploadModalModal = ({
             placeholder={t(
               "upload.modal.accordion.name-and-description.name.placeholder",
             )}
+            maxLength={TRANSFER_NAME_MAX_LENGTH}
             value={typeof form.values.name === "string" ? form.values.name : ""}
             onChange={(e) => form.setValue("name", e.target.value)}
             error={form.errors.name}
@@ -612,14 +622,14 @@ const SimplifiedCreateUploadModalModal = ({
             error={form.errors.description}
           />
           <Checkbox
-            label="Allow uploads"
+            label={t("upload.modal.allow-uploads")}
             checked={Boolean(form.values.allowPublicUpload)}
             onChange={(e) =>
               form.setValue("allowPublicUpload", e.target.checked)
             }
           />
           <Checkbox
-            label="Allow versioning"
+            label={t("upload.modal.allow-versioning")}
             checked={Boolean(form.values.allowVersioning)}
             onChange={(e) => form.setValue("allowVersioning", e.target.checked)}
           />

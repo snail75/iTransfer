@@ -1,5 +1,12 @@
 import axios from "axios";
-import Config, { AdminConfig, UpdateConfig } from "../types/config.type";
+import Config, {
+  AdminConfig,
+  StorageMigrationDryRun,
+  StorageMigrationJob,
+  StoragePathValidation,
+  SystemStatus,
+  UpdateConfig,
+} from "../types/config.type";
 import api from "./api.service";
 import { stringToTimespan } from "../utils/date.util";
 
@@ -22,6 +29,51 @@ const migrateLocalSharesToConfiguredStoragePath = async (): Promise<{
   updatedShares: number;
 }> => {
   return (await api.post("/configs/admin/storage/migrate")).data;
+};
+
+const getSystemStatus = async (): Promise<SystemStatus> => {
+  return (await api.get("/configs/admin/system/status")).data;
+};
+
+const validateStoragePath = async (
+  path: string,
+): Promise<StoragePathValidation> => {
+  return (await api.post("/configs/admin/storage/validate", { path })).data;
+};
+
+const dryRunStorageMigration = async (
+  targetPath: string,
+): Promise<StorageMigrationDryRun> => {
+  return (
+    await api.post("/configs/admin/storage/migrations/dry-run", {
+      targetPath,
+    })
+  ).data;
+};
+
+const createStorageMigration = async (
+  targetPath: string,
+  deleteEmptySourceRoots = false,
+): Promise<StorageMigrationJob> => {
+  return (
+    await api.post("/configs/admin/storage/migrations", {
+      targetPath,
+      deleteEmptySourceRoots,
+    })
+  ).data;
+};
+
+const getStorageMigration = async (
+  id: string,
+): Promise<StorageMigrationJob> => {
+  return (await api.get(`/configs/admin/storage/migrations/${id}`)).data;
+};
+
+const cancelStorageMigration = async (
+  id: string,
+): Promise<StorageMigrationJob> => {
+  return (await api.post(`/configs/admin/storage/migrations/${id}/cancel`))
+    .data;
 };
 
 const get = (key: string, configVariables: Config[]): any => {
@@ -83,6 +135,12 @@ export default {
   getByCategory,
   updateMany,
   migrateLocalSharesToConfiguredStoragePath,
+  getSystemStatus,
+  validateStoragePath,
+  dryRunStorageMigration,
+  createStorageMigration,
+  getStorageMigration,
+  cancelStorageMigration,
   get,
   finishSetup,
   sendTestEmail,

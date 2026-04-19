@@ -13,7 +13,7 @@ export default {
   // /
   "home.title": "Eine <h>selbst gehostete</h> Dateifreigabe-Plattform.",
   "home.description":
-    "Möchtest du wirklich deine persönlichen Dateien an Drittanbieter wie WeTransfer weitergeben?",
+    "Möchtest du deine Daten wirklich an Drittanbieter weitergeben, deren Nutzungsbedingungen oft schwer zu überblicken sind und eine Nutzung für KI-Training oder weitreichende Rechte einräumen können? Wenn du keine Lust auf seitenlange Bedingungen hast, hoste deinen Dienst selbst.",
   "home.bullet.a.name": "Selbst gehostet",
   "home.bullet.a.description":
     "Betreibe Mediapult Transfer auf deinem eigenen Server.",
@@ -113,17 +113,21 @@ export default {
   "account.modal.totp.verify": "Überprüfen",
   "account.notify.totp.disable": "TOTP erfolgreich deaktiviert",
   "account.notify.totp.enable": "TOTP erfolgreich aktiviert",
-  "account.card.api-tokens.title": "Desktop-API-Tokens",
+  "account.card.api-tokens.title": "Desktop-API-Token",
   "account.card.api-tokens.description":
-    "Erstelle Tokens fuer Desktop-Apps. Der Token wird nur einmal angezeigt.",
+    "Erstelle und verwalte Token für Desktop-Apps.",
   "account.card.api-tokens.created":
-    "Kopiere diesen Token jetzt. Er wird nicht erneut angezeigt.",
+    "Token erstellt. Du kannst ihn jetzt oder später aus der Liste kopieren.",
   "account.card.api-tokens.create": "Token erstellen",
   "account.card.api-tokens.name-placeholder": "Desktop-App",
+  "account.card.api-tokens.name-label": "Token-Name",
   "account.card.api-tokens.last-used": "Zuletzt verwendet: {date}",
-  "account.card.api-tokens.never-used": "Noch nie verwendet",
+  "account.card.api-tokens.never-used": "Nie verwendet",
+  "account.card.api-tokens.unavailable":
+    "Dieser ältere Token kann nicht erneut angezeigt werden. Erstelle einen neuen Token, um ihn später zu kopieren.",
   "account.notify.api-token.created": "API-Token erstellt",
-  "account.notify.api-token.deleted": "API-Token geloescht",
+  "account.notify.api-token.deleted": "API-Token gelöscht",
+  "account.notify.api-token.updated": "API-Token aktualisiert",
   "account.card.language.title": "Sprache",
   "account.card.language.description":
     "Das Projekt wird von der Community übersetzt. Einige Sprachen könnten unvollständig sein.",
@@ -158,6 +162,13 @@ export default {
   "account.shares.modal.delete.title": "Freigabe löschen: {share}",
   "account.shares.modal.delete.description":
     "Möchtest du diese Freigabe wirklich löschen?",
+  "account.shares.table.allow-uploads": "Uploads erlauben",
+  "account.shares.table.allow-versioning": "Versionierung erlauben",
+  "account.shares.action.information": "Freigabeinformationen",
+  "account.shares.action.copy-link": "Freigabelink kopieren",
+  "account.shares.action.delete": "Freigabe löschen",
+  "account.shares.action.edit": "Freigabe bearbeiten",
+  "account.shares.notify.name-saved": "Gespeichert",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Datei Anfragen",
@@ -208,12 +219,15 @@ export default {
   "account.reverseShares.modal.delete.title": "Externe Freigabe löschen",
   "account.reverseShares.modal.delete.description":
     "Möchtest du diese externe Freigabe wirklich löschen? In diesem Fall werden auch hiermit verbundene Freigaben gelöscht.",
+  "account.reverseShares.action.copy-link": "Reverse-Freigabelink kopieren",
+  "account.reverseShares.action.delete": "Reverse-Freigabe löschen",
   // END /account/reverseShares
   // /admin
   "admin.title": "Verwaltung",
   "admin.button.users": "Benutzerverwaltung",
   "admin.button.shares": "Freigaben Verwaltung",
   "admin.button.config": "Konfiguration",
+  "admin.button.system": "Systemkonfiguration",
   "admin.version": "Version",
   // END /admin
   // /admin/users
@@ -242,6 +256,12 @@ export default {
   "admin.users.modal.create.admin": "Administratorrechte",
   "admin.users.modal.create.admin.description":
     "Wenn aktiviert, kann der Benutzer auf das Administrator-Panel zugreifen.",
+  "admin.users.table.storage-quota": "Speicherkontingent",
+  "admin.users.storage.unlimited": "Unbegrenzter Speicher",
+  "admin.users.storage.unlimited.description":
+    "Deaktiviere diese Option, um dem Benutzer ein Speicherkontingent zuzuweisen.",
+  "admin.users.action.edit": "Benutzer bearbeiten",
+  "admin.users.action.delete": "Benutzer löschen",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Freigaben Verwaltung",
@@ -252,9 +272,10 @@ export default {
   "admin.shares.edit.delete.title": "Freigabe löschen: {id}",
   "admin.shares.edit.delete.description":
     "Möchtest du diese Freigabe wirklich löschen?",
+  "admin.shares.table.anonymous": "Anonym",
   // END /admin/shares
   // /upload
-  "upload.title": "Upload",
+  "upload.title": "Hochladen",
   "upload.notify.confirm-leave":
     "Bist du sicher, dass du diese Seite verlassen willst? Dein Upload wird abgebrochen.",
   "upload.notify.generic-error":
@@ -275,6 +296,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Name",
   "upload.filelist.size": "Grösse",
+  "upload.modal.allow-uploads": "Uploads erlauben",
+  "upload.modal.allow-versioning": "Versionierung erlauben",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Erstelle Freigabe",
   "upload.modal.link.error.invalid":
@@ -320,12 +343,16 @@ export default {
   "upload.modal.completed.share-ready": "Freigabe bereit",
   "upload.modal.completed.notified-reverse-share-creator":
     "Wir haben den Ersteller der externen Freigabe benachrichtigt. Du kannst den Link auch auf andere Wege teilen.",
+  "upload.filelist.action.remove": "Datei entfernen",
+  "upload.filelist.action.restore": "Datei wiederherstellen",
+  "upload.filelist.status.waiting": "Wartet auf den Upload",
+  "upload.filelist.status.queued": "In Warteschlange",
   // END /upload
   // /share/[id]
   "share.title": "Freigabe {shareId}",
   "share.description": "Schau, was ich mit dir geteilt habe!",
   "share.fileCount":
-    "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+    "{count, plural, =1 {# Datei} other {# Dateien}} - {size} (ZIP-Datei kann durch Komprimierung kleiner sein)",
   "share.error.visitor-limit-exceeded.title": "Besucher Limit erreicht",
   "share.error.visitor-limit-exceeded.description":
     "Die maximale Besucheranzahl für diese Freigabe ist überschritten.",
@@ -350,6 +377,14 @@ export default {
     "Vorschau wird nicht unterstützt",
   "share.modal.file-preview.error.not-supported.description":
     "Vorschaubilder werden für diesen Dateityp nicht unterstützt. Bitte lade die Datei herunter, um sie anzuzeigen.",
+  "share.notify.file-version-replaced": "Dateiversion ersetzt",
+  "share.upload-back.title": "Dateien zurück hochladen",
+  "share.upload-back.replace-title": "Bestehende Dateien ersetzen",
+  "share.upload-back.button": "Hochladen",
+  "share.upload-back.dropzone-title":
+    "Dateien hier ablegen, um sie zu diesem Link hinzuzufügen",
+  "share.upload-back.replace-hint":
+    "Nutze das Ersetzen-Symbol neben einer Datei, um eine neuere Version hochzuladen.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "{shareId} bearbeiten",
@@ -371,7 +406,7 @@ export default {
   "admin.config.title": "Einstellungen",
   "admin.config.empty-category.title": "Keine Konfigurationsoptionen gefunden",
   "admin.config.empty-category.description":
-    "Diese Kategorie hat in der aktuellen Datenbank keine bearbeitbaren Einstellungen. Fuehre den Config-Seed aus und starte das Backend neu, wenn diese Kategorie kuerzlich ergaenzt wurde.",
+    "Diese Kategorie hat in der aktuellen Datenbank keine bearbeitbaren Einstellungen. Führe den Config-Seed aus und starte das Backend neu, wenn diese Kategorie kürzlich ergänzt wurde.",
   "admin.config.category.general": "Allgemein",
   "admin.config.category.share": "Freigabe",
   "admin.config.category.cache": "Cache",
@@ -460,16 +495,98 @@ export default {
   "admin.config.share.max-size.description": "Maximale Grösse einer Freigabe",
   "admin.config.storage.local-upload-path": "Lokaler Upload-Pfad",
   "admin.config.storage.local-upload-path.description":
-    "Absoluter Pfad für neue lokal gespeicherte Uploads. Bestehende Freigaben behalten ihren bisherigen Speicherort. Leer lassen, um das Standard-Datenverzeichnis zu nutzen.",
+    "Absoluter Pfad für neue lokal gespeicherte Uploads. Bestehende Freigaben behalten ihren aktuellen Speicherpfad. Leer lassen, um das Standard-Datenverzeichnis zu verwenden.",
   "admin.config.storage.migrate.title":
     "Bestehende lokale Freigaben verschieben",
   "admin.config.storage.migrate.description":
-    "Verschiebt alle bestehenden lokalen Freigabe-Ordner in den aktuell konfigurierten Upload-Pfad und aktualisiert die Freigaben. Die Links bleiben gleich. Fuehre das aus, wenn gerade keine grossen Uploads laufen.",
+    "Verschiebt alle bestehenden lokalen Freigabeordner in den aktuell konfigurierten lokalen Upload-Pfad und aktualisiert die Freigabeeinträge. Freigabelinks bleiben unverändert. Führe dies aus, wenn keine großen Uploads laufen.",
   "admin.config.storage.migrate.button": "Bestehende Freigaben verschieben",
   "admin.config.storage.migrate.confirm":
-    "Alle bestehenden lokalen Freigabe-Ordner in den konfigurierten Speicherpfad verschieben? Die Links bleiben aktiv, aber waehrenddessen sollten keine grossen Uploads laufen.",
+    "Alle bestehenden lokalen Freigabeordner in den konfigurierten Speicherpfad verschieben? Freigabelinks bleiben aktiv, aber währenddessen sollten keine großen Uploads laufen.",
   "admin.config.storage.migrate.success":
-    "{count} Freigabe-Ordner nach {path} verschoben. Bestehende Links bleiben aktiv.",
+    "{count} Freigabeordner nach {path} verschoben. Bestehende Links bleiben aktiv.",
+  "admin.system.nav": "System",
+  "admin.system.open": "Systemkonfiguration öffnen",
+  "admin.system.title": "Systemkonfiguration",
+  "admin.system.description":
+    "Prüfe aktive Konfiguration, Speicherpfade, Datenbankort, SMTP-Status und lokale Speicher-Migrationen an einer Stelle.",
+  "admin.system.yaml.title": "Konfigurationsdatei aktiv",
+  "admin.system.yaml.description":
+    "Eine config.yaml ist aktiv. Werte aus der Datei sind in der Oberfläche schreibgeschützt, aber die lokale Speicher-Migration kann für den aktiven Pfad gestartet werden.",
+  "admin.system.panel.config": "Konfiguration",
+  "admin.system.panel.database": "Datenbank",
+  "admin.system.panel.email": "E-Mail",
+  "admin.system.field.source": "Quelle",
+  "admin.system.field.config-file": "Konfigurationsdatei",
+  "admin.system.field.editable": "Bearbeitbar",
+  "admin.system.field.database-url": "Datenbank-URL",
+  "admin.system.field.database-path": "Datenbankpfad",
+  "admin.system.field.live-move": "Live-Umzug",
+  "admin.system.field.smtp-enabled": "SMTP aktiv",
+  "admin.system.field.smtp-host": "SMTP-Host",
+  "admin.system.field.smtp-ready": "SMTP bereit",
+  "admin.system.field.current-upload-path": "Aktiver Upload-Pfad",
+  "admin.system.field.current-upload-path.description":
+    "Dieser Pfad ist aktuell für neue lokale Freigaben konfiguriert. Bestehende Freigaben können weiterhin auf älteren Pfaden liegen, bis sie migriert werden.",
+  "admin.system.field.default-upload-path": "Eingebauter Fallback-Upload-Pfad",
+  "admin.system.field.default-upload-path.description":
+    "Dieser Pfad wird nur verwendet, wenn kein eigener lokaler Upload-Pfad in der Oberfläche, per Umgebungsvariable oder in config.yaml gesetzt ist. Er ist nicht automatisch das Migrationsziel.",
+  "admin.system.field.temp-upload-path": "Temporärer Upload-Pfad",
+  "admin.system.field.temp-upload-path.description":
+    "Reserviert für temporäre Upload-Daten. Dauerhafte Freigabe-Dateien liegen nicht hier. Bei einer Speicher-Migration werden temporäre Kopierordner im Zielpfad erstellt und nach der Prüfung entfernt.",
+  "admin.system.field.shares": "Freigaben",
+  "admin.system.field.data": "Daten",
+  "admin.system.field.free-space": "Freier Speicher",
+  "admin.system.value.not-applicable": "Nicht zutreffend",
+  "admin.system.value.not-set": "Nicht gesetzt",
+  "admin.system.config-source.database": "Datenbank und Oberfläche",
+  "admin.system.config-source.yaml": "config.yaml",
+  "admin.system.storage.title": "Speicherpfad",
+  "admin.system.storage.description":
+    "Dieser Bereich steuert, wo neue lokale Freigaben gespeichert werden. Bestehende Freigaben werden erst verschoben, wenn du unten die Migration ausführst.",
+  "admin.system.storage.target-path-label": "Neuer aktiver Upload-Pfad",
+  "admin.system.storage.target-path-help":
+    "Speichere diesen Wert, damit neue lokale Freigaben ab jetzt dort erstellt werden. Nutze danach den Migrationsassistenten, wenn bestehende Freigaben ebenfalls dorthin verschoben werden sollen.",
+  "admin.system.storage.validate": "Pfad prüfen",
+  "admin.system.storage.validation.valid":
+    "{path} ist beschreibbar. Freier Speicher: {space}.",
+  "admin.system.storage.save-success": "Speicherpfad gespeichert",
+  "admin.system.storage.advanced": "Erweiterte Speichereinstellungen",
+  "admin.system.migration.title": "Lokale Speicher-Migration",
+  "admin.system.migration.description":
+    "Starte zuerst einen Dry-Run, prüfe betroffene Freigaben und blockierende Probleme und starte danach die Migration bewusst. Jede Freigabe wird in einen temporären Ordner im Zielpfad kopiert, geprüft, in der Datenbank umgeschaltet und danach im alten Freigabeordner gelöscht.",
+  "admin.system.migration.cleanup-source-roots.label":
+    "Alte Upload-Root-Ordner löschen, wenn sie leer sind",
+  "admin.system.migration.cleanup-source-roots.description":
+    "Nachdem alle Freigabeordner aus dem alten Pfad verschoben und gelöscht wurden, versucht die Migration auch den alten Root-Ordner selbst zu entfernen. Er wird nur gelöscht, wenn er leer ist; Ordner mit fremden Dateien bleiben bestehen und werden als Warnung gemeldet.",
+  "admin.system.migration.dry-run": "Dry-Run",
+  "admin.system.migration.start": "Migration starten",
+  "admin.system.migration.started": "Speicher-Migration gestartet",
+  "admin.system.migration.cancel-requested":
+    "Abbruch der Migration angefordert",
+  "admin.system.migration.unsaved-path.title": "Ungespeicherter Pfad",
+  "admin.system.migration.unsaved-path.description":
+    "Speichere den Speicherpfad, bevor du die Migration startest. Der Dry-Run kann weiterhin zur Vorschau verwendet werden.",
+  "admin.system.migration.dry-run-ok":
+    "Dry-Run ohne blockierende Probleme abgeschlossen.",
+  "admin.system.migration.latest-job": "Letzter Migrationsjob",
+  "admin.system.migration.progress":
+    "{done} von {total} Freigaben verarbeitet. Verschobene Daten: {bytes}.",
+  "admin.system.migration.status.pending": "Wartend",
+  "admin.system.migration.status.running": "Läuft",
+  "admin.system.migration.status.cancel_requested": "Abbruch angefordert",
+  "admin.system.migration.status.cancelled": "Abgebrochen",
+  "admin.system.migration.status.completed": "Abgeschlossen",
+  "admin.system.migration.status.completed_with_warnings":
+    "Mit Warnungen abgeschlossen",
+  "admin.system.migration.status.failed": "Fehlgeschlagen",
+  "admin.system.migration.status.skipped": "Übersprungen",
+  "admin.system.migration.status.cleanup_failed": "Bereinigung fehlgeschlagen",
+  "admin.system.roots.title": "Lokale Speicherorte",
+  "admin.system.roots.summary":
+    "{shares} Freigaben, {files} Dateien, {bytes} gespeichert.",
+  "admin.system.file-count":
+    "{count, plural, one {# Datei} other {# Dateien}}",
   "admin.config.share.zip-compression-level": "ZIP-Kompressionslevel",
   "admin.config.share.zip-compression-level.description":
     "Passe den Wert an, um ein Gleichgewicht zwischen Dateigrösse und Kompressionsgeschwindigkeit herzustellen. Gültige Werte liegen zwischen 0 und 9, wobei 0 für keine Komprimierung und 9 für maximale Komprimierung steht. ",
@@ -702,12 +819,16 @@ export default {
   "common.button.share": "Teilen",
   "common.button.generate": "Generieren",
   "common.button.done": "Fertig",
+  "common.text.yes": "Ja",
+  "common.text.no": "Nein",
   "common.text.link": "Link",
   "common.text.navigate-to-link": "Link öffnen",
   "common.text.or": "oder",
   "common.text.redirecting": "Umleitung...",
   "common.button.go-back": "Zurück",
   "common.button.go-home": "Zur Startseite",
+  "common.yes": "Ja",
+  "common.no": "Nein",
   "common.notify.copied": "Dein Link wurde in die Zwischenablage kopiert",
   "common.notify.copied-link": "Dein Link wurde in die Zwischenablage kopiert",
   "common.success": "Erfolg",

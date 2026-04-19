@@ -13,9 +13,22 @@ import authService, { ApiToken } from "../../services/auth.service";
 import userService from "../../services/user.service";
 import { getOAuthIcon, getOAuthUrl, unlinkOAuth } from "../../utils/oauth.util";
 import toast from "../../utils/toast.util";
-import { Button, Container, Input, PasswordInput, Card, Badge, Tabs } from "../../components/ui";
+import {
+  Button,
+  Container,
+  Input,
+  PasswordInput,
+  Card,
+  Badge,
+  Tabs,
+} from "../../components/ui";
 import { useForm } from "../../hooks/useForm";
 import { useModals } from "../../contexts/ModalContext";
+
+const shortenApiToken = (token: string) => {
+  if (token.length <= 22) return token;
+  return `${token.slice(0, 12)}...${token.slice(-8)}`;
+};
 
 const Account = () => {
   const [oauth, setOAuth] = useState<string[]>([]);
@@ -34,12 +47,14 @@ const Account = () => {
   const [apiTokens, setApiTokens] = useState<ApiToken[]>([]);
   const [apiTokenName, setApiTokenName] = useState("Desktop app");
   const [newApiToken, setNewApiToken] = useState<string | null>(null);
+  const [visibleApiTokenIds, setVisibleApiTokenIds] = useState<string[]>([]);
+  const [apiTokenNames, setApiTokenNames] = useState<Record<string, string>>(
+    {},
+  );
 
   const accountValidationSchema = yup.object().shape({
     email: yup.string().email(t("common.error.invalid-email")),
-    username: yup
-      .string()
-      .min(3, t("common.error.too-short", { length: 3 })),
+    username: yup.string().min(3, t("common.error.too-short", { length: 3 })),
   });
 
   const accountForm = useForm({
@@ -125,7 +140,15 @@ const Account = () => {
   const refreshApiTokens = () => {
     authService
       .listApiTokens()
-      .then(setApiTokens)
+      .then((tokens) => {
+        setApiTokens(tokens);
+        setApiTokenNames(
+          tokens.reduce<Record<string, string>>((names, token) => {
+            names[token.id] = token.name;
+            return names;
+          }, {}),
+        );
+      })
       .catch(toast.axiosError);
   };
 
@@ -147,15 +170,13 @@ const Account = () => {
         <h2 className="text-2xl font-bold mb-6 text-text dark:text-text-dark">
           <FormattedMessage id="account.title" />
         </h2>
-        
+
         <Card padding="lg" className="mb-6">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-lg font-semibold text-text dark:text-text-dark">
               <FormattedMessage id="account.card.info.title" />
             </h3>
-            {user?.isLdap && (
-              <Badge variant="secondary">LDAP</Badge>
-            )}
+            {user?.isLdap && <Badge variant="secondary">LDAP</Badge>}
           </div>
           <form
             onSubmit={accountForm.onSubmit((values) =>
@@ -263,9 +284,7 @@ const Account = () => {
                           modals.openConfirmModal({
                             title: t("account.modal.unlink.title"),
                             children: (
-                              <p>
-                                {t("account.modal.unlink.description")}
-                              </p>
+                              <p>{t("account.modal.unlink.description")}</p>
                             ),
                             labels: {
                               confirm: t("account.card.oauth.unlink"),
@@ -329,7 +348,9 @@ const Account = () => {
                 >
                   <PasswordInput
                     label={t("account.card.password.title")}
-                    helperText={t("account.card.security.totp.disable.description")}
+                    helperText={t(
+                      "account.card.security.totp.disable.description",
+                    )}
                     {...disableTotpForm.getInputProps("password")}
                   />
                   <Input
@@ -363,7 +384,9 @@ const Account = () => {
                 >
                   <PasswordInput
                     label={t("account.card.password.title")}
-                    helperText={t("account.card.security.totp.enable.description")}
+                    helperText={t(
+                      "account.card.security.totp.enable.description",
+                    )}
                     {...enableTotpForm.getInputProps("password")}
                   />
                   <div className="flex justify-end">
@@ -428,12 +451,67 @@ const Account = () => {
             {apiTokens.map((token) => (
               <div
                 key={token.id}
-                className="flex flex-col sm:flex-row justify-between gap-2 rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 dark:border-gray-700"
               >
-                <div>
-                  <p className="font-medium text-text dark:text-text-dark">
-                    {token.name}
-                  </p>
+                <form
+                  className="flex flex-col sm:flex-row gap-2"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    authService
+                      .updateApiTokenName(
+                        token.id,
+                        apiTokenNames[token.id] || "",
+                      )
+                      .then(() => {
+                        refreshApiTokens();
+                        toast.success(t("account.notify.api-token.updated"));
+                      })
+                      .catch(toast.axiosError);
+                  }}
+                >
+                  <Input
+                    value={apiTokenNames[token.id] ?? token.name}
+                    onChange={(event) =>
+                      setApiTokenNames((names) => ({
+                        ...names,
+                        [token.id]: event.target.value,
+                      }))
+                    }
+                    aria-label={t("account.card.api-tokens.name-label")}
+                  />
+                  <Button type="submit">
+                    <FormattedMessage id="common.button.save" />
+                  </Button>
+                </form>
+                {token.token && (
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <button
+                      type="button"
+                      className="min-w-0 rounded border border-gray-200 bg-gray-50 px-3 py-2 text-left font-mono text-xs text-text hover:border-primary dark:border-gray-700 dark:bg-gray-800 dark:text-text-dark"
+                      onClick={() =>
+                        setVisibleApiTokenIds((ids) =>
+                          ids.includes(token.id)
+                            ? ids.filter((id) => id !== token.id)
+                            : [...ids, token.id],
+                        )
+                      }
+                    >
+                      <span className="break-all">
+                        {visibleApiTokenIds.includes(token.id)
+                          ? token.token
+                          : shortenApiToken(token.token)}
+                      </span>
+                    </button>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => clipboard.copy(token.token || "")}
+                    >
+                      <FormattedMessage id="common.button.copy" />
+                    </Button>
+                  </div>
+                )}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     {token.lastUsedAt
                       ? t("account.card.api-tokens.last-used", {
@@ -441,22 +519,27 @@ const Account = () => {
                         })
                       : t("account.card.api-tokens.never-used")}
                   </p>
+                  {!token.token && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <FormattedMessage id="account.card.api-tokens.unavailable" />
+                    </p>
+                  )}
+                  <Button
+                    type="button"
+                    variant="danger"
+                    onClick={() =>
+                      authService
+                        .deleteApiToken(token.id)
+                        .then(() => {
+                          refreshApiTokens();
+                          toast.success(t("account.notify.api-token.deleted"));
+                        })
+                        .catch(toast.axiosError)
+                    }
+                  >
+                    <FormattedMessage id="common.button.delete" />
+                  </Button>
                 </div>
-                <Button
-                  type="button"
-                  variant="danger"
-                  onClick={() =>
-                    authService
-                      .deleteApiToken(token.id)
-                      .then(() => {
-                        refreshApiTokens();
-                        toast.success(t("account.notify.api-token.deleted"));
-                      })
-                      .catch(toast.axiosError)
-                  }
-                >
-                  <FormattedMessage id="common.button.delete" />
-                </Button>
               </div>
             ))}
           </div>

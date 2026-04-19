@@ -5,6 +5,8 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { ConfigController } from "./config.controller";
 import { ConfigService } from "./config.service";
 import { LogoService } from "./logo.service";
+import { StorageMigrationLockService } from "./storageMigrationLock.service";
+import { StorageMigrationService } from "./storageMigration.service";
 
 @Global()
 @Module({
@@ -27,8 +29,14 @@ import { LogoService } from "./logo.service";
       inject: [PrismaService, "CONFIG_VARIABLES"],
     },
     LogoService,
+    StorageMigrationLockService,
+    StorageMigrationService,
   ],
   controllers: [ConfigController],
-  exports: [ConfigService],
+  exports: [
+    ConfigService,
+    StorageMigrationLockService,
+    StorageMigrationService,
+  ],
 })
 export class ConfigModule {}

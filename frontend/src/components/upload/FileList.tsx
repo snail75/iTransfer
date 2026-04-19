@@ -6,6 +6,7 @@ import UploadProgressIndicator from "./UploadProgressIndicator";
 import { FormattedMessage } from "react-intl";
 import { Table } from "../ui";
 import clsx from "clsx";
+import useTranslate from "../../hooks/useTranslate.hook";
 
 const FileListRow = ({
   file,
@@ -16,8 +17,13 @@ const FileListRow = ({
   onRemove?: () => void;
   onRestore?: () => void;
 }) => {
+  const t = useTranslate();
   const uploadable = "uploadingProgress" in file;
-  const uploading = uploadable && file.uploadingProgress !== 0 && file.uploadingProgress < 100 && file.uploadingProgress !== -1;
+  const uploading =
+    uploadable &&
+    file.uploadingProgress !== 0 &&
+    file.uploadingProgress < 100 &&
+    file.uploadingProgress !== -1;
   const queued = uploadable && file.uploadingProgress === 0;
   const removable = uploadable
     ? file.uploadingProgress === 0 || file.uploadingProgress === -1
@@ -26,11 +32,7 @@ const FileListRow = ({
   const deleted = !uploadable && !!file.deleted;
 
   return (
-    <Table.Row
-      className={clsx(
-        deleted && "opacity-50 line-through"
-      )}
-    >
+    <Table.Row className={clsx(deleted && "opacity-50 line-through")}>
       <Table.Cell>{file.name}</Table.Cell>
       <Table.Cell>{byteToHumanSizeString(+file.size)}</Table.Cell>
       <Table.Cell>
@@ -39,14 +41,17 @@ const FileListRow = ({
             <button
               onClick={onRemove}
               className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-              aria-label="Remove file"
+              aria-label={t("upload.filelist.action.remove")}
             >
               <TbTrash size={18} />
             </button>
           )}
           {queued && (
-            <span className="text-xs text-gray-500 dark:text-gray-400" title="Waiting to upload">
-              Queued
+            <span
+              className="text-xs text-gray-500 dark:text-gray-400"
+              title={t("upload.filelist.status.waiting")}
+            >
+              {t("upload.filelist.status.queued")}
             </span>
           )}
           {uploading && (
@@ -62,7 +67,7 @@ const FileListRow = ({
             <button
               onClick={onRestore}
               className="p-1.5 text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:text-primary-400 dark:hover:text-primary-300 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
-              aria-label="Restore file"
+              aria-label={t("upload.filelist.action.restore")}
             >
               <GrUndo size={18} />
             </button>

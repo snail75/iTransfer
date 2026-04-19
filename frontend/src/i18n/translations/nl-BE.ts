@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Deel link",
   "account.shares.modal.delete.title": "Share verwijderd: {share}",
   "account.shares.modal.delete.description": "Weet u zeker dat u deze share wilt verwijderen?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Omgekeerde share",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Omgekeerde share link",
   "account.reverseShares.modal.delete.title": "Omgekeerde share verwijderen",
   "account.reverseShares.modal.delete.description": "Weet u zeker dat u deze omgekeerde share wilt verwijderen? Als u dit doet, worden de bijbehorende bestanden ook verwijderd.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Instellingen",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "Indien niet aangevinkt, ontvangt de gebruiker een e-mail met een link om zijn wachtwoord in te stellen.",
   "admin.users.modal.create.admin": "Beheerdersrechten",
   "admin.users.modal.create.admin.description": "Indien aangevinkt, heeft de gebruiker toegang tot de beheeromgeving.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Share management",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Verloopt op",
   "admin.shares.edit.delete.title": "Delete share: {id}",
   "admin.shares.edit.delete.description": "Weet u zeker dat u deze share wilt verwijderen?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Uploaden",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Naam",
   "upload.filelist.size": "Grootte",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Share aanmaken",
   "upload.modal.link.error.invalid": "Het mag alleen letters, cijfers, onderstrepingstekens en koppeltekens bevatten",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "Deze omgekeerde share verloopt op {expiration}.",
   "upload.modal.completed.share-ready": "Share is gereed",
   "upload.modal.completed.notified-reverse-share-creator": "We hebben de maker van de reverse share op de hoogte gesteld. U kunt deze link ook handmatig met hen delen via andere middelen.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Share {shareId}",
   "share.description": "Kijk eens wat ik met je heb gedeeld!",
-  "share.fileCount": "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Bezoekerslimiet overschreden",
   "share.error.visitor-limit-exceeded.description": "De bezoekerslimiet van deze share is overschreden.",
   "share.error.removed.title": "Share was verwijderd",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Grootte",
   "share.modal.file-preview.error.not-supported.title": "Voorbeeld niet ondersteund",
   "share.modal.file-preview.error.not-supported.description": "Previews are not supported for this type of files. Please download the file to view it.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "{shareId} bewerken",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Configuration file present",
   "admin.config.config-file-warning.description": "As you have a configured Mediapult Transfer with a configuration file, you can't change the configuration through the UI.",
   "admin.config.title": "Configuratie",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Algemeen",
   "admin.config.category.share": "Delen",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Default length for the generated ID of a share. This value is also used to generate links for reverse shares. A value below 8 is not considered secure.",
   "admin.config.share.max-size": "Max. grootte",
   "admin.config.share.max-size.description": "Maximale share grootte",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Zip compressie niveau",
   "admin.config.share.zip-compression-level.description": "Pas het niveau aan voor evenwicht tussen bestandsgrootte en compressie snelheid. Geldige waarden variëren van 0 tot 9, waarbij 0 geen compressie is en 9 de maximale compressie is. ",
   "admin.config.share.chunk-size": "Chunk size",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "The secret which allows you to access the S3 bucket.",
   "admin.config.s3.use-checksum": "Use checksum",
   "admin.config.s3.use-checksum.description": "Turn off for backends that do not support checksum (e.g. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Legal",
   "admin.config.legal.enabled": "Enable legal notices",
   "admin.config.legal.enabled.description": "Whether to show a link to imprint and privacy policy in the footer.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Delen",
   "common.button.generate": "Genereren",
   "common.button.done": "Voltooid",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Koppeling",
   "common.text.navigate-to-link": "Visit link",
   "common.text.or": "of",

@@ -19,11 +19,11 @@ const showShareInformationsModal = (
   const formattedMaxShareSize = byteToHumanSizeString(maxShareSize);
   const shareSizeProgress = (share.size / maxShareSize) * 100;
 
-  const formattedCreatedAt = moment(share.createdAt).format("LLL");
+  const formattedCreatedAt = moment(share.createdAt).format("YYYY/MM/DD HH:mm");
   const formattedExpiration =
     moment(share.expiration).unix() === 0
-      ? "Never"
-      : moment(share.expiration).format("LLL");
+      ? t("account.shares.table.expiry-never")
+      : moment(share.expiration).format("YYYY/MM/DD HH:mm");
 
   return modals.openModal({
     title: t("account.shares.modal.share-informations"),
@@ -64,12 +64,17 @@ const showShareInformationsModal = (
           {formattedExpiration}
         </p>
         <p className="text-sm">
-          <b>Allow uploads: </b>
-          {share.allowPublicUpload ? "Yes" : "No"}
+          <b>
+            <FormattedMessage id="account.shares.table.allow-uploads" />:{" "}
+          </b>
+          {share.allowPublicUpload ? t("common.text.yes") : t("common.text.no")}
         </p>
         <p className="text-sm">
-          <b>Allow versioning: </b>
-          {share.allowVersioning ? "Yes" : "No"}
+          <b>
+            <FormattedMessage id="account.shares.table.allow-versioning" />
+            :{" "}
+          </b>
+          {share.allowVersioning ? t("common.text.yes") : t("common.text.no")}
         </p>
         <hr className="border-gray-200 dark:border-gray-700" />
         <CopyTextField link={link} />

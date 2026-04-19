@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Delningslänk",
   "account.shares.modal.delete.title": "Ta bort delning: {share}",
   "account.shares.modal.delete.description": "Vill du verkligen ta bort denna delning?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Omvända delningar",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Omvänd delningslänk",
   "account.reverseShares.modal.delete.title": "Ta bort omvänd delning",
   "account.reverseShares.modal.delete.description": "Vill du verkligen ta bort denna omvänd delning? Om du gör det, kommer de tillhörande delningarna också att raderas.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Administration",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "Om den inte är markerad kommer användaren att få ett e-postmeddelande med en länk för att ange lösenordet.",
   "admin.users.modal.create.admin": "Administratörsbehörigheter",
   "admin.users.modal.create.admin.description": "Om detta markeras kommer användaren att kunna komma åt administratörspanelen.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Delningshantering",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Förfaller",
   "admin.shares.edit.delete.title": "Ta bort delning: {id}",
   "admin.shares.edit.delete.description": "Vill du verkligen ta bort denna delning?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Ladda upp",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Namn",
   "upload.filelist.size": "Storlek",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Skapa delning",
   "upload.modal.link.error.invalid": "Kan endast innehålla bokstäver, siffror, understreck och bindestreck",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "Denna delning upphör att gälla {expiration}.",
   "upload.modal.completed.share-ready": "Delning redo",
   "upload.modal.completed.notified-reverse-share-creator": "Vi har meddelat skaparen av omvänd delning. Du kan också manuellt dela denna länk med dem på andra sätt.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Delning {shareId}",
   "share.description": "Titta vad jag har delat med dig!",
-  "share.fileCount": "{count, plural, =1 {# fil} other {# filer}} · {size} (zip-filen kan vara mindre på grund av komprimering)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Besökargränsen överskriden",
   "share.error.visitor-limit-exceeded.description": "Gränsen för antalet besökare för denna delning har överskridits.",
   "share.error.removed.title": "Delning borttagen",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Storlek",
   "share.modal.file-preview.error.not-supported.title": "Förhandsgranskning stöds ej",
   "share.modal.file-preview.error.not-supported.description": "Förhandsvisningar stöds inte för denna typ av filer. Ladda ner filen för att se den.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Redigera {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Konfigurationsfil finns",
   "admin.config.config-file-warning.description": "Eftersom du har en konfigurerad Mediapult Transfer med en konfigurationsfil kan du inte ändra konfigurationen genom UI.",
   "admin.config.title": "Konfiguration",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Allmänt",
   "admin.config.category.share": "Delning",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Standardlängd för genererat ID för en delning. Detta värde används också för att generera länkar för omvända delningar. Ett värde under 8 anses inte vara säkert.",
   "admin.config.share.max-size": "Max storlek",
   "admin.config.share.max-size.description": "Maximal storlek för delning",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Komprimeringsnivå för zip",
   "admin.config.share.zip-compression-level.description": "Justera nivån för att balansera mellan filstorlek och komprimeringshastighet. Giltiga värden varierar från 0 till 9, med 0 som ingen komprimering och 9 som maximal komprimering. ",
   "admin.config.share.chunk-size": "Bitstorleken",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "Hemligheten som gör att du kan komma åt S3 bucket.",
   "admin.config.s3.use-checksum": "Använd kontrollsumma",
   "admin.config.s3.use-checksum.description": "Stäng av för backends som inte stöder kontrollsumma (t.ex. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Juridisk",
   "admin.config.legal.enabled": "Aktivera juridiska meddelanden",
   "admin.config.legal.enabled.description": "Om en länk till utgivarinformation och integritetspolicy ska visas i sidfoten.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Delning",
   "common.button.generate": "Generera",
   "common.button.done": "Klar",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Länk",
   "common.text.navigate-to-link": "Besök länk",
   "common.text.or": "eller",

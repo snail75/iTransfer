@@ -11,6 +11,7 @@ import {
   TbShare,
   TbSocial,
   TbFolderCog,
+  TbTool,
 } from "react-icons/tb";
 import { FormattedMessage } from "react-intl";
 import clsx from "clsx";
@@ -42,7 +43,7 @@ const ConfigurationNavBar = ({
       className={clsx(
         "fixed left-0 top-16 bottom-0 w-64 lg:w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 overflow-y-auto z-40 transition-transform",
         "sm:translate-x-0",
-        isMobileNavBarOpened ? "translate-x-0" : "-translate-x-full"
+        isMobileNavBarOpened ? "translate-x-0" : "-translate-x-full",
       )}
     >
       <div className="space-y-4">
@@ -50,6 +51,28 @@ const ConfigurationNavBar = ({
           <FormattedMessage id="admin.config.title" />
         </p>
         <div className="space-y-1">
+          <Link
+            href="/admin/system"
+            onClick={() => setIsMobileNavBarOpened(false)}
+            className={clsx(
+              "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
+              categoryId === "system"
+                ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 font-semibold"
+                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700",
+            )}
+          >
+            <TbTool
+              size={20}
+              className={clsx(
+                categoryId === "system"
+                  ? "text-primary-600 dark:text-primary-400"
+                  : "text-gray-500 dark:text-gray-400",
+              )}
+            />
+            <span className="text-sm">
+              <FormattedMessage id="admin.system.nav" />
+            </span>
+          </Link>
           {categories.map((category) => {
             const Icon = category.icon;
             const isActive = categoryId === category.name.toLowerCase();
@@ -62,7 +85,7 @@ const ConfigurationNavBar = ({
                   "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
                   isActive
                     ? "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 font-semibold"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700",
                 )}
               >
                 <Icon
@@ -70,7 +93,7 @@ const ConfigurationNavBar = ({
                   className={clsx(
                     isActive
                       ? "text-primary-600 dark:text-primary-400"
-                      : "text-gray-500 dark:text-gray-400"
+                      : "text-gray-500 dark:text-gray-400",
                   )}
                 />
                 <span className="text-sm">

@@ -31,12 +31,10 @@ const Body = ({
   getUsers: () => void;
 }) => {
   const t = useTranslate();
-  
+
   const validationSchema = yup.object().shape({
     email: yup.string().email(t("common.error.invalid-email")),
-    username: yup
-      .string()
-      .min(3, t("common.error.too-short", { length: 3 })),
+    username: yup.string().min(3, t("common.error.too-short", { length: 3 })),
     password: yup
       .string()
       .min(8, t("common.error.too-short", { length: 8 }))
@@ -113,14 +111,14 @@ const Body = ({
         onChange={(checked) => form.setValue("isAdmin", checked)}
       />
       <Switch
-        label="Unlimited storage"
-        helperText="Turn this off to assign a storage quota to the user."
+        label={t("admin.users.storage.unlimited")}
+        helperText={t("admin.users.storage.unlimited.description")}
         checked={form.values.unlimitedStorage}
         onChange={(checked) => form.setValue("unlimitedStorage", checked)}
       />
       {!form.values.unlimitedStorage && (
         <FileSizeInput
-          label="Storage quota"
+          label={t("admin.users.table.storage-quota")}
           value={form.values.storageQuotaBytes || 12_000_000_000}
           onChange={(bytes) => form.setValue("storageQuotaBytes", bytes)}
         />

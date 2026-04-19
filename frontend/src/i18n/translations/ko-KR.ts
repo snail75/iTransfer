@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "공유 링크",
   "account.shares.modal.delete.title": "Delete share: {share}",
   "account.shares.modal.delete.description": "정말로 이 공유를 삭제하시겠습니까?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "역방향 공유",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "역방향 공유 링크",
   "account.reverseShares.modal.delete.title": "역방향 공유 삭제",
   "account.reverseShares.modal.delete.description": "이 역방향 공유를 삭제하시겠습니까? 삭제하면 관련 공유도 삭제됩니다.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "관리자",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "선택하지 않으면 사용자는 암호를 설정할 수 있는 링크가 포함된 이메일을 받게 됩니다.",
   "admin.users.modal.create.admin": "Admin Privilege",
   "admin.users.modal.create.admin.description": "이 옵션을 선택하면 사용자는 관리 패널에 액세스할 수 있습니다.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "공유 관리",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Expires on",
   "admin.shares.edit.delete.title": "Delete share: {id}",
   "admin.shares.edit.delete.description": "정말로 이 공유를 삭제하시겠습니까?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "업로드",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "이름",
   "upload.filelist.size": "크기",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "공유 생성",
   "upload.modal.link.error.invalid": "문자, 숫자, 밑줄 및 하이픈만 포함할 수 있습니다",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "이 공유는 {expiration} 에 만료됩니다.",
   "upload.modal.completed.share-ready": "공유 준비",
   "upload.modal.completed.notified-reverse-share-creator": "We have notified the creator of the reverse share. You can also manually share this link with them through other means.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "공유 {shareId}",
   "share.description": "내가 당신과 공유한 것을 보세요!",
-  "share.fileCount": "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "방문자 한도 초과",
   "share.error.visitor-limit-exceeded.description": "이 공유의 방문자 한도를 초과했습니다.",
   "share.error.removed.title": "공유가 삭제됨",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "크기",
   "share.modal.file-preview.error.not-supported.title": "미리보기는 지원되지 않습니다",
   "share.modal.file-preview.error.not-supported.description": "Previews are not supported for this type of files. Please download the file to view it.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "수정 {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Configuration file present",
   "admin.config.config-file-warning.description": "As you have a configured Mediapult Transfer with a configuration file, you can't change the configuration through the UI.",
   "admin.config.title": "구성",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "일반",
   "admin.config.category.share": "공유",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Default length for the generated ID of a share. This value is also used to generate links for reverse shares. A value below 8 is not considered secure.",
   "admin.config.share.max-size": "최대 크기",
   "admin.config.share.max-size.description": "공유의 최대 크기",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Zip 압축 레벨",
   "admin.config.share.zip-compression-level.description": "파일 크기와 압축 속도 간의 균형을 맞추도록 레벨을 조정합니다. 유효한 값의 범위는 0에서 9까지이며, 0은 압축되지 않고 9는 최대 압축입니다. ",
   "admin.config.share.chunk-size": "청크 크기",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "The secret which allows you to access the S3 bucket.",
   "admin.config.s3.use-checksum": "Use checksum",
   "admin.config.s3.use-checksum.description": "Turn off for backends that do not support checksum (e.g. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Legal",
   "admin.config.legal.enabled": "Enable legal notices",
   "admin.config.legal.enabled.description": "Whether to show a link to imprint and privacy policy in the footer.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "공유",
   "common.button.generate": "생성",
   "common.button.done": "완료",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "링크",
   "common.text.navigate-to-link": "Visit link",
   "common.text.or": "또는",

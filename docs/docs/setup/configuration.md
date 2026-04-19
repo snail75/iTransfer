@@ -40,9 +40,24 @@ For installation specific configuration, you can use environment variables. The 
 | `CLAMAV_HOST`            | `127.0.0.1` or `clamav` when running with Docker/Podman  | The IP address of the ClamAV server. See the [ClamAV docs](integrations.md#clamav) for more information. |
 | `CLAMAV_PORT`            | `3310`                                                  | The port number of the ClamAV server.                                                                    |
 
-## Local Storage Path
+## System configuration and local storage migration
 
-Admins can set a local upload path in `/admin/config/storage`. The path must be absolute and writable by the backend process or container user. The setting applies only to new shares; existing shares keep their original path so existing links continue to work after updates. If the UI or YAML setting is empty, the backend uses `UPLOAD_DIRECTORY`.
+Admins can review the active system configuration in `/admin/system`. The page shows the configuration source, config file path, database location, active local upload path, fallback upload path, temporary upload path, storage provider, SMTP status, and local storage roots currently used by shares.
+
+The local upload path must be absolute and writable by the backend process or container user. Saving a new path affects only new local shares. Existing local shares keep their stored `localStoragePath` until an admin explicitly runs the local storage migration.
+
+The migration assistant on `/admin/system` works in two steps:
+
+1. Run a dry-run to list affected shares, file counts, total bytes, missing source folders, target conflicts, and available free space.
+2. Start the migration after reviewing the dry-run. Each share is copied into a temporary folder below the target path, verified, switched in the database, and then removed from the old share folder.
+
+Only one storage migration can run at a time. Uploads, deletes, and share deletion for a share currently being migrated are blocked to avoid race conditions. Downloads remain available where possible; if a share is hit during the short switch-over window, the API returns a temporary error instead of serving incomplete data.
+
+If cleanup of old upload roots is enabled, the migration attempts to remove old root folders after all moved share folders have been deleted. A root folder is removed only when it is empty; folders with unrelated files are left in place and reported as warnings.
+
+S3 storage remains configurable and visible in the UI, but live migration between local storage and S3 is not implemented. Moving the SQLite database location is also not performed live because Prisma initializes the database connection for the running process.
+
+The older `/admin/config/storage` page remains available for detailed configuration. If the UI or YAML setting is empty, the backend uses `UPLOAD_DIRECTORY`.
 
 #### Frontend
 

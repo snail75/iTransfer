@@ -21,25 +21,50 @@
         <header class="app-header">
           <div id="window-drag-region" class="title-row">
             <div class="brand">
-              <span class="material-symbols-outlined brand-icon" aria-hidden="true">cloud_upload</span>
+              <img class="brand-icon-image" src="/icon.png" alt="" aria-hidden="true" />
               <h1>Transporter</h1>
             </div>
             <div class="header-actions">
-              <button id="settings-toggle" class="icon-button" type="button" aria-label="Open settings">
-                <span class="material-symbols-outlined" aria-hidden="true">settings</span>
+              <button
+                id="settings-toggle"
+                class="icon-button"
+                type="button"
+                aria-label="Open settings"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true"
+                  >settings</span
+                >
               </button>
-              <button id="window-minimize" class="window-button" type="button" aria-label="Minimize window">
-                <span class="material-symbols-outlined" aria-hidden="true">remove</span>
+              <button
+                id="window-minimize"
+                class="window-button"
+                type="button"
+                aria-label="Minimize window"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true"
+                  >remove</span
+                >
               </button>
-              <button id="window-close" class="window-button close-button" type="button" aria-label="Close window">
-                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+              <button
+                id="window-close"
+                class="window-button close-button"
+                type="button"
+                aria-label="Close window"
+              >
+                <span class="material-symbols-outlined" aria-hidden="true"
+                  >close</span
+                >
               </button>
             </div>
           </div>
 
           <nav class="top-tabs" aria-label="App sections">
-            <button id="share-files-tab" class="top-tab active" type="button">Transfer</button>
-            <button id="share-history-tab" class="top-tab" type="button">History</button>
+            <button id="share-files-tab" class="top-tab active" type="button">
+              Transfer
+            </button>
+            <button id="share-history-tab" class="top-tab" type="button">
+              History
+            </button>
           </nav>
         </header>
 
@@ -47,7 +72,12 @@
           <div class="settings-card">
             <div class="settings-header">
               <p class="pane-title">Settings</p>
-              <button id="settings-close" class="text-button" type="button" aria-label="Close settings">
+              <button
+                id="settings-close"
+                class="text-button"
+                type="button"
+                aria-label="Close settings"
+              >
                 Close
               </button>
             </div>
@@ -55,16 +85,43 @@
             <section id="settings-pane" class="menu-pane">
               <label class="field-label">
                 Server URL
-                <input id="server-url" name="serverUrl" type="url" placeholder="https://transfer.example.com" />
+                <input
+                  id="server-url"
+                  name="serverUrl"
+                  type="url"
+                  placeholder="https://transfer.example.com"
+                />
               </label>
+              <div class="field-label token-field">
+                <label for="api-token">API token</label>
+                <span class="token-row">
+                  <input
+                    id="api-token"
+                    name="apiToken"
+                    type="password"
+                    placeholder="mtp..."
+                    autocomplete="off"
+                  />
+                  <button
+                    id="clear-token"
+                    class="secondary-button"
+                    type="button"
+                  >
+                    Clear token
+                  </button>
+                </span>
+              </div>
               <label class="field-label">
-                API token
-                <input id="api-token" name="apiToken" type="password" placeholder="mtp..." autocomplete="off" />
+                Language
+                <select id="language" name="language"></select>
               </label>
-              <p class="info-line" id="server-max-size">Server upload limit is loaded after saving the server URL.</p>
+              <p class="info-line" id="server-max-size">
+                Server upload limit is loaded after saving the server URL.
+              </p>
               <div class="settings-actions">
-                <button id="save-settings" class="primary-button" type="submit">Save</button>
-                <button id="clear-token" class="secondary-button" type="button">Clear token</button>
+                <button id="save-settings" class="primary-button" type="submit">
+                  Save
+                </button>
               </div>
             </section>
           </div>
@@ -74,14 +131,30 @@
           <label class="field-label compact-label">
             Transfer Name
             <span class="transfer-name-row">
-              <input id="transfer-name" name="transferName" type="text" placeholder="Enter Transfer Name ..." />
-              <button id="save-transfer-name" class="text-button transfer-save-button" type="button">Save</button>
+              <input
+                id="transfer-name"
+                name="transferName"
+                type="text"
+                maxlength="128"
+                placeholder="Enter Transfer Name ..."
+              />
+              <button
+                id="save-transfer-name"
+                class="text-button transfer-save-button"
+                type="button"
+              >
+                Save
+              </button>
             </span>
           </label>
 
           <section class="option-grid" aria-label="Transfer options">
             <label class="option-card option-select">
-              <span class="option-icon material-symbols-outlined" aria-hidden="true">schedule</span>
+              <span
+                class="option-icon material-symbols-outlined"
+                aria-hidden="true"
+                >schedule</span
+              >
               <span class="option-copy">
                 <span class="option-label">Expiration</span>
                 <select id="expiration" name="expiration">
@@ -97,32 +170,56 @@
             </label>
 
             <label class="option-card checkbox-label">
-              <span class="option-icon muted material-symbols-outlined" aria-hidden="true">lock</span>
+              <span
+                class="option-icon material-symbols-outlined"
+                aria-hidden="true"
+                >lock</span
+              >
               <span class="option-copy">
                 <span class="option-label">Password</span>
                 <span id="password-status" class="option-value">Off</span>
               </span>
-              <input id="password-enabled" name="passwordEnabled" type="checkbox" />
+              <input
+                id="password-enabled"
+                name="passwordEnabled"
+                type="checkbox"
+              />
               <span class="switch disabled-switch" aria-hidden="true"></span>
             </label>
 
             <label class="option-card checkbox-label">
-              <span class="option-icon material-symbols-outlined" aria-hidden="true">upload</span>
+              <span
+                class="option-icon material-symbols-outlined"
+                aria-hidden="true"
+                >upload</span
+              >
               <span class="option-copy">
                 <span class="option-label">Uploads</span>
                 <span id="uploads-status" class="option-value">Enabled</span>
               </span>
-              <input id="allow-public-upload" name="allowPublicUpload" type="checkbox" />
+              <input
+                id="allow-public-upload"
+                name="allowPublicUpload"
+                type="checkbox"
+              />
               <span class="switch" aria-hidden="true"></span>
             </label>
 
             <label class="option-card checkbox-label">
-              <span class="option-icon muted material-symbols-outlined" aria-hidden="true">history</span>
+              <span
+                class="option-icon material-symbols-outlined"
+                aria-hidden="true"
+                >history</span
+              >
               <span class="option-copy">
                 <span class="option-label">Versions</span>
                 <span id="versions-status" class="option-value">Off</span>
               </span>
-              <input id="allow-versioning" name="allowVersioning" type="checkbox" />
+              <input
+                id="allow-versioning"
+                name="allowVersioning"
+                type="checkbox"
+              />
               <span class="switch" aria-hidden="true"></span>
             </label>
           </section>
@@ -130,20 +227,46 @@
           <section id="drop-zone" class="drop-zone" tabindex="0">
             <form id="password-panel" class="password-panel" hidden>
               <p class="drop-title">Set password</p>
-              <input id="share-password" type="password" placeholder="Enter password" autocomplete="new-password" />
+              <input
+                id="share-password"
+                type="password"
+                placeholder="Enter password"
+                autocomplete="new-password"
+              />
               <div class="password-actions">
-                <button id="password-cancel" class="secondary-button" type="button">Cancel</button>
+                <button
+                  id="password-cancel"
+                  class="secondary-button"
+                  type="button"
+                >
+                  Cancel
+                </button>
                 <button class="primary-button" type="submit">Save</button>
               </div>
             </form>
             <input id="file-picker" type="file" multiple />
-            <button id="choose-files" class="primary-button" type="button">Drop files here or choose files</button>
-            <ul id="upload-list" class="upload-list" aria-label="Upload files"></ul>
+            <button
+              id="start-new-transfer"
+              class="secondary-button"
+              type="button"
+            >
+              Start New Transfer
+            </button>
+            <button id="choose-files" class="primary-button" type="button">
+              Drop files here or choose files
+            </button>
+            <ul
+              id="upload-list"
+              class="upload-list"
+              aria-label="Upload files"
+            ></ul>
           </section>
 
           <article class="transfer-row drop-transfer-status">
             <div class="transfer-title-row">
-              <p id="message" class="transfer-title">Configure the server URL and API token before the first upload.</p>
+              <p id="message" class="transfer-title">
+                Configure the server URL and API token before the first upload.
+              </p>
               <p id="upload-speed" class="upload-speed">0 KB/s</p>
             </div>
             <progress id="progress" max="100" value="0"></progress>
@@ -156,9 +279,15 @@
           <section class="share-url">
             <label class="section-label">Shareable URL</label>
             <div class="share-row">
-              <a id="last-link" class="share-value" href="#" hidden>Upload a file to create a share link</a>
-              <span class="share-value placeholder" id="share-placeholder">Upload a file to create a share link</span>
-              <button id="copy-last-link" class="copy-button" type="button">Copy</button>
+              <a id="last-link" class="share-value" href="#" hidden
+                >Upload a file to create a share link</a
+              >
+              <span class="share-value placeholder" id="share-placeholder"
+                >Upload a file to create a share link</span
+              >
+              <button id="copy-last-link" class="copy-button" type="button">
+                Copy
+              </button>
             </div>
           </section>
         </section>
@@ -170,13 +299,24 @@
               <h2>Your transfers</h2>
             </div>
             <div class="history-actions">
-              <button id="see-links-web" class="secondary-button" type="button">Open Web</button>
-              <button id="refresh-links" class="primary-button" type="button">Refresh</button>
+              <button id="see-links-web" class="secondary-button" type="button">
+                Open Web
+              </button>
+              <button id="refresh-links" class="primary-button" type="button">
+                Refresh
+              </button>
             </div>
           </div>
-          <input id="links-search" class="search-input" type="search" placeholder="Search links" />
+          <input
+            id="links-search"
+            class="search-input"
+            type="search"
+            placeholder="Search links"
+          />
           <div id="links-list" class="links-list"></div>
-          <p id="links-message" class="info-line">Open History to load your shares.</p>
+          <p id="links-message" class="info-line">
+            Open History to load your shares.
+          </p>
         </section>
 
         <div class="bottom-spacer" aria-hidden="true"></div>

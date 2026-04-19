@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Paylaşım bağlantısı",
   "account.shares.modal.delete.title": "Paylaşımı sil: {share}",
   "account.shares.modal.delete.description": "Bu paylaşımı gerçekten silmek istiyor musunuz?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Karşı Paylaşımlar",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Karşı paylaşım bağlantısı",
   "account.reverseShares.modal.delete.title": "Karşı paylaşımı sil",
   "account.reverseShares.modal.delete.description": "Bu karşı paylaşımı gerçekten silmek istiyor musunuz? Eğer silerseniz, ilişkili paylaşımlar da silinecektir.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Yönetim",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "İşaretlenmezse, kullanıcı şifresini ayarlaması için bir bağlantı içeren bir e-posta alacaktır.",
   "admin.users.modal.create.admin": "Yönetici yetkileri",
   "admin.users.modal.create.admin.description": "İşaretlenirse, kullanıcı yönetim paneline erişebilecektir.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Paylaşım Yönetimi",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Bitiş Tarihi",
   "admin.shares.edit.delete.title": "Paylaşımı sil: {id}",
   "admin.shares.edit.delete.description": "Bu paylaşımı gerçekten silmek istiyor musunuz?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Yükle",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "İsim",
   "upload.filelist.size": "Boyut",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Paylaşım Oluştur",
   "upload.modal.link.error.invalid": "Sadece harf, rakam, alt çizgi ve tire içerebilir",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "Bu paylaşımın süresi {expiration} tarihinde dolacak.",
   "upload.modal.completed.share-ready": "Paylaşım hazır",
   "upload.modal.completed.notified-reverse-share-creator": "Karşı paylaşımı oluşturan kişiyi bilgilendirdik. Bu bağlantıyı onlarla başka yollarla da manuel olarak paylaşabilirsiniz.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Paylaşım {shareId}",
   "share.description": "Bak sana ne paylaştım!",
-  "share.fileCount": "{count, plural, =1 {# dosya} other {# dosya}} · {size} (zip dosyası sıkıştırma nedeniyle daha küçük olabilir)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Ziyaretçi limiti aşıldı",
   "share.error.visitor-limit-exceeded.description": "Bu paylaşımın ziyaretçi limiti aşıldı.",
   "share.error.removed.title": "Paylaşım kaldırıldı",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Boyut",
   "share.modal.file-preview.error.not-supported.title": "Önizleme desteklenmiyor",
   "share.modal.file-preview.error.not-supported.description": "Bu dosya türü için önizleme desteklenmemektedir. Görüntülemek için lütfen dosyayı indirin.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Düzenle {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Yapılandırma dosyası mevcut",
   "admin.config.config-file-warning.description": "Mediapult Transfer'i bir yapılandırma dosyası ile kurduğunuz için, yapılandırmayı arayüz üzerinden değiştiremezsiniz.",
   "admin.config.title": "Yapılandırma",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Genel",
   "admin.config.category.share": "Paylaşım",
   "admin.config.category.cache": "Önbellek",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Bir paylaşımın oluşturulan ID'si için varsayılan uzunluk. Bu değer aynı zamanda karşı paylaşımlar için bağlantı oluşturmak için de kullanılır. 8'in altındaki bir değer güvenli kabul edilmez.",
   "admin.config.share.max-size": "Maksimum boyut",
   "admin.config.share.max-size.description": "Maksimum paylaşım boyutu",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Zip sıkıştırma seviyesi",
   "admin.config.share.zip-compression-level.description": "Dosya boyutu ve sıkıştırma hızı arasında denge kurmak için seviyeyi ayarlayın. Geçerli değerler 0 ile 9 arasındadır; 0 sıkıştırma yok, 9 ise maksimum sıkıştırma anlamına gelir.",
   "admin.config.share.chunk-size": "Parça boyutu",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "S3 bucket'ına erişmenizi sağlayan sır.",
   "admin.config.s3.use-checksum": "Sağlama toplamı (checksum) kullan",
   "admin.config.s3.use-checksum.description": "Sağlama toplamını desteklemeyen (ör. B2) arka uçlar için kapatın.",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Yasal",
   "admin.config.legal.enabled": "Yasal bildirimleri etkinleştir",
   "admin.config.legal.enabled.description": "Altbilgide künye ve gizlilik politikası bağlantısı gösterilip gösterilmeyeceği.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Paylaş",
   "common.button.generate": "Oluştur",
   "common.button.done": "Bitti",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Bağlantı",
   "common.text.navigate-to-link": "Bağlantıya git",
   "common.text.or": "veya",

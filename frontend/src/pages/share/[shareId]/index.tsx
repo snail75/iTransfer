@@ -160,7 +160,7 @@ const Share = ({ shareId }: { shareId: string }) => {
       setIsUploadingBack(true);
       try {
         await uploadFileToShare(file, file.name, fileToReplace.id);
-        toast.success("File version replaced");
+        toast.success(t("share.notify.file-version-replaced"));
         await getFiles();
       } catch (e) {
         toast.axiosError(e);
@@ -258,27 +258,27 @@ const Share = ({ shareId }: { shareId: string }) => {
             <div className="flex justify-between items-center gap-4 mb-4">
               <h2 className="text-lg font-bold text-text dark:text-text-dark">
                 {share.allowPublicUpload
-                  ? "Upload files back"
-                  : "Replace existing files"}
+                  ? t("share.upload-back.title")
+                  : t("share.upload-back.replace-title")}
               </h2>
               <Button
                 loading={isUploadingBack}
                 disabled={!share.allowPublicUpload || !uploadingFiles.length}
                 onClick={uploadBackFiles}
               >
-                Upload
+                {t("share.upload-back.button")}
               </Button>
             </div>
             {share.allowPublicUpload ? (
               <Dropzone
-                title="Drop files to add them to this link"
+                title={t("share.upload-back.dropzone-title")}
                 maxShareSize={parseInt(config.get("share.maxSize"))}
                 onFilesChanged={appendBackUploadFiles}
                 isUploading={isUploadingBack}
               />
             ) : (
               <p className="rounded-lg border border-gray-200 p-4 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
-                Use the replace icon next to a file to upload a newer version.
+                {t("share.upload-back.replace-hint")}
               </p>
             )}
             {uploadingFiles.length > 0 && (

@@ -17,7 +17,7 @@ export default {
   "home.title": "A <h>self-hosted</h> file sharing platform.",
 
   "home.description":
-    "Do you really want to give your personal files in the hand of third parties like WeTransfer?",
+    "Do you really want to hand your data to third-party services with terms that can be hard to review and may allow AI training or broad usage rights? If you do not want to deal with pages of legal terms, host the service yourself.",
   "home.bullet.a.name": "Self-Hosted",
   "home.bullet.a.description": "Host Mediapult Transfer on your own machine.",
   "home.bullet.b.name": "Privacy",
@@ -129,15 +129,19 @@ export default {
   "account.notify.totp.enable": "TOTP enabled successfully",
   "account.card.api-tokens.title": "Desktop API tokens",
   "account.card.api-tokens.description":
-    "Create tokens for desktop apps. The token is shown only once.",
+    "Create and manage tokens for desktop apps.",
   "account.card.api-tokens.created":
-    "Copy this token now. It will not be shown again.",
+    "Token created. You can copy it now or later from the list below.",
   "account.card.api-tokens.create": "Create token",
   "account.card.api-tokens.name-placeholder": "Desktop app",
+  "account.card.api-tokens.name-label": "Token name",
   "account.card.api-tokens.last-used": "Last used: {date}",
   "account.card.api-tokens.never-used": "Never used",
+  "account.card.api-tokens.unavailable":
+    "This older token cannot be shown again. Create a new token to copy it later.",
   "account.notify.api-token.created": "API token created",
   "account.notify.api-token.deleted": "API token deleted",
+  "account.notify.api-token.updated": "API token updated",
 
   "account.card.language.title": "Language",
   "account.card.language.description":
@@ -180,6 +184,13 @@ export default {
   "account.shares.modal.delete.description":
     "Do you really want to delete this share?",
 
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
 
   // /account/reverseShares
@@ -242,6 +253,8 @@ export default {
   "account.reverseShares.modal.delete.description":
     "Do you really want to delete this reverse share? If you do, the associated shares will be deleted as well.",
 
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
 
   // /admin
@@ -249,6 +262,7 @@ export default {
   "admin.button.users": "User management",
   "admin.button.shares": "Share management",
   "admin.button.config": "Configuration",
+  "admin.button.system": "System configuration",
   "admin.version": "Version",
   // END /admin
 
@@ -282,6 +296,12 @@ export default {
   "admin.users.modal.create.admin.description":
     "If checked, the user will be able to access the admin panel.",
 
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description":
+    "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
 
   // /admin/shares
@@ -295,6 +315,7 @@ export default {
   "admin.shares.edit.delete.description":
     "Do you really want to delete this share?",
 
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
 
   // /upload
@@ -321,6 +342,8 @@ export default {
   "upload.filelist.name": "Name",
   "upload.filelist.size": "Size",
 
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Create Share",
   "upload.modal.link.error.invalid":
@@ -373,13 +396,17 @@ export default {
   "upload.modal.completed.notified-reverse-share-creator":
     "We have notified the creator of the reverse share. You can also manually share this link with them through other means.",
 
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
 
   // /share/[id]
   "share.title": "Share {shareId}",
   "share.description": "Look what I've shared with you!",
   "share.fileCount":
-    "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+    "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Visitor limit exceeded",
   "share.error.visitor-limit-exceeded.description":
     "The visitor limit from this share has been exceeded.",
@@ -409,6 +436,13 @@ export default {
   "share.modal.file-preview.error.not-supported.description":
     "Previews are not supported for this type of files. Please download the file to view it.",
 
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint":
+    "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
 
   // /share/[id]/edit
@@ -533,6 +567,85 @@ export default {
     "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
   "admin.config.storage.migrate.success":
     "Moved {count} share folders to {path}. Existing links remain active.",
+  "admin.system.nav": "System",
+  "admin.system.open": "Open system configuration",
+  "admin.system.title": "System configuration",
+  "admin.system.description":
+    "Check the active configuration, storage paths, database location, SMTP status, and local storage migrations in one place.",
+  "admin.system.yaml.title": "Configuration file active",
+  "admin.system.yaml.description":
+    "A config.yaml file is active. Values from the file are read-only in the UI, but local storage migration can still be started for the active path.",
+  "admin.system.panel.config": "Configuration",
+  "admin.system.panel.database": "Database",
+  "admin.system.panel.email": "Email",
+  "admin.system.field.source": "Source",
+  "admin.system.field.config-file": "Config file",
+  "admin.system.field.editable": "Editable",
+  "admin.system.field.database-url": "Database URL",
+  "admin.system.field.database-path": "Database path",
+  "admin.system.field.live-move": "Live move",
+  "admin.system.field.smtp-enabled": "SMTP enabled",
+  "admin.system.field.smtp-host": "SMTP host",
+  "admin.system.field.smtp-ready": "SMTP ready",
+  "admin.system.field.current-upload-path": "Active upload path",
+  "admin.system.field.current-upload-path.description":
+    "This is the path currently configured for new local shares. Existing shares can still be stored on older paths until they are migrated.",
+  "admin.system.field.default-upload-path": "Built-in fallback upload path",
+  "admin.system.field.default-upload-path.description":
+    "This path is used only when no custom local upload path is set in the UI, environment variables, or config.yaml. It is not automatically the migration target.",
+  "admin.system.field.temp-upload-path": "Temporary upload path",
+  "admin.system.field.temp-upload-path.description":
+    "Reserved for temporary upload data. Permanent share files are not stored here. During a storage migration, temporary copy folders are created inside the target path and removed after verification.",
+  "admin.system.field.shares": "Shares",
+  "admin.system.field.data": "Data",
+  "admin.system.field.free-space": "Free space",
+  "admin.system.value.not-applicable": "Not applicable",
+  "admin.system.value.not-set": "Not set",
+  "admin.system.config-source.database": "Database and UI",
+  "admin.system.config-source.yaml": "config.yaml",
+  "admin.system.storage.title": "Storage path",
+  "admin.system.storage.description":
+    "This section controls where new local shares are stored. It does not move existing shares until you run the migration below.",
+  "admin.system.storage.target-path-label": "New active upload path",
+  "admin.system.storage.target-path-help":
+    "Save this value to make it the active path for new local shares. Use the migration assistant afterwards if existing shares should be moved to this path as well.",
+  "admin.system.storage.validate": "Validate path",
+  "admin.system.storage.validation.valid":
+    "{path} is writable. Available space: {space}.",
+  "admin.system.storage.save-success": "Storage path saved",
+  "admin.system.storage.advanced": "Advanced storage settings",
+  "admin.system.migration.title": "Local storage migration",
+  "admin.system.migration.description":
+    "Run a dry run first, review the affected shares and blocking issues, then start the migration explicitly. Each share is copied to a temporary folder in the target path, verified, switched in the database, and then the old share folder is deleted.",
+  "admin.system.migration.cleanup-source-roots.label":
+    "Delete old upload root folders if they are empty",
+  "admin.system.migration.cleanup-source-roots.description":
+    "After all share folders were moved and deleted from the old path, the migration will also try to remove the old root folder itself. It is deleted only when it is empty; folders with unrelated files are left in place and reported as a warning.",
+  "admin.system.migration.dry-run": "Dry run",
+  "admin.system.migration.start": "Start migration",
+  "admin.system.migration.started": "Storage migration started",
+  "admin.system.migration.cancel-requested": "Migration cancellation requested",
+  "admin.system.migration.unsaved-path.title": "Unsaved path",
+  "admin.system.migration.unsaved-path.description":
+    "Save the storage path before starting the migration. Dry run can still be used to preview the target.",
+  "admin.system.migration.dry-run-ok": "Dry run finished without blocking issues.",
+  "admin.system.migration.latest-job": "Latest migration job",
+  "admin.system.migration.progress":
+    "{done} of {total} shares processed. Moved data: {bytes}.",
+  "admin.system.migration.status.pending": "Pending",
+  "admin.system.migration.status.running": "Running",
+  "admin.system.migration.status.cancel_requested": "Cancellation requested",
+  "admin.system.migration.status.cancelled": "Cancelled",
+  "admin.system.migration.status.completed": "Completed",
+  "admin.system.migration.status.completed_with_warnings":
+    "Completed with warnings",
+  "admin.system.migration.status.failed": "Failed",
+  "admin.system.migration.status.skipped": "Skipped",
+  "admin.system.migration.status.cleanup_failed": "Cleanup failed",
+  "admin.system.roots.title": "Local storage roots",
+  "admin.system.roots.summary":
+    "{shares} shares, {files} files, {bytes} stored.",
+  "admin.system.file-count": "{count, plural, one {# file} other {# files}}",
   "admin.config.share.zip-compression-level": "Zip compression level",
   "admin.config.share.zip-compression-level.description":
     "Adjust the level to balance between file size and compression speed. Valid values range from 0 to 9, with 0 being no compression and 9 being maximum compression. ",
@@ -770,12 +883,16 @@ export default {
   "common.button.share": "Share",
   "common.button.generate": "Generate",
   "common.button.done": "Done",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Link",
   "common.text.navigate-to-link": "Visit link",
   "common.text.or": "or",
   "common.text.redirecting": "Redirecting...",
   "common.button.go-back": "Go back",
   "common.button.go-home": "Go home",
+  "common.yes": "Yes",
+  "common.no": "No",
   "common.notify.copied": "Your link was copied to the clipboard",
   "common.notify.copied-link": "Your link was copied to the clipboard",
   "common.success": "Success",

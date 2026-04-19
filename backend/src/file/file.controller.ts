@@ -15,6 +15,7 @@ import { SkipThrottle } from "@nestjs/throttler";
 import * as contentDisposition from "content-disposition";
 import { Response } from "express";
 import { ShareOwnerGuard } from "src/share/guard/shareOwner.guard";
+import { PrismaService } from "src/prisma/prisma.service";
 import { FileService } from "./file.service";
 import { FileUploadGuard } from "./guard/fileUpload.guard";
 import { FileSecurityGuard } from "./guard/fileSecurity.guard";
@@ -23,7 +24,10 @@ import { Request } from "express";
 
 @Controller("shares/:shareId/files")
 export class FileController {
-  constructor(private fileService: FileService) {}
+  constructor(
+    private fileService: FileService,
+    private prisma: PrismaService,
+  ) {}
 
   @Post()
   @SkipThrottle()
@@ -62,10 +66,15 @@ export class FileController {
     @Param("shareId") shareId: string,
   ) {
     const zipStream = await this.fileService.getZip(shareId);
+    const share = await this.prisma.share.findUnique({
+      where: { id: shareId },
+      select: { name: true },
+    });
+    const zipName = sanitizeZipFileName(share?.name || shareId);
 
     res.set({
       "Content-Type": "application/zip",
-      "Content-Disposition": contentDisposition(`${shareId}.zip`),
+      "Content-Disposition": contentDisposition(zipName),
     });
 
     return new StreamableFile(zipStream);
@@ -110,4 +119,14 @@ export class FileController {
   ) {
     await this.fileService.remove(shareId, fileId);
   }
+}
+
+function sanitizeZipFileName(name: string) {
+  const safeName = name
+    .trim()
+    .replace(/[<>:"/\\|?*\u0000-\u001f]/g, "_")
+    .replace(/[. ]+$/g, "")
+    .slice(0, 128);
+
+  return `${safeName || "transfer"}.zip`;
 }

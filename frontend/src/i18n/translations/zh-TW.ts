@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "分享連結",
   "account.shares.modal.delete.title": "刪除： {share}",
   "account.shares.modal.delete.description": "您真的想刪除這個分享嗎？",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "檔案請求",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "檔案請求連結",
   "account.reverseShares.modal.delete.title": "刪除檔案請求連結",
   "account.reverseShares.modal.delete.description": "您真的想刪除此檔案請求連結嗎？聯結下所有關聯的檔案都將被刪除",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "管理",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "如果不勾選，使用者將會收到一封Email來設置他們的密碼",
   "admin.users.modal.create.admin": "管理員",
   "admin.users.modal.create.admin.description": "如果勾選，使用者將能查看管理員面板",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "檔案管理",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "失效於",
   "admin.shares.edit.delete.title": "刪除： {id}",
   "admin.shares.edit.delete.description": "您真的想刪除這個檔案嗎？",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "上傳",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "檔案名稱",
   "upload.filelist.size": "檔案大小",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "建立分享",
   "upload.modal.link.error.invalid": "只能包括字母，數字，下劃線(_)，和橫線(-)",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "這個分享將於 {expiration} 過期。",
   "upload.modal.completed.share-ready": "分享建立完畢",
   "upload.modal.completed.notified-reverse-share-creator": "我們已經通知檔案請求連結的擁有者，你也可以手動分享此連結給他們。",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "分享 {shareId}",
   "share.description": "瞧瞧我給您分享了些什麽！",
-  "share.fileCount": "{count, plural, =1 {# 個檔案} other {# 個檔案}} · {size} (壓縮檔可能比原檔小)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "查看次數達到上限",
   "share.error.visitor-limit-exceeded.description": "查看次數達到上限",
   "share.error.removed.title": "分享已刪除",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "檔案大小",
   "share.modal.file-preview.error.not-supported.title": "該檔案類型不支持預覽",
   "share.modal.file-preview.error.not-supported.description": "該檔案類型不支援預覽，請下載後再瀏覽。",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "編輯 {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Configuration file present",
   "admin.config.config-file-warning.description": "As you have a configured Mediapult Transfer with a configuration file, you can't change the configuration through the UI.",
   "admin.config.title": "配置管理",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "通用",
   "admin.config.category.share": "分享",
   "admin.config.category.cache": "快取",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "預設的自動生成分享ID長度。這個設定同時用於生成檔案請求連結。小於 8 被認為是不安全的。",
   "admin.config.share.max-size": "最大檔案上限",
   "admin.config.share.max-size.description": "最大檔案上限",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Zip 壓縮等級",
   "admin.config.share.zip-compression-level.description": "調整壓縮等級以平衡檔案大小和壓縮速度。 有效值範圍從 0 到 9，其中 0 表示無壓縮，9 表示最大壓縮。 ",
   "admin.config.share.chunk-size": "分塊大小",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "The secret which allows you to access the S3 bucket.",
   "admin.config.s3.use-checksum": "Use checksum",
   "admin.config.s3.use-checksum.description": "Turn off for backends that do not support checksum (e.g. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "法律",
   "admin.config.legal.enabled": "啟用法律提醒",
   "admin.config.legal.enabled.description": "是否在 footer 顯示版權宣告及隱私權政策。",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "分享",
   "common.button.generate": "自動產生",
   "common.button.done": "完成",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "連結",
   "common.text.navigate-to-link": "瀏覽連結",
   "common.text.or": "或",

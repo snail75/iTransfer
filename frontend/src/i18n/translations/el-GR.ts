@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Κοινοποίηση συνδέσμου",
   "account.shares.modal.delete.title": "Delete share: {share}",
   "account.shares.modal.delete.description": "Θέλετε πραγματικά να διαγράψετε αυτό το διαμοιρασμό;",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Αντίστροφες κοινοποιήσεις",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Αντίστροφος σύνδεσμος κοινής χρήσης",
   "account.reverseShares.modal.delete.title": "Διαγραφή αντίστροφης κοινοποίησης",
   "account.reverseShares.modal.delete.description": "Θέλετε πραγματικά να διαγράψετε αυτή την αντίστροφη κοινοποίηση; Εάν το κάνετε, οι συνδεδεμένες κοινοποιήσεις θα διαγραφούν επίσης.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Διαχείριση",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "Εάν δεν είναι επιλεγμένο, ο χρήστης θα λάβει ένα email με ένα σύνδεσμο για να ορίσει τον κωδικό πρόσβασής του.",
   "admin.users.modal.create.admin": "Δικαιώματα διαχειριστή",
   "admin.users.modal.create.admin.description": "Αν ενεργοποιηθεί, ο χρήστης θα μπορεί να έχει πρόσβαση στον πίνακα διαχείρισης.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Διαχείριση κοινοποιήσεων",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Expires on",
   "admin.shares.edit.delete.title": "Delete share: {id}",
   "admin.shares.edit.delete.description": "Θέλετε πραγματικά να διαγράψετε αυτή τη κοινοποίηση;",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Μεταφόρτωση",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Όνομα",
   "upload.filelist.size": "Μέγεθος",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Δημιουργία Κοινοποίησης",
   "upload.modal.link.error.invalid": "Μπορεί να περιέχει μόνο γράμματα, αριθμούς, κάτω παύλες και παύλες",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "Αυτός ο διαμοιρασμός θα λήξει {expiration}.",
   "upload.modal.completed.share-ready": "Κοινοποίηση έτοιμου",
   "upload.modal.completed.notified-reverse-share-creator": "Έχουμε ειδοποιήσει τον δημιουργό της αντίστροφης κοινής χρήσης. Μπορείτε επίσης να μοιραστείτε χειροκίνητα αυτόν τον σύνδεσμο μαζί τους μέσω άλλων μέσων.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Διαμοιρασμός {shareId}",
   "share.description": "Σας προωθώ αρχεία προς κοινοποίηση.",
-  "share.fileCount": "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Υπέρβαση ορίου επισκέπτη",
   "share.error.visitor-limit-exceeded.description": "Ξεπεράστηκε το όριο επισκεπτών σε αυτή την κοινοποίηση.",
   "share.error.removed.title": "Κοινοποίηση αφαιρέθηκε",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Μέγεθος",
   "share.modal.file-preview.error.not-supported.title": "Η προεπισκόπηση δεν υποστηρίζεται",
   "share.modal.file-preview.error.not-supported.description": "Previews are not supported for this type of files. Please download the file to view it.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Ενημέρωση {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Configuration file present",
   "admin.config.config-file-warning.description": "As you have a configured Mediapult Transfer with a configuration file, you can't change the configuration through the UI.",
   "admin.config.title": "Διαμόρφωση",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Γενικά",
   "admin.config.category.share": "Διαμοιρασμός",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Default length for the generated ID of a share. This value is also used to generate links for reverse shares. A value below 8 is not considered secure.",
   "admin.config.share.max-size": "Μέγιστο μέγεθος",
   "admin.config.share.max-size.description": "Μέγιστο μέγεθος κοινοποίησης",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Βαθμός συμπίεσης ZIP",
   "admin.config.share.zip-compression-level.description": "Προσαρμόστε το βαθμό συμπίεσης για να εξισορροπηθεί το μέγεθος του αρχείου και η ταχύτητα επεξεργασίας. Έγκυρες τιμές κυμαίνονται από 0 έως 9, με 0 χωρίς συμπίεση και 9 μέγιστη συμπίεση.",
   "admin.config.share.chunk-size": "Μέγεθος κομματιών",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "The secret which allows you to access the S3 bucket.",
   "admin.config.s3.use-checksum": "Use checksum",
   "admin.config.s3.use-checksum.description": "Turn off for backends that do not support checksum (e.g. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Legal",
   "admin.config.legal.enabled": "Enable legal notices",
   "admin.config.legal.enabled.description": "Whether to show a link to imprint and privacy policy in the footer.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Διαμοιρασμός",
   "common.button.generate": "Δημιουργία",
   "common.button.done": "Ολοκληρώθηκε",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Σύνδεσμος",
   "common.text.navigate-to-link": "Visit link",
   "common.text.or": "ή",

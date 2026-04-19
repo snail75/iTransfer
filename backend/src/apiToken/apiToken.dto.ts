@@ -7,6 +7,12 @@ export class CreateApiTokenDTO {
   name: string;
 }
 
+export class UpdateApiTokenDTO {
+  @IsString()
+  @Length(1, 64)
+  name: string;
+}
+
 export class ApiTokenDTO {
   @Expose()
   id: string;
@@ -20,8 +26,13 @@ export class ApiTokenDTO {
   @Expose()
   lastUsedAt?: Date;
 
+  @Expose()
+  token?: string;
+
   from(partial: Partial<ApiTokenDTO>) {
-    return plainToClass(ApiTokenDTO, partial, { excludeExtraneousValues: true });
+    return plainToClass(ApiTokenDTO, partial, {
+      excludeExtraneousValues: true,
+    });
   }
 
   fromList(partial: Partial<ApiTokenDTO>[]) {

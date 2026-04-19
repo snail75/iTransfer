@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Deli vezu",
   "account.shares.modal.delete.title": "Izbriši deljenje {share}",
   "account.shares.modal.delete.description": "Da li zaista želite da izbrišete ovo deljenje?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Obrnuto deljenje",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Link za obrnuto deljenje",
   "account.reverseShares.modal.delete.title": "Obrišite obrnuto deljenje",
   "account.reverseShares.modal.delete.description": "Da li zaista želite da izbrišete ovo obrnuto deljenje? Ako to učinite, pridružena deljenja će takođe biti izbrisana.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Administracija",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "Ako nije označeno, korisnik će dobiti imejl sa vezom za postavljanje lozinke.",
   "admin.users.modal.create.admin": "Administratorske privilegije",
   "admin.users.modal.create.admin.description": "Ako je označeno, korisnik će moći da pristupi administrativnom panelu.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Upravljanje deljenjem",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Ističe",
   "admin.shares.edit.delete.title": "Obriši deljenje: {id}",
   "admin.shares.edit.delete.description": "Da li zaista želite da obrišete ovo deljenje?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Pošalji",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Naziv",
   "upload.filelist.size": "Veličina",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Napravi deljenje",
   "upload.modal.link.error.invalid": "Može da sadrži samo slova, brojeve, donje crte i crtice",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "Ovo deljenje će isteći {expiration}.",
   "upload.modal.completed.share-ready": "Deljenje je spremno",
   "upload.modal.completed.notified-reverse-share-creator": "Obavestili smo kreatora reverznog deljenja. Takođe možete ručno podeliti ovaj link sa njima na druge načine.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Deljenje {shareId}",
   "share.description": "Pogledajte šta sam podelio sa vama!",
-  "share.fileCount": "{count, plural, =1 {# file} other {# files}} · {size} (ZIP fajl može biti manji zbog kompresije)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Prekoračeno je ograničenje posetilaca",
   "share.error.visitor-limit-exceeded.description": "Ograničenje posetilaca iz ovog deljenja je premašeno.",
   "share.error.removed.title": "Deljenje je uklonjeno",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Veličina",
   "share.modal.file-preview.error.not-supported.title": "Pregled nije podržan",
   "share.modal.file-preview.error.not-supported.description": "Pregledi nisu podržani za ovaj tip datoteka. Molimo preuzmite fajl da biste ga pregledali.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Uredi {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Konfiguracioni fajl je prisutan",
   "admin.config.config-file-warning.description": "Pošto ste konfigurisali Mediapult Transfer pomoću konfiguracionog fajla, ne možete menjati konfiguraciju putem korisničkog interfejsa (UI).",
   "admin.config.title": "Konfiguracija",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Opšte",
   "admin.config.category.share": "Deljenje",
   "admin.config.category.cache": "Keš",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Podrazumevana dužina generisanog ID-a za deljenje. Ova vrednost se takođe koristi za generisanje linkova za obrnuto deljenje. Vrednost ispod 8 se ne smatra bezbednom.",
   "admin.config.share.max-size": "Maksimalna veličina",
   "admin.config.share.max-size.description": "Maksimalna veličina deljenja",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Nivo Zip kompresije",
   "admin.config.share.zip-compression-level.description": "Podesite nivo da biste balansirali između veličine datoteke i brzine kompresije. Važeće vrednosti se kreću od 0 do 9, pri čemu je 0 bez kompresije, a 9 je maksimalna kompresija. ",
   "admin.config.share.chunk-size": "Veličina komada",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "Tajna koja vam omogućava pristup S3 bucket-u.",
   "admin.config.s3.use-checksum": "Koristi kontrolnu sumu",
   "admin.config.s3.use-checksum.description": "Isključi za bekende koji ne podržavaju kontrolnu sumu (npr. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Pravno",
   "admin.config.legal.enabled": "Omogući pravna obaveštenja",
   "admin.config.legal.enabled.description": "Da li prikazati link do impresuma i politike privatnosti u podnožju.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Deljenje",
   "common.button.generate": "Generiši",
   "common.button.done": "Gotovo",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Link",
   "common.text.navigate-to-link": "Posetite link",
   "common.text.or": "ili",

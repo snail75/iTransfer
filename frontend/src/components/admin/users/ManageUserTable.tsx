@@ -5,6 +5,7 @@ import { FormattedMessage } from "react-intl";
 import { Table, Badge } from "../../../components/ui";
 import { useModals } from "../../../contexts/ModalContext";
 import { byteToHumanSizeString } from "../../../utils/fileSize.util";
+import useTranslate from "../../../hooks/useTranslate.hook";
 
 const ManageUserTable = ({
   users,
@@ -18,6 +19,7 @@ const ManageUserTable = ({
   isLoading: boolean;
 }) => {
   const modals = useModals();
+  const t = useTranslate();
 
   return (
     <div className="overflow-x-auto">
@@ -33,7 +35,9 @@ const ManageUserTable = ({
             <Table.Cell header>
               <FormattedMessage id="admin.users.table.admin" />
             </Table.Cell>
-            <Table.Cell header>Storage quota</Table.Cell>
+            <Table.Cell header>
+              <FormattedMessage id="admin.users.table.storage-quota" />
+            </Table.Cell>
             <Table.Cell header>{null}</Table.Cell>
           </Table.Row>
         </Table.Header>
@@ -45,19 +49,22 @@ const ManageUserTable = ({
                   <Table.Cell>
                     <div className="flex items-center gap-2">
                       {user.username}{" "}
-                      {user.isLdap && (
-                        <Badge variant="secondary">LDAP</Badge>
-                      )}
+                      {user.isLdap && <Badge variant="secondary">LDAP</Badge>}
                     </div>
                   </Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
                   <Table.Cell>
-                    {user.isAdmin && <TbCheck className="text-green-600 dark:text-green-400" size={18} />}
+                    {user.isAdmin && (
+                      <TbCheck
+                        className="text-green-600 dark:text-green-400"
+                        size={18}
+                      />
+                    )}
                   </Table.Cell>
                   <Table.Cell>
                     {user.storageQuotaBytes
                       ? byteToHumanSizeString(parseInt(user.storageQuotaBytes))
-                      : "Unlimited"}
+                      : t("admin.users.storage.unlimited")}
                   </Table.Cell>
                   <Table.Cell>
                     <div className="flex items-center justify-end gap-2">
@@ -67,7 +74,7 @@ const ManageUserTable = ({
                             showUpdateUserModal(modals, user, getUsers)
                           }
                           className="p-1.5 text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:text-primary-400 dark:hover:text-primary-300 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
-                          aria-label="Edit user"
+                          aria-label={t("admin.users.action.edit")}
                         >
                           <TbEdit size={18} />
                         </button>
@@ -75,7 +82,7 @@ const ManageUserTable = ({
                       <button
                         onClick={() => deleteUser(user)}
                         className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                        aria-label="Delete user"
+                        aria-label={t("admin.users.action.delete")}
                       >
                         <TbTrash size={18} />
                       </button>

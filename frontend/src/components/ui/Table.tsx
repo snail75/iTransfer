@@ -4,6 +4,7 @@ import React, { ReactNode } from "react";
 export interface TableProps {
   children: ReactNode;
   className?: string;
+  wrapperClassName?: string;
   striped?: boolean;
 }
 
@@ -31,14 +32,19 @@ export interface TableCellProps {
   style?: React.CSSProperties;
 }
 
-const Table = ({ children, className, striped = false }: TableProps) => {
+const Table = ({
+  children,
+  className,
+  wrapperClassName,
+  striped = false,
+}: TableProps) => {
   return (
-    <div className="overflow-x-auto">
+    <div className={clsx("overflow-x-auto", wrapperClassName)}>
       <table
         className={clsx(
           "w-full border-collapse",
           striped && "table-auto",
-          className
+          className,
         )}
       >
         {children}
@@ -48,21 +54,39 @@ const Table = ({ children, className, striped = false }: TableProps) => {
 };
 
 const TableHeader = ({ children, className }: TableHeaderProps) => {
-  return <thead className={clsx("bg-gray-50 dark:bg-gray-900", className)}>{children}</thead>;
+  return (
+    <thead className={clsx("bg-gray-50 dark:bg-gray-900", className)}>
+      {children}
+    </thead>
+  );
 };
 
 const TableBody = ({ children, className }: TableBodyProps) => {
-  return <tbody className={clsx("divide-y divide-gray-200 dark:divide-gray-700", className)}>{children}</tbody>;
+  return (
+    <tbody
+      className={clsx(
+        "divide-y divide-gray-200 dark:divide-gray-700",
+        className,
+      )}
+    >
+      {children}
+    </tbody>
+  );
 };
 
-const TableRow = ({ children, className, hover = false, onClick }: TableRowProps) => {
+const TableRow = ({
+  children,
+  className,
+  hover = false,
+  onClick,
+}: TableRowProps) => {
   return (
     <tr
       className={clsx(
         "border-b border-gray-200 dark:border-gray-700",
         hover && "hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
         onClick && "cursor-pointer",
-        className
+        className,
       )}
       onClick={onClick}
     >
@@ -71,7 +95,12 @@ const TableRow = ({ children, className, hover = false, onClick }: TableRowProps
   );
 };
 
-const TableCell = ({ children, className, header = false, style }: TableCellProps) => {
+const TableCell = ({
+  children,
+  className,
+  header = false,
+  style,
+}: TableCellProps) => {
   const Component = header ? "th" : "td";
   return (
     <Component
@@ -79,7 +108,7 @@ const TableCell = ({ children, className, header = false, style }: TableCellProp
         header
           ? "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400"
           : "px-6 py-4 whitespace-nowrap text-sm text-text dark:text-text-dark",
-        className
+        className,
       )}
       style={style}
     >
@@ -94,4 +123,3 @@ Table.Row = TableRow;
 Table.Cell = TableCell;
 
 export default Table;
-

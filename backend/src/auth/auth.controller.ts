@@ -21,6 +21,7 @@ import {
   ApiTokenDTO,
   CreatedApiTokenDTO,
   CreateApiTokenDTO,
+  UpdateApiTokenDTO,
 } from "src/apiToken/apiToken.dto";
 import { ConfigService } from "src/config/config.service";
 import { AuthService } from "./auth.service";
@@ -230,10 +231,7 @@ export class AuthController {
 
   @Post("apiTokens")
   @UseGuards(CookieJwtGuard)
-  async createApiToken(
-    @GetUser() user: User,
-    @Body() body: CreateApiTokenDTO,
-  ) {
+  async createApiToken(@GetUser() user: User, @Body() body: CreateApiTokenDTO) {
     return new CreatedApiTokenDTO().from(
       await this.apiTokenService.create(user.id, body.name),
     );
@@ -244,5 +242,16 @@ export class AuthController {
   @UseGuards(CookieJwtGuard)
   async deleteApiToken(@GetUser() user: User, @Param("id") id: string) {
     await this.apiTokenService.remove(user.id, id);
+  }
+
+  @Patch("apiTokens/:id")
+  @HttpCode(204)
+  @UseGuards(CookieJwtGuard)
+  async renameApiToken(
+    @GetUser() user: User,
+    @Param("id") id: string,
+    @Body() body: UpdateApiTokenDTO,
+  ) {
+    await this.apiTokenService.rename(user.id, id, body.name);
   }
 }

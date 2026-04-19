@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Jaa linkki",
   "account.shares.modal.delete.title": "Delete share: {share}",
   "account.shares.modal.delete.description": "Haluatko todella poistaa tämän jaetun tiedoston/ot?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Takaperin jaetut",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Takaperin jaetun jaon linkki",
   "account.reverseShares.modal.delete.title": "Poista käänteinen jako",
   "account.reverseShares.modal.delete.description": "Haluatko varmasti poistaa tämän käänteisen jaon? Jos kyllä, myös siihen liittyvät jaot poistetaan.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Ylläpito",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "Jos ei ole valittuna, käyttäjä saa sähköpostiviestin, jossa on linkki, joka määrittää heidän salasanansa.",
   "admin.users.modal.create.admin": "Ylläpitäjän oikeudet",
   "admin.users.modal.create.admin.description": "Jos valittu, käyttäjä voi käyttää hallintapaneelia.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Share management",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Expires on",
   "admin.shares.edit.delete.title": "Delete share: {id}",
   "admin.shares.edit.delete.description": "Do you really want to delete this share?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Pilvetä",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Nimi",
   "upload.filelist.size": "Koko",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Luo Jako",
   "upload.modal.link.error.invalid": "Voi sisältää vain kirjaimia, numeroita, alaviivoja ja väliviivoja",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "Tämä käänteinen jako vanhenee kun on {expiration}.",
   "upload.modal.completed.share-ready": "Jako valmiina",
   "upload.modal.completed.notified-reverse-share-creator": "We have notified the creator of the reverse share. You can also manually share this link with them through other means.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Jaa {shareId}",
   "share.description": "Katso, mitä olen jakanut kanssasi!",
-  "share.fileCount": "{count, plural, one {}=1 {# tiedosto} other {# tiedostoa}} · {size} (zip tiedosto voi olla pienempi pakkauksesta)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Vierailijoiden raja ylitetty",
   "share.error.visitor-limit-exceeded.description": "Tämän jaon kävijäraja on ylittynyt.",
   "share.error.removed.title": "Jako poistettu",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Koko",
   "share.modal.file-preview.error.not-supported.title": "Esikatselua ei tuettu",
   "share.modal.file-preview.error.not-supported.description": "Esikatselua ei tueta tämäntyyppisille tiedostoille. Ole hyvä ja lataa tiedosto nähdäksesi sen.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Muokkaa {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Configuration file present",
   "admin.config.config-file-warning.description": "As you have a configured Mediapult Transfer with a configuration file, you can't change the configuration through the UI.",
   "admin.config.title": "Asetukset",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Yleiset",
   "admin.config.category.share": "Jako",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Default length for the generated ID of a share. This value is also used to generate links for reverse shares. A value below 8 is not considered secure.",
   "admin.config.share.max-size": "Maksimikoko",
   "admin.config.share.max-size.description": "Jaon enimmäiskoko tavuissa",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Zip puristustaso",
   "admin.config.share.zip-compression-level.description": "Säädä tasoa tiedoston koon ja pakkausnopeuden välillä. Kelvolliset arvot vaihtelevat 0–9, 0 ei puristusta ja 9 on suurin puristusvoima. ",
   "admin.config.share.chunk-size": "Lohkojen koko",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "The secret which allows you to access the S3 bucket.",
   "admin.config.s3.use-checksum": "Use checksum",
   "admin.config.s3.use-checksum.description": "Turn off for backends that do not support checksum (e.g. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Legal",
   "admin.config.legal.enabled": "Enable legal notices",
   "admin.config.legal.enabled.description": "Whether to show a link to imprint and privacy policy in the footer.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Jako",
   "common.button.generate": "Luo",
   "common.button.done": "Valmis",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Linkki",
   "common.text.navigate-to-link": "Visit link",
   "common.text.or": "tai",

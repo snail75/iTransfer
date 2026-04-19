@@ -7,6 +7,7 @@ export type ApiToken = {
   name: string;
   createdAt: string;
   lastUsedAt?: string;
+  token?: string;
 };
 
 export type CreatedApiToken = ApiToken & {
@@ -119,6 +120,10 @@ const deleteApiToken = async (id: string) => {
   await api.delete(`/auth/apiTokens/${id}`);
 };
 
+const updateApiTokenName = async (id: string, name: string) => {
+  await api.patch(`/auth/apiTokens/${id}`, { name });
+};
+
 export default {
   signIn,
   signInTotp,
@@ -136,4 +141,5 @@ export default {
   listApiTokens,
   createApiToken,
   deleteApiToken,
+  updateApiTokenName,
 };

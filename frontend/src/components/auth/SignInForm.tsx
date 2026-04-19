@@ -10,7 +10,14 @@ import authService from "../../services/auth.service";
 import { getOAuthIcon, getOAuthUrl } from "../../utils/oauth.util";
 import { safeRedirectPath } from "../../utils/router.util";
 import toast from "../../utils/toast.util";
-import { Button, Container, Input, PasswordInput, Card, LoadingSpinner } from "../ui";
+import {
+  Button,
+  Container,
+  Input,
+  PasswordInput,
+  Card,
+  LoadingSpinner,
+} from "../ui";
 import { useForm } from "../../hooks/useForm";
 import { useToast } from "../../hooks/useToast";
 
@@ -22,7 +29,8 @@ const SignInForm = ({ redirectPath }: { redirectPath: string }) => {
   const { info } = useToast();
 
   const [oauthProviders, setOauthProviders] = useState<string[] | null>(null);
-  const [isRedirectingToOauthProvider, setIsRedirectingToOauthProvider] = useState(false);
+  const [isRedirectingToOauthProvider, setIsRedirectingToOauthProvider] =
+    useState(false);
 
   const validationSchema = yup.object().shape({
     emailOrUsername: yup.string().required(t("common.error.field-required")),
@@ -126,16 +134,14 @@ const SignInForm = ({ redirectPath }: { redirectPath: string }) => {
                 autoComplete="current-password"
                 {...form.getInputProps("password")}
               />
-              {config.get("smtp.enabled") && (
-                <div className="flex justify-end">
-                  <Link
-                    href="/auth/resetPassword"
-                    className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
-                  >
-                    <FormattedMessage id="resetPassword.title" />
-                  </Link>
-                </div>
-              )}
+              <div className="flex justify-end">
+                <Link
+                  href="/auth/resetPassword"
+                  className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                >
+                  <FormattedMessage id="resetPassword.title" />
+                </Link>
+              </div>
               <Button fullWidth type="submit" className="mt-6">
                 <FormattedMessage id="signin.button.submit" />
               </Button>

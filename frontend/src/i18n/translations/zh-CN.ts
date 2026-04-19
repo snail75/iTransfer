@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "共享链接",
   "account.shares.modal.delete.title": "删除共享 {share}",
   "account.shares.modal.delete.description": "你真的想删除这个共享吗？",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "预留共享",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "预留共享链接",
   "account.reverseShares.modal.delete.title": "删除预留共享链接",
   "account.reverseShares.modal.delete.description": "你真的想删除此预留共享链接吗？链接下所有关联的共享都将被删除",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "管理",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "如果不勾选，用户将会收到一封电子邮件来设置他们的密码",
   "admin.users.modal.create.admin": "管理员",
   "admin.users.modal.create.admin.description": "如果勾选，用户将能访问管理员面板",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "共享管理",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "过期于",
   "admin.shares.edit.delete.title": "删除共享 {id}",
   "admin.shares.edit.delete.description": "你真的要删除这个共享吗？",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "上传",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "文件名",
   "upload.filelist.size": "文件大小",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "创建共享",
   "upload.modal.link.error.invalid": "只能包括字母，数字，下划线(_)，和横线(-)",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "这个共享将过期于 {expiration}.",
   "upload.modal.completed.share-ready": "共享创建完毕",
   "upload.modal.completed.notified-reverse-share-creator": "我们已经通知预留共享的创建者。您也可以通过其他方式将该链接手动分享给他们。",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "共享 {shareId}",
   "share.description": "瞧瞧我给你共享了些什么！",
-  "share.fileCount": "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "访问次数达到上限",
   "share.error.visitor-limit-exceeded.description": "访问次数达到上限",
   "share.error.removed.title": "共享已删除",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "文件大小",
   "share.modal.file-preview.error.not-supported.title": "该文件类型不支持预览",
   "share.modal.file-preview.error.not-supported.description": "这种类型的文件不支持预览。请下载文件查看。",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "编辑 {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "配置文件已存在",
   "admin.config.config-file-warning.description": "由于您已配置了Pingvin 共享的配置文件，您无法通过UI更改配置。",
   "admin.config.title": "配置管理",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "通用",
   "admin.config.category.share": "共享",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "生成的共享 ID 的默认长度。该值也用于生成预留共享的链接。低于 8 的值不安全。",
   "admin.config.share.max-size": "最大文件上限",
   "admin.config.share.max-size.description": "最大文件上限",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Zip 文件压缩质量",
   "admin.config.share.zip-compression-level.description": "调整压缩质量来平衡压缩文件的大小和压缩的速度。有效值介于 0 和 9 之间，0 为不压缩，9 为最高质量压缩。 ",
   "admin.config.share.chunk-size": "块大小",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "允许您访问 S3 桶的密钥。",
   "admin.config.s3.use-checksum": "Use checksum",
   "admin.config.s3.use-checksum.description": "Turn off for backends that do not support checksum (e.g. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "合规",
   "admin.config.legal.enabled": "启用合规提醒",
   "admin.config.legal.enabled.description": "是否在页脚中显示版权信息和隐私政策。",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "共享",
   "common.button.generate": "生成",
   "common.button.done": "完成",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "链接",
   "common.text.navigate-to-link": "访问链接",
   "common.text.or": "或",

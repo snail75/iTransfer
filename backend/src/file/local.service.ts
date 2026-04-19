@@ -13,6 +13,7 @@ import * as mime from "mime-types";
 import * as archiver from "archiver";
 import { ClamScanService } from "src/clamscan/clamscan.service";
 import { ConfigService } from "src/config/config.service";
+import { StorageMigrationLockService } from "src/config/storageMigrationLock.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { resolveShareDirectory } from "src/storage/localStoragePath.util";
 import { validate as isValidUUID } from "uuid";
@@ -24,6 +25,7 @@ export class LocalFileService {
     private prisma: PrismaService,
     private config: ConfigService,
     private clamScanService: ClamScanService,
+    private storageMigrationLock: StorageMigrationLockService,
   ) {}
 
   async create(
@@ -46,6 +48,7 @@ export class LocalFileService {
       include: { files: true, reverseShare: true, creator: true },
     });
     if (!share) throw new NotFoundException("Share not found");
+    this.storageMigrationLock.assertShareIsNotLocked(shareId);
     const shareDirectory = resolveShareDirectory(share);
 
     if (share.uploadLocked && !allowCompletedShareUpload)
@@ -69,14 +72,15 @@ export class LocalFileService {
       !allowPublicUpload &&
       versionedFiles.length === 0
     ) {
-      throw new BadRequestException("Versioning requires an existing file name");
+      throw new BadRequestException(
+        "Versioning requires an existing file name",
+      );
     }
 
     let diskFileSize: number;
     try {
-      diskFileSize = (
-        await fs.stat(`${shareDirectory}/${file.id}.tmp-chunk`)
-      ).size;
+      diskFileSize = (await fs.stat(`${shareDirectory}/${file.id}.tmp-chunk`))
+        .size;
     } catch {
       diskFileSize = 0;
     }
@@ -102,10 +106,9 @@ export class LocalFileService {
     }
 
     // Check if share size limit is exceeded
-    const fileSizeSum = share.files.reduce(
-      (n, { size }) => n + parseInt(size),
-      0,
-    ) - versionedFileSize;
+    const fileSizeSum =
+      share.files.reduce((n, { size }) => n + parseInt(size), 0) -
+      versionedFileSize;
 
     const shareSizeSum = fileSizeSum + diskFileSize + buffer.byteLength;
     const userStorageUsage = await this.getUserStorageUsageBytes(
@@ -137,13 +140,12 @@ export class LocalFileService {
       );
     }
 
-    await fs.appendFile(
-      `${shareDirectory}/${file.id}.tmp-chunk`,
-      buffer,
-    );
+    this.storageMigrationLock.assertShareIsNotLocked(shareId);
+    await fs.appendFile(`${shareDirectory}/${file.id}.tmp-chunk`, buffer);
 
     const isLastChunk = chunk.index == chunk.total - 1;
     if (isLastChunk) {
+      this.storageMigrationLock.assertShareIsNotLocked(shareId);
       await fs.rename(
         `${shareDirectory}/${file.id}.tmp-chunk`,
         `${shareDirectory}/${file.id}`,
@@ -213,7 +215,9 @@ export class LocalFileService {
       throw new NotFoundException("File not found");
     }
 
-    const file = createReadStream(`${resolveShareDirectory(fileMetaData.share)}/${fileId}`);
+    const file = createReadStream(
+      `${resolveShareDirectory(fileMetaData.share)}/${fileId}`,
+    );
 
     return {
       metaData: {
@@ -239,7 +243,9 @@ export class LocalFileService {
   }
 
   async deleteAllFiles(shareId: string) {
-    const share = await this.prisma.share.findUnique({ where: { id: shareId } });
+    const share = await this.prisma.share.findUnique({
+      where: { id: shareId },
+    });
     if (!share) return;
     await fs.rm(resolveShareDirectory(share), {
       recursive: true,

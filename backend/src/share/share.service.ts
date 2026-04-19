@@ -6,7 +6,6 @@ import {
 } from "@nestjs/common";
 import { JwtService, JwtSignOptions } from "@nestjs/jwt";
 import { Share, User } from "@prisma/client";
-import * as archiver from "archiver";
 import * as argon from "argon2";
 import * as fs from "fs";
 import * as moment from "moment";
@@ -16,10 +15,7 @@ import { EmailService } from "src/email/email.service";
 import { FileService } from "src/file/file.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ReverseShareService } from "src/reverseShare/reverseShare.service";
-import {
-  getConfiguredLocalStorageRoot,
-  resolveShareDirectory,
-} from "src/storage/localStoragePath.util";
+import { getConfiguredLocalStorageRoot } from "src/storage/localStoragePath.util";
 import { parseRelativeDateToAbsolute } from "src/utils/date.util";
 import { CreateShareDTO } from "./dto/createShare.dto";
 
@@ -103,43 +99,6 @@ export class ShareService {
     return shareTuple;
   }
 
-  async createZip(shareId: string) {
-    const share = await this.prisma.share.findUnique({
-      where: { id: shareId },
-    });
-    if (!share || share.storageProvider == "S3") return;
-
-    const path = resolveShareDirectory(share);
-
-    const files = await this.prisma.file.findMany({
-      where: {
-        shareId,
-        scanStatus: { in: ["CLEAN", "UNSCANNED"] },
-      },
-    });
-    const archivePath = `${path}/archive.zip`;
-    const nextArchivePath = `${path}/archive.zip.tmp`;
-
-    const archive = archiver("zip", {
-      zlib: { level: this.config.get("share.zipCompressionLevel") },
-    });
-    const writeStream = fs.createWriteStream(nextArchivePath);
-
-    for (const file of files) {
-      archive.append(fs.createReadStream(`${path}/${file.id}`), {
-        name: file.name,
-      });
-    }
-
-    archive.pipe(writeStream);
-    await archive.finalize();
-    await new Promise<void>((resolve, reject) => {
-      writeStream.on("close", resolve);
-      writeStream.on("error", reject);
-    });
-    fs.renameSync(nextArchivePath, archivePath);
-  }
-
   async complete(id: string, reverseShareToken?: string) {
     const share = await this.prisma.share.findUnique({
       where: { id },
@@ -157,12 +116,6 @@ export class ShareService {
     if (share.files.length == 0)
       throw new BadRequestException(
         "You need at least on file in your share to complete it.",
-      );
-
-    // Asynchronously create a zip of all files
-    if (share.files.length > 1)
-      this.createZip(id).then(() =>
-        this.prisma.share.update({ where: { id }, data: { isZipReady: true } }),
       );
 
     // Send email for each recipient
@@ -201,7 +154,7 @@ export class ShareService {
 
     const updatedShare = await this.prisma.share.update({
       where: { id },
-      data: { uploadLocked: true },
+      data: { uploadLocked: true, isZipReady: share.files.length > 1 },
     });
 
     return {
@@ -392,13 +345,10 @@ export class ShareService {
     if (!share || !share.uploadLocked)
       throw new NotFoundException("Share not found");
 
-    if (!share.isZipReady && share.files.length > 1) {
-      void this.createZip(id).then(() =>
-        this.prisma.share.update({ where: { id }, data: { isZipReady: true } }),
-      );
-    }
-
-    return share;
+    return {
+      ...share,
+      isZipReady: share.files.length > 1,
+    };
   }
 
   async remove(shareId: string, isDeleterAdmin = false) {

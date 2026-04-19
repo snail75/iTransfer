@@ -20,7 +20,12 @@
   color: var(--on-surface);
   background: var(--surface-container-high);
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
     sans-serif;
 }
 
@@ -74,7 +79,11 @@ p {
   white-space: nowrap;
   word-wrap: normal;
   -webkit-font-smoothing: antialiased;
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
 }
 
 #app {
@@ -140,6 +149,14 @@ p {
 .brand-icon {
   color: var(--primary);
   font-size: 22px;
+}
+
+.brand-icon-image {
+  border-radius: 6px;
+  display: block;
+  height: 28px;
+  object-fit: cover;
+  width: 28px;
 }
 
 h1 {
@@ -297,9 +314,26 @@ h1 {
   gap: 8px;
 }
 
+.token-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
 .transfer-name-row input {
   flex: 1;
   min-width: 0;
+}
+
+.token-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.token-row .secondary-button {
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 9px 12px;
 }
 
 .transfer-save-button {
@@ -364,10 +398,6 @@ select:focus {
 
 .option-icon {
   font-size: 19px;
-}
-
-.option-icon.muted {
-  color: rgba(81, 97, 109, 0.62);
 }
 
 .option-copy {
@@ -585,6 +615,11 @@ select:focus {
 }
 
 #choose-files {
+  min-width: 0;
+  width: 100%;
+}
+
+#start-new-transfer {
   min-width: 0;
   width: 100%;
 }
@@ -878,6 +913,7 @@ progress::-webkit-progress-value {
 }
 
 .links-list {
+  align-content: start;
   background: rgba(235, 245, 255, 0.32);
   border: 1px solid rgba(191, 219, 254, 0.34);
   border-radius: 12px;
@@ -897,10 +933,12 @@ progress::-webkit-progress-value {
   contain-intrinsic-size: 76px;
   display: grid;
   gap: 8px;
+  grid-auto-rows: max-content;
   padding: 12px 0;
 }
 
 .link-summary {
+  align-content: start;
   background: transparent;
   color: var(--on-surface);
   display: grid;

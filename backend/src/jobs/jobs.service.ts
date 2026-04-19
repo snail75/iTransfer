@@ -30,11 +30,11 @@ export class JobsService {
     });
 
     for (const expiredShare of expiredShares) {
+      await this.fileService.deleteAllFiles(expiredShare.id);
+
       await this.prisma.share.delete({
         where: { id: expiredShare.id },
       });
-
-      await this.fileService.deleteAllFiles(expiredShare.id);
     }
 
     if (expiredShares.length > 0) {
@@ -71,11 +71,11 @@ export class JobsService {
     });
 
     for (const unfinishedShare of unfinishedShares) {
+      await this.fileService.deleteAllFiles(unfinishedShare.id);
+
       await this.prisma.share.delete({
         where: { id: unfinishedShare.id },
       });
-
-      await this.fileService.deleteAllFiles(unfinishedShare.id);
     }
 
     if (unfinishedShares.length > 0) {
@@ -84,30 +84,45 @@ export class JobsService {
   }
 
   @Cron("0 0 * * *")
-  deleteTemporaryFiles() {
+  async deleteTemporaryFiles() {
     let filesDeleted = 0;
 
-    const shareDirectories = fs
-      .readdirSync(SHARE_DIRECTORY, { withFileTypes: true })
-      .filter((dirent) => dirent.isDirectory())
-      .map((dirent) => dirent.name);
+    const localShares = await this.prisma.share.findMany({
+      where: { storageProvider: "LOCAL" },
+      select: { localStoragePath: true },
+    });
+    const localRoots = new Set([
+      SHARE_DIRECTORY,
+      ...localShares
+        .map((share) => share.localStoragePath)
+        .filter((localStoragePath): localStoragePath is string =>
+          Boolean(localStoragePath),
+        ),
+    ]);
 
-    for (const shareDirectory of shareDirectories) {
-      const temporaryFiles = fs
-        .readdirSync(`${SHARE_DIRECTORY}/${shareDirectory}`)
-        .filter((file) => file.endsWith(".tmp-chunk"));
+    for (const localRoot of localRoots) {
+      if (!fs.existsSync(localRoot)) continue;
 
-      for (const file of temporaryFiles) {
-        const stats = fs.statSync(
-          `${SHARE_DIRECTORY}/${shareDirectory}/${file}`,
-        );
-        const isOlderThanOneDay = moment(stats.mtime)
-          .add(1, "day")
-          .isBefore(moment());
+      const shareDirectories = fs
+        .readdirSync(localRoot, { withFileTypes: true })
+        .filter((dirent) => dirent.isDirectory())
+        .map((dirent) => dirent.name);
 
-        if (isOlderThanOneDay) {
-          fs.rmSync(`${SHARE_DIRECTORY}/${shareDirectory}/${file}`);
-          filesDeleted++;
+      for (const shareDirectory of shareDirectories) {
+        const temporaryFiles = fs
+          .readdirSync(`${localRoot}/${shareDirectory}`)
+          .filter((file) => file.endsWith(".tmp-chunk"));
+
+        for (const file of temporaryFiles) {
+          const stats = fs.statSync(`${localRoot}/${shareDirectory}/${file}`);
+          const isOlderThanOneDay = moment(stats.mtime)
+            .add(1, "day")
+            .isBefore(moment());
+
+          if (isOlderThanOneDay) {
+            fs.rmSync(`${localRoot}/${shareDirectory}/${file}`);
+            filesDeleted++;
+          }
         }
       }
     }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { TbLink, TbRefresh, TbSettings, TbUsers } from "react-icons/tb";
+import { TbLink, TbRefresh, TbSettings, TbTool, TbUsers } from "react-icons/tb";
 import { FormattedMessage } from "react-intl";
 import Meta from "../../components/Meta";
 import useTranslate from "../../hooks/useTranslate.hook";
@@ -26,6 +26,11 @@ const Admin = () => {
       title: t("admin.button.config"),
       icon: TbSettings,
       route: "/admin/config/general",
+    },
+    {
+      title: t("admin.button.system"),
+      icon: TbTool,
+      route: "/admin/system",
     },
   ]);
 
@@ -72,10 +77,13 @@ const Admin = () => {
                   className={clsx(
                     "h-32 flex flex-col items-center justify-center text-center",
                     "hover:shadow-lg transition-all duration-200 hover:scale-105",
-                    "cursor-pointer"
+                    "cursor-pointer",
                   )}
                 >
-                  <Icon className="text-primary-600 dark:text-primary-400 mb-2" size={35} />
+                  <Icon
+                    className="text-primary-600 dark:text-primary-400 mb-2"
+                    size={35}
+                  />
                   <p className="text-sm font-medium text-text dark:text-text-dark">
                     {item.title}
                   </p>

@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Дели везу",
   "account.shares.modal.delete.title": "Избриши дељење {share}",
   "account.shares.modal.delete.description": "Да ли заиста желите да избришете ово дељење?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Обрнуто дељење",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Линк за обрнуто дељење",
   "account.reverseShares.modal.delete.title": "Обришите обрнуто дељење",
   "account.reverseShares.modal.delete.description": "Да ли заиста желите да избришете ово обрнуто дељење? Ако то учините, придружена дељења ће такође бити избрисана.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Администрација",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "Ако није означено, корисник ће добити имејл са везом за постављање лозинке.",
   "admin.users.modal.create.admin": "Администраторске привилегије",
   "admin.users.modal.create.admin.description": "Ако је означено, корисник ће моћи да приступи административном панелу.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Управљање дељењем",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Истиче",
   "admin.shares.edit.delete.title": "Обриши дељење: {id}",
   "admin.shares.edit.delete.description": "Да ли заиста желите да обришете ово дељење?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Пошаљи",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Назив",
   "upload.filelist.size": "Величина",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Направи дељење",
   "upload.modal.link.error.invalid": "Може да садржи само слова, бројеве, доње црте и цртице",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "Ово дељење ће истећи {expiration}.",
   "upload.modal.completed.share-ready": "Дељење је спремно",
   "upload.modal.completed.notified-reverse-share-creator": "Обавестили смо креатора реверзног дељења. Такође можете ручно поделити овај линк са њима на друге начине.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Дељење {shareId}",
   "share.description": "Погледајте шта сам поделио са вама!",
-  "share.fileCount": "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Прекорачено је ограничење посетилаца",
   "share.error.visitor-limit-exceeded.description": "Ограничење посетилаца из овог дељења је премашено.",
   "share.error.removed.title": "Дељење је уклоњено",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Величина",
   "share.modal.file-preview.error.not-supported.title": "Преглед није подржан",
   "share.modal.file-preview.error.not-supported.description": "Прегледи нису подржани за овај тип датотека. Молимо преузмите фајл да бисте га прегледали.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Уреди {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Configuration file present",
   "admin.config.config-file-warning.description": "As you have a configured Mediapult Transfer with a configuration file, you can't change the configuration through the UI.",
   "admin.config.title": "Конфигурација",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Опште",
   "admin.config.category.share": "Дељење",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Подразумевана дужина генерисаног ID-а за дељење. Ова вредност се такође користи за генерисање линкова за обрнуто дељење. Вредност испод 8 се не сматра безбедном.",
   "admin.config.share.max-size": "Максимална величина",
   "admin.config.share.max-size.description": "Максимална величина дељења",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Ниво Zip компресије",
   "admin.config.share.zip-compression-level.description": "Подесите ниво да бисте балансирали између величине датотеке и брзине компресије. Важеће вредности се крећу од 0 до 9, при чему је 0 без компресије, а 9 је максимална компресија. ",
   "admin.config.share.chunk-size": "Величина комада",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "The secret which allows you to access the S3 bucket.",
   "admin.config.s3.use-checksum": "Use checksum",
   "admin.config.s3.use-checksum.description": "Turn off for backends that do not support checksum (e.g. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Legal",
   "admin.config.legal.enabled": "Enable legal notices",
   "admin.config.legal.enabled.description": "Whether to show a link to imprint and privacy policy in the footer.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Дељење",
   "common.button.generate": "Генериши",
   "common.button.done": "Готово",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Линк",
   "common.text.navigate-to-link": "Посетите линк",
   "common.text.or": "или",

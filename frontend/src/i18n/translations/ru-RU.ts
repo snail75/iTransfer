@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Поделиться ссылкой",
   "account.shares.modal.delete.title": "Delete share: {share}",
   "account.shares.modal.delete.description": "Вы действительно хотите удалить эту загрузку?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Обратные загрузки",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Ссылка обратной загрузки",
   "account.reverseShares.modal.delete.title": "Удалить обратную загрузку",
   "account.reverseShares.modal.delete.description": "Вы действительно хотите удалить эту обратную загрузку? Если вы это сделаете, то все связанные обратные загрузки будут также удалены.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Администрирование",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "Если флажок не установлен, пользователь получит письмо со ссылкой для установки пароля.",
   "admin.users.modal.create.admin": "Права администратора",
   "admin.users.modal.create.admin.description": "Если отмечено, пользователь будет иметь доступ к панели администратора.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Управление Share",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Срок действия до",
   "admin.shares.edit.delete.title": "Delete share: {id}",
   "admin.shares.edit.delete.description": "Вы действительно хотите удалить эту загрузку?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Загрузить",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Название",
   "upload.filelist.size": "Размер",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Загрузить",
   "upload.modal.link.error.invalid": "Имя пользователя должно состоять только из букв, цифр, подчёркиваний и дефисов",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "Эта загрузка устареет {expiration}.",
   "upload.modal.completed.share-ready": "Готово",
   "upload.modal.completed.notified-reverse-share-creator": "Мы уведомили создателя обратного ресурса. Вы также можете вручную поделиться этой ссылкой с ними другими средствами.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Загрузка {shareId}",
   "share.description": "Посмотрите, чем я поделился с вами!",
-  "share.fileCount": "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Превышен лимит посетителей",
   "share.error.visitor-limit-exceeded.description": "Превышен лимит посетителей.",
   "share.error.removed.title": "Загрузка удалена",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Размер",
   "share.modal.file-preview.error.not-supported.title": "Предпросмотр не поддерживается",
   "share.modal.file-preview.error.not-supported.description": "Предпросмотр не поддерживается для этого типа файлов. Пожалуйста, скачайте файл для просмотра.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Редактировать {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Configuration file present",
   "admin.config.config-file-warning.description": "As you have a configured Mediapult Transfer with a configuration file, you can't change the configuration through the UI.",
   "admin.config.title": "Конфигурация",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Общее",
   "admin.config.category.share": "Загрузки",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Длина по умолчанию для сгенерированного ID ресурса. Это значение также используется для генерации ссылок для обратных акций. Значение ниже 8 не считается безопасным.",
   "admin.config.share.max-size": "Максимальный размер",
   "admin.config.share.max-size.description": "Максимальный размер файла",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Уровень сжатия Zip",
   "admin.config.share.zip-compression-level.description": "Регулировка уровня баланса между размером файла и скоростью сжатия. Допустимые значения от 0 до 9, с 0 без сжатия, а 9 - максимальное сжатие. ",
   "admin.config.share.chunk-size": "Размер чанка",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "The secret which allows you to access the S3 bucket.",
   "admin.config.s3.use-checksum": "Use checksum",
   "admin.config.s3.use-checksum.description": "Turn off for backends that do not support checksum (e.g. B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Legal",
   "admin.config.legal.enabled": "Enable legal notices",
   "admin.config.legal.enabled.description": "Whether to show a link to imprint and privacy policy in the footer.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Поделиться",
   "common.button.generate": "Сгенерировать",
   "common.button.done": "Готово",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Ссылка",
   "common.text.navigate-to-link": "Перейти по ссылке",
   "common.text.or": "или",

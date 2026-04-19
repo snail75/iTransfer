@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Odkaz na sdílení",
   "account.shares.modal.delete.title": "Odstranit sdílení {share}",
   "account.shares.modal.delete.description": "Opravdu chcete odstranit toto sdílení?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Opačná sdílení",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Odkaz na opačné sdílení",
   "account.reverseShares.modal.delete.title": "Odstranit opačné sdílení",
   "account.reverseShares.modal.delete.description": "Opravdu chcete odstranit toto opačné sdílení? Pokud tak učiníte, související sdílení budou také odstraněny.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Administrace",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "Pokud není zaškrtnuto, uživatel obdrží e-mail s odkazem pro nastavení svého hesla.",
   "admin.users.modal.create.admin": "Administrátorská práva",
   "admin.users.modal.create.admin.description": "Je-li zaškrtnuto, uživatel bude mít přístup k administračnímu panelu.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Správa sdílení",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Vyprší",
   "admin.shares.edit.delete.title": "Odstranit sdílení: {id}",
   "admin.shares.edit.delete.description": "Opravdu chcete smazat toto sdílení?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Nahrát",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Název",
   "upload.filelist.size": "Velikost",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Vytvořit sdílení",
   "upload.modal.link.error.invalid": "Může obsahovat pouze písmena, číslice, podtržítka a pomlčky",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "Toto sdílení vyprší {expiration}.",
   "upload.modal.completed.share-ready": "Sdílení připraveno",
   "upload.modal.completed.notified-reverse-share-creator": "Upozornili jsme tvůrce opačného sdílení. Můžete s nimi také ručně sdílet tento odkaz jiným způsobem.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Sdílení {shareId}",
   "share.description": "Podívejte se, co jsem s vámi sdílel!",
-  "share.fileCount": "{count, plural, =1 {# soubor} other {# soubory}} · {size} (Archiv může být menší díky kompresi)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Limit návštěvníků překročen",
   "share.error.visitor-limit-exceeded.description": "Limit návštěvníků tohoto sdílení byl překročen.",
   "share.error.removed.title": "Sdílení bylo odstraněno",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Velikost",
   "share.modal.file-preview.error.not-supported.title": "Náhled není podporován",
   "share.modal.file-preview.error.not-supported.description": "Náhledy nejsou podporovány pro tento typ souborů. Stáhněte si soubor pro jeho zobrazení.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Upravit {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Konfigurační soubor existuje",
   "admin.config.config-file-warning.description": "Jelikož je Mediapult Transfer nastaven pomocí konfiguračního souboru, nemůžete změnit nastavení přes UI.",
   "admin.config.title": "Nastavení",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Obecné",
   "admin.config.category.share": "Sdílení",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Výchozí délka pro generované ID sdílení. Tato hodnota se používá také pro generování odkazů na opačné sdílení. Hodnota nižší než 8 se nepovažuje za bezpečnou.",
   "admin.config.share.max-size": "Max. velikost",
   "admin.config.share.max-size.description": "Maximální velikost sdílení v bajtech",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Úroveň Zip komprese",
   "admin.config.share.zip-compression-level.description": "Upravte úroveň pro rovnováhu mezi velikostí souboru a rychlostí komprese. Platné hodnoty se pohybují od 0 do 9, přičemž 0 znamená bez komprese a 9 je maximální komprese. ",
   "admin.config.share.chunk-size": "Velikost bloku",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "Tajný kód, který vám umožňuje přístup do bloku S3.",
   "admin.config.s3.use-checksum": "Použít checksum",
   "admin.config.s3.use-checksum.description": "Vypněte pro backendy které nepodporují checksum (např. B2)",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Právní ustanovení",
   "admin.config.legal.enabled": "Povolit právní oznámení",
   "admin.config.legal.enabled.description": "Zda v zápatí zobrazit odkaz na tiráž a zásady ochrany osobních údajů.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Sdílet",
   "common.button.generate": "Generovat",
   "common.button.done": "Hotovo",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Odkaz",
   "common.text.navigate-to-link": "Navštívit odkaz",
   "common.text.or": "nebo",

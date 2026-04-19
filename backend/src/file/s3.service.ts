@@ -288,32 +288,35 @@ export class S3FileService {
     const s3Instance = this.getS3Instance();
 
     try {
-      // List all objects under the given prefix
-      const listResponse = await s3Instance.send(
-        new ListObjectsV2Command({
-          Bucket: this.config.get("s3.bucketName"),
-          Prefix: prefix,
-        }),
-      );
+      let continuationToken: string | undefined;
 
-      if (!listResponse.Contents || listResponse.Contents.length === 0) {
-        throw new Error(`No files found for share ${shareId}`);
-      }
+      do {
+        const listResponse = await s3Instance.send(
+          new ListObjectsV2Command({
+            Bucket: this.config.get("s3.bucketName"),
+            Prefix: prefix,
+            ContinuationToken: continuationToken,
+          }),
+        );
 
-      // Extract the keys of the files to be deleted
-      const objectsToDelete = listResponse.Contents.map((file) => ({
-        Key: file.Key!,
-      }));
+        const objectsToDelete =
+          listResponse.Contents?.map((file) => ({
+            Key: file.Key!,
+          })) ?? [];
 
-      // Delete all files in a single request (up to 1000 objects at once)
-      await s3Instance.send(
-        new DeleteObjectsCommand({
-          Bucket: this.config.get("s3.bucketName"),
-          Delete: {
-            Objects: objectsToDelete,
-          },
-        }),
-      );
+        if (objectsToDelete.length > 0) {
+          await s3Instance.send(
+            new DeleteObjectsCommand({
+              Bucket: this.config.get("s3.bucketName"),
+              Delete: {
+                Objects: objectsToDelete,
+              },
+            }),
+          );
+        }
+
+        continuationToken = listResponse.NextContinuationToken;
+      } while (continuationToken);
     } catch {
       throw new Error("Could not delete all files from S3");
     }

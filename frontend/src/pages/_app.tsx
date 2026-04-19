@@ -24,7 +24,10 @@ import { ToastContainer } from "../components/ui";
 import { setGlobalToast } from "../utils/toast.util";
 import "../styles/globals.css";
 
-const excludeDefaultLayoutRoutes = ["/admin/config/[category]"];
+const excludeDefaultLayoutRoutes = [
+  "/admin/config/[category]",
+  "/admin/system",
+];
 
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -82,12 +85,11 @@ function App({ Component, pageProps }: AppProps) {
 
   // Get language from cookie or browser
   const [language, setLanguage] = useState<string>("en");
-  
+
   useEffect(() => {
-    const lang = getCookie("language")?.toString() ||
-      (typeof window !== "undefined"
-        ? navigator.language.split("-")[0]
-        : "en");
+    const lang =
+      getCookie("language")?.toString() ||
+      (typeof window !== "undefined" ? navigator.language.split("-")[0] : "en");
     setLanguage(lang);
     moment.locale(lang);
   }, []);
@@ -108,45 +110,54 @@ function App({ Component, pageProps }: AppProps) {
         <ThemeProvider>
           <ModalProvider>
             <ConfigContext.Provider
-            value={useMemo(
-              () => ({
-                configVariables,
-                refresh: async () => {
-                  setConfigVariables(await configService.list());
-                },
-              }),
-              [configVariables]
-            )}
-          >
-            <UserContext.Provider
               value={useMemo(
                 () => ({
-                  user,
-                  refreshUser: async () => {
-                    const user = await userService.getCurrentUser();
-                    setUser(user);
-                    return user;
+                  configVariables,
+                  refresh: async () => {
+                    setConfigVariables(await configService.list());
                   },
                 }),
-                [user]
+                [configVariables],
               )}
             >
-              {excludeDefaultLayoutRoutes.includes(route) ? (
-                <Component {...pageProps} />
-              ) : (
-                <div className="flex flex-col min-h-screen">
-                  <div className="flex-1">
-                    <Header />
-                    <main>
-                      <Component {...pageProps} />
-                    </main>
+              <UserContext.Provider
+                value={useMemo(
+                  () => ({
+                    user,
+                    refreshUser: async () => {
+                      const user = await userService.getCurrentUser();
+                      setUser(user);
+                      return user;
+                    },
+                  }),
+                  [user],
+                )}
+              >
+                {excludeDefaultLayoutRoutes.includes(route) ? (
+                  <Component {...pageProps} />
+                ) : (
+                  <div className="flex flex-col min-h-screen">
+                    <div className="flex-1">
+                      <Header />
+                      <main>
+                        <Component {...pageProps} />
+                      </main>
+                    </div>
+                    <Footer />
                   </div>
-                  <Footer />
-                </div>
-              )}
-              <ToastContainer toasts={toasts.map(t => ({ id: t.id, message: t.message, type: t.type, duration: t.duration, onClose: removeToast }))} onClose={removeToast} />
-            </UserContext.Provider>
-          </ConfigContext.Provider>
+                )}
+                <ToastContainer
+                  toasts={toasts.map((t) => ({
+                    id: t.id,
+                    message: t.message,
+                    type: t.type,
+                    duration: t.duration,
+                    onClose: removeToast,
+                  }))}
+                  onClose={removeToast}
+                />
+              </UserContext.Provider>
+            </ConfigContext.Provider>
           </ModalProvider>
         </ThemeProvider>
       </IntlProvider>

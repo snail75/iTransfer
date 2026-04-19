@@ -140,6 +140,13 @@ export default {
   "account.shares.modal.share-link": "Jagamise link",
   "account.shares.modal.delete.title": "Kustuta jagamine: {share}",
   "account.shares.modal.delete.description": "Kas soovid tõesti seda jagamist kustutada?",
+  "account.shares.table.allow-uploads": "Allow uploads",
+  "account.shares.table.allow-versioning": "Allow versioning",
+  "account.shares.action.information": "Share information",
+  "account.shares.action.copy-link": "Copy share link",
+  "account.shares.action.delete": "Delete share",
+  "account.shares.action.edit": "Edit share",
+  "account.shares.notify.name-saved": "Saved",
   // END /account/shares
   // /account/reverseShares
   "account.reverseShares.title": "Tagasijagamine",
@@ -182,6 +189,8 @@ export default {
   "account.reverseShares.modal.reverse-share-link": "Tagasijagamise link",
   "account.reverseShares.modal.delete.title": "Kustuta tagasijagamine",
   "account.reverseShares.modal.delete.description": "Kas soovid tõesti seda tagasijagamist kustutada? Kui jah, siis kustutatakse ka sellega seotud jagamised.",
+  "account.reverseShares.action.copy-link": "Copy reverse share link",
+  "account.reverseShares.action.delete": "Delete reverse share",
   // END /account/reverseShares
   // /admin
   "admin.title": "Administreerimine",
@@ -212,6 +221,11 @@ export default {
   "admin.users.modal.create.manual-password.description": "Kui see ei ole märgitud, saab kasutaja e-kirja lingiga mille kaudu oma parooli seada.",
   "admin.users.modal.create.admin": "Administraatori õigused",
   "admin.users.modal.create.admin.description": "Kui see on märgitud, saab kasutaja pääseda administraatori paneelile.",
+  "admin.users.table.storage-quota": "Storage quota",
+  "admin.users.storage.unlimited": "Unlimited storage",
+  "admin.users.storage.unlimited.description": "Turn this off to assign a storage quota to the user.",
+  "admin.users.action.edit": "Edit user",
+  "admin.users.action.delete": "Delete user",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Jagamiste haldus",
@@ -221,6 +235,7 @@ export default {
   "admin.shares.table.expires": "Aegub",
   "admin.shares.edit.delete.title": "Kustuta jagamine: {id}",
   "admin.shares.edit.delete.description": "Kas soovid tõesti seda jagamist kustutada?",
+  "admin.shares.table.anonymous": "Anonymous",
   // END /admin/shares
   // /upload
   "upload.title": "Laadi üles",
@@ -237,6 +252,8 @@ export default {
   // FileList.tsx
   "upload.filelist.name": "Nimi",
   "upload.filelist.size": "Suurus",
+  "upload.modal.allow-uploads": "Allow uploads",
+  "upload.modal.allow-versioning": "Allow versioning",
   // showCreateUploadModal.tsx
   "upload.modal.title": "Loo jagamine",
   "upload.modal.link.error.invalid": "Võib sisaldada ainult tähti, numbreid, alakriipse ja kriipse",
@@ -276,11 +293,15 @@ export default {
   "upload.modal.completed.expires-on": "See jagamine aegub {expiration}.",
   "upload.modal.completed.share-ready": "Jagamine valmis",
   "upload.modal.completed.notified-reverse-share-creator": "Oleme teavitanud tagasijagamise loojat. Saad samuti seda linki nendega käsitsi teiste vahenditega jagada.",
+  "upload.filelist.action.remove": "Remove file",
+  "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.status.waiting": "Waiting to upload",
+  "upload.filelist.status.queued": "Queued",
   // END /upload
   // /share/[id]
   "share.title": "Jagamine {shareId}",
   "share.description": "Vaata, mida ma sinuga jagasin!",
-  "share.fileCount": "{count, plural, =1 {# file} other {# files}} · {size} (zip file may be smaller due to compression)",
+  "share.fileCount": "{count, plural, =1 {# file} other {# files}} - {size} (zip file may be smaller due to compression)",
   "share.error.visitor-limit-exceeded.title": "Külastajate limiit ületatud",
   "share.error.visitor-limit-exceeded.description": "Selle jagamise külastajate limiit on ületatud.",
   "share.error.removed.title": "Jagamine eemaldatud",
@@ -299,6 +320,12 @@ export default {
   "share.table.size": "Suurus",
   "share.modal.file-preview.error.not-supported.title": "Eelvaadet ei toetata",
   "share.modal.file-preview.error.not-supported.description": "Selle failitüübi eelvaateid ei toetata. Faili vaatamiseks laadi see alla.",
+  "share.notify.file-version-replaced": "File version replaced",
+  "share.upload-back.title": "Upload files back",
+  "share.upload-back.replace-title": "Replace existing files",
+  "share.upload-back.button": "Upload",
+  "share.upload-back.dropzone-title": "Drop files to add them to this link",
+  "share.upload-back.replace-hint": "Use the replace icon next to a file to upload a newer version.",
   // END /share/[id]
   // /share/[id]/edit
   "share.edit.title": "Muuda jagamist {shareId}",
@@ -316,6 +343,8 @@ export default {
   "admin.config.config-file-warning.title": "Konfiguratsioonifail olemas",
   "admin.config.config-file-warning.description": "Kuna teil on konfigureeritud Mediapult Transfer konfiguratsioonifailiga, ei saa te muuta konfiguratsiooni kasutajaliidest kasutades.",
   "admin.config.title": "Seaded",
+  "admin.config.empty-category.title": "No configuration options found",
+  "admin.config.empty-category.description": "This category does not have any editable settings in the current database. Run the config seed and restart the backend if this category was added recently.",
   "admin.config.category.general": "Üldine",
   "admin.config.category.share": "Jagamine",
   "admin.config.category.cache": "Cache",
@@ -373,6 +402,13 @@ export default {
   "admin.config.share.share-id-length.description": "Vaikimisi pikkus jagamise genereeritud ID jaoks. Seda väärtust kasutatakse ka tagasijagamise linkide loomiseks. Väärtust alla 8 ei peeta turvaliseks.",
   "admin.config.share.max-size": "Maksimaalne suurus",
   "admin.config.share.max-size.description": "Maksimaalne jagamise suurus",
+  "admin.config.storage.local-upload-path": "Local upload path",
+  "admin.config.storage.local-upload-path.description": "Absolute path used for new locally stored uploads. Existing shares keep their current storage path. Leave empty to use the default data directory.",
+  "admin.config.storage.migrate.title": "Move existing local shares",
+  "admin.config.storage.migrate.description": "Moves all existing local share folders to the currently configured local upload path and updates the share records. Share links stay the same. Do this when no large uploads are running.",
+  "admin.config.storage.migrate.button": "Move existing shares",
+  "admin.config.storage.migrate.confirm": "Move all existing local share folders to the configured storage path? Share links stay active, but no large uploads should be running during the move.",
+  "admin.config.storage.migrate.success": "Moved {count} share folders to {path}. Existing links remain active.",
   "admin.config.share.zip-compression-level": "Zip tihendustase",
   "admin.config.share.zip-compression-level.description": "Reguleeri tihendustaset, et leida tasakaal faili suuruse ja tihendamise kiiruse vahel. Kehtivad väärtused jäävad vahemikku 0 kuni 9, kus 0 tähendab mitte tihendamist ja 9 maksimaalset tihendamist. ",
   "admin.config.share.chunk-size": "Andmeploki suurus",
@@ -489,6 +525,7 @@ export default {
   "admin.config.s3.secret.description": "S3 ämbri saladus.",
   "admin.config.s3.use-checksum": "Kasuta kontrollsummat",
   "admin.config.s3.use-checksum.description": "Lülita välja, kui tagaliides ei toeta kontrollsummasid (nt B2).",
+  "admin.config.category.storage": "Storage",
   "admin.config.category.legal": "Juriidiline",
   "admin.config.legal.enabled": "Luba juriidilised teated",
   "admin.config.legal.enabled.description": "Kas kuvada linki kontaktandmetele ja privaatsuspoliitikale jaluses.",
@@ -535,6 +572,8 @@ export default {
   "common.button.share": "Jaga",
   "common.button.generate": "Genereeri",
   "common.button.done": "Valmis",
+  "common.text.yes": "Yes",
+  "common.text.no": "No",
   "common.text.link": "Link",
   "common.text.navigate-to-link": "Külastage linki",
   "common.text.or": "või",

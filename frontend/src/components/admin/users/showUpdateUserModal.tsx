@@ -6,7 +6,13 @@ import useTranslate, {
 import userService from "../../../services/user.service";
 import User from "../../../types/user.type";
 import toast from "../../../utils/toast.util";
-import { Button, Input, PasswordInput, Switch, Accordion } from "../../../components/ui";
+import {
+  Button,
+  Input,
+  PasswordInput,
+  Switch,
+  Accordion,
+} from "../../../components/ui";
 import { useForm } from "../../../hooks/useForm";
 import { ModalContextType } from "../../../contexts/ModalContext";
 import FileSizeInput from "../../core/FileSizeInput";
@@ -37,9 +43,7 @@ const Body = ({
 
   const accountValidationSchema = yup.object().shape({
     email: yup.string().email(t("common.error.invalid-email")),
-    username: yup
-      .string()
-      .min(3, t("common.error.too-short", { length: 3 })),
+    username: yup.string().min(3, t("common.error.too-short", { length: 3 })),
   });
 
   const accountForm = useForm({
@@ -56,9 +60,7 @@ const Body = ({
   });
 
   const passwordValidationSchema = yup.object().shape({
-    password: yup
-      .string()
-      .min(8, t("common.error.too-short", { length: 8 })),
+    password: yup.string().min(8, t("common.error.too-short", { length: 8 })),
   });
 
   const passwordForm = useForm({
@@ -109,15 +111,19 @@ const Body = ({
           onChange={(checked) => accountForm.setValue("isAdmin", checked)}
         />
         <Switch
-          label="Unlimited storage"
+          label={t("admin.users.storage.unlimited")}
           checked={accountForm.values.unlimitedStorage}
-          onChange={(checked) => accountForm.setValue("unlimitedStorage", checked)}
+          onChange={(checked) =>
+            accountForm.setValue("unlimitedStorage", checked)
+          }
         />
         {!accountForm.values.unlimitedStorage && (
           <FileSizeInput
-            label="Storage quota"
+            label={t("admin.users.table.storage-quota")}
             value={accountForm.values.storageQuotaBytes}
-            onChange={(bytes) => accountForm.setValue("storageQuotaBytes", bytes)}
+            onChange={(bytes) =>
+              accountForm.setValue("storageQuotaBytes", bytes)
+            }
           />
         )}
       </form>

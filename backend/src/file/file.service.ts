@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { LocalFileService } from "./local.service";
 import { S3FileService } from "./s3.service";
 import { ConfigService } from "src/config/config.service";
+import { StorageMigrationLockService } from "src/config/storageMigrationLock.service";
 import { Readable } from "stream";
 import { PrismaService } from "../prisma/prisma.service";
 
@@ -12,6 +13,7 @@ export class FileService {
     private localFileService: LocalFileService,
     private s3FileService: S3FileService,
     private configService: ConfigService,
+    private storageMigrationLock: StorageMigrationLockService,
   ) {}
 
   // Determine which service to use based on the current config value
@@ -41,6 +43,8 @@ export class FileService {
     allowVersioning = false,
     allowPublicUpload = false,
   ) {
+    this.storageMigrationLock.assertShareIsNotLocked(shareId);
+
     const storageService = this.getStorageService();
     return storageService.create(
       data,
@@ -62,6 +66,8 @@ export class FileService {
   }
 
   async remove(shareId: string, fileId: string) {
+    this.storageMigrationLock.assertShareIsNotLocked(shareId);
+
     const share = await this.prisma.share.findFirst({
       where: { id: shareId },
     });
@@ -70,6 +76,8 @@ export class FileService {
   }
 
   async deleteAllFiles(shareId: string) {
+    this.storageMigrationLock.assertShareIsNotLocked(shareId);
+
     const share = await this.prisma.share.findFirst({
       where: { id: shareId },
     });

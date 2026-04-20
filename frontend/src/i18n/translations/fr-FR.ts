@@ -268,6 +268,35 @@ export default {
     "Désactivez cette option pour attribuer un quota de stockage à l’utilisateur.",
   "admin.users.action.edit": "Modifier l’utilisateur",
   "admin.users.action.delete": "Supprimer l’utilisateur",
+  "admin.users.action.transfer-ownership": "Transfer shares",
+  "admin.users.transfer.title": "Transfer shares from {username}",
+  "admin.users.transfer.target-user": "Target user",
+  "admin.users.transfer.include-reverse-shares": "Also transfer reverse shares",
+  "admin.users.transfer.summary": "Transfer summary",
+  "admin.users.transfer.summary.shares": "Shares",
+  "admin.users.transfer.summary.reverse-shares": "Reverse shares",
+  "admin.users.transfer.summary.size": "Data size",
+  "admin.users.transfer.warning":
+    "This changes the owner of the selected shares. Existing links, files, passwords, expiration dates, and recipients remain unchanged.",
+  "admin.users.transfer.no-target":
+    "There is no active user available as a transfer target.",
+  "admin.users.transfer.success":
+    "Transferred {shares} shares and {reverseShares} reverse shares.",
+  "admin.users.transfer.delete-warning":
+    "This user still owns {count} transfers or reverse shares. Transfer them before deleting the user if they should remain available.",
+  "admin.users.transfer.submit": "Transfer shares",
+  "admin.users.status.disabled": "Disabled",
+  "admin.users.action.disable": "Disable user",
+  "admin.users.action.enable": "Enable user",
+  "admin.users.disable.title": "Disable user: {username}",
+  "admin.users.disable.description":
+    "This user will no longer be able to sign in or use API tokens. Existing transfers stay available.",
+  "admin.users.enable.title": "Enable user: {username}",
+  "admin.users.enable.description":
+    "This user will be able to sign in and use API tokens again.",
+  "admin.users.edit.update.disabled": "User disabled",
+  "admin.users.edit.update.disabled.description":
+    "Disabled users cannot sign in or use API tokens. Their transfers remain available.",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Gestion des partages",
@@ -686,7 +715,7 @@ export default {
   "admin.config.oauth.oidc-sign-out":
     "Déconnexion du fournisseur OpenID Connect",
   "admin.config.oauth.oidc-sign-out.description":
-    "Si activé, le bouton \"Déconnexion\" vous déconnectera également du fournisseur d'identité OpenID Connect",
+    'Si activé, le bouton "Déconnexion" vous déconnectera également du fournisseur d\'identité OpenID Connect',
   "admin.config.oauth.oidc-scope": "Paramètres de connexion OpenID",
   "admin.config.oauth.oidc-scope.description":
     "Paramètres fournis par votre fournisseur OpenID.",
@@ -811,6 +840,7 @@ export default {
   "error.msg.unverified_account":
     "Le compte {0} n'est pas vérifié, veuillez réessayer après vérification.",
   "error.msg.user_not_allowed": "Vous n’êtes pas autorisé à vous authentifier.",
+  "error.msg.user_disabled": "This user account is disabled.",
   "error.msg.cannot_get_user_info":
     "Impossible d’obtenir vos informations utilisateur à partir du compte {0}.",
   "error.param.provider_github": "GitHub",

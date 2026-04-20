@@ -29,14 +29,26 @@ const Users = () => {
   };
 
   const deleteUser = (user: User) => {
+    const ownedTransferCount =
+      (user.shareCount ?? 0) + (user.reverseShareCount ?? 0);
+
     modals.openConfirmModal({
       title: t("admin.users.edit.delete.title", {
         username: user.username,
       }),
       children: (
-        <p className="text-sm">
-          <FormattedMessage id="admin.users.edit.delete.description" />
-        </p>
+        <div className="space-y-3 text-sm">
+          <p>
+            <FormattedMessage id="admin.users.edit.delete.description" />
+          </p>
+          {ownedTransferCount > 0 && (
+            <p className="text-red-600 dark:text-red-400">
+              {t("admin.users.transfer.delete-warning", {
+                count: ownedTransferCount,
+              })}
+            </p>
+          )}
+        </div>
       ),
       labels: {
         confirm: t("common.button.delete"),
@@ -47,6 +59,47 @@ const Users = () => {
         userService
           .remove(user.id)
           .then(() => setUsers(users.filter((v) => v.id != user.id)))
+          .catch(toast.axiosError);
+      },
+    });
+  };
+
+  const toggleUserDisabled = (user: User) => {
+    const nextIsDisabled = !user.isDisabled;
+
+    modals.openConfirmModal({
+      title: t(
+        nextIsDisabled
+          ? "admin.users.disable.title"
+          : "admin.users.enable.title",
+        {
+          username: user.username,
+        },
+      ),
+      children: (
+        <p className="text-sm">
+          <FormattedMessage
+            id={
+              nextIsDisabled
+                ? "admin.users.disable.description"
+                : "admin.users.enable.description"
+            }
+          />
+        </p>
+      ),
+      labels: {
+        confirm: t(
+          nextIsDisabled
+            ? "admin.users.action.disable"
+            : "admin.users.action.enable",
+        ),
+        cancel: t("common.button.cancel"),
+      },
+      confirmProps: { variant: nextIsDisabled ? "danger" : "primary" },
+      onConfirm: async () => {
+        userService
+          .update(user.id, { isDisabled: nextIsDisabled })
+          .then(getUsers)
           .catch(toast.axiosError);
       },
     });
@@ -78,6 +131,7 @@ const Users = () => {
           users={users}
           getUsers={getUsers}
           deleteUser={deleteUser}
+          toggleUserDisabled={toggleUserDisabled}
           isLoading={isLoading}
         />
       </Container>

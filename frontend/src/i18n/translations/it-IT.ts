@@ -266,6 +266,35 @@ export default {
     "Disattiva questa opzione per assegnare una quota di archiviazione all’utente.",
   "admin.users.action.edit": "Modifica utente",
   "admin.users.action.delete": "Elimina utente",
+  "admin.users.action.transfer-ownership": "Transfer shares",
+  "admin.users.transfer.title": "Transfer shares from {username}",
+  "admin.users.transfer.target-user": "Target user",
+  "admin.users.transfer.include-reverse-shares": "Also transfer reverse shares",
+  "admin.users.transfer.summary": "Transfer summary",
+  "admin.users.transfer.summary.shares": "Shares",
+  "admin.users.transfer.summary.reverse-shares": "Reverse shares",
+  "admin.users.transfer.summary.size": "Data size",
+  "admin.users.transfer.warning":
+    "This changes the owner of the selected shares. Existing links, files, passwords, expiration dates, and recipients remain unchanged.",
+  "admin.users.transfer.no-target":
+    "There is no active user available as a transfer target.",
+  "admin.users.transfer.success":
+    "Transferred {shares} shares and {reverseShares} reverse shares.",
+  "admin.users.transfer.delete-warning":
+    "This user still owns {count} transfers or reverse shares. Transfer them before deleting the user if they should remain available.",
+  "admin.users.transfer.submit": "Transfer shares",
+  "admin.users.status.disabled": "Disabled",
+  "admin.users.action.disable": "Disable user",
+  "admin.users.action.enable": "Enable user",
+  "admin.users.disable.title": "Disable user: {username}",
+  "admin.users.disable.description":
+    "This user will no longer be able to sign in or use API tokens. Existing transfers stay available.",
+  "admin.users.enable.title": "Enable user: {username}",
+  "admin.users.enable.description":
+    "This user will be able to sign in and use API tokens again.",
+  "admin.users.edit.update.disabled": "User disabled",
+  "admin.users.edit.update.disabled.description":
+    "Disabled users cannot sign in or use API tokens. Their transfers remain available.",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Gestione condivisioni",
@@ -537,7 +566,8 @@ export default {
   "admin.system.field.current-upload-path": "Percorso upload attivo",
   "admin.system.field.current-upload-path.description":
     "Questo percorso è attualmente configurato per le nuove condivisioni locali. Le condivisioni esistenti possono restare su percorsi precedenti finché non vengono migrate.",
-  "admin.system.field.default-upload-path": "Percorso upload di fallback integrato",
+  "admin.system.field.default-upload-path":
+    "Percorso upload di fallback integrato",
   "admin.system.field.default-upload-path.description":
     "Questo percorso viene usato solo se non è impostato un percorso upload locale personalizzato nell'interfaccia, nelle variabili d'ambiente o in config.yaml. Non è automaticamente la destinazione della migrazione.",
   "admin.system.field.temp-upload-path": "Percorso upload temporaneo",
@@ -571,7 +601,8 @@ export default {
   "admin.system.migration.dry-run": "Dry run",
   "admin.system.migration.start": "Avvia migrazione",
   "admin.system.migration.started": "Migrazione archiviazione avviata",
-  "admin.system.migration.cancel-requested": "Annullamento migrazione richiesto",
+  "admin.system.migration.cancel-requested":
+    "Annullamento migrazione richiesto",
   "admin.system.migration.unsaved-path.title": "Percorso non salvato",
   "admin.system.migration.unsaved-path.description":
     "Salva il percorso di archiviazione prima di avviare la migrazione. Il dry run può ancora essere usato per vedere l'anteprima della destinazione.",
@@ -622,7 +653,7 @@ export default {
   "admin.config.smtp.allow-unauthorized-certificates":
     "Fidati di certificati server SMTP non autorizzati",
   "admin.config.smtp.allow-unauthorized-certificates.description":
-    "Imposta il parametro a \"vero\" solo se vuoi fidarti di certificati self signed.",
+    'Imposta il parametro a "vero" solo se vuoi fidarti di certificati self signed.',
   "admin.config.oauth.allow-registration": "Consenti la registrazione",
   "admin.config.oauth.allow-registration.description":
     "Consenti agli utenti di registrarsi tramite social login",
@@ -812,6 +843,7 @@ export default {
   "error.msg.unverified_account":
     "Questo account {0} non è verificato, per favore riprova dopo la verifica.",
   "error.msg.user_not_allowed": "Non sei autorizzato ad accedere.",
+  "error.msg.user_disabled": "This user account is disabled.",
   "error.msg.cannot_get_user_info":
     "Non è possibile ottenere le informazioni utente da questo account {0}.",
   "error.param.provider_github": "GitHub",

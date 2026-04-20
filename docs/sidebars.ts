@@ -14,7 +14,7 @@ const sidebars: SidebarsConfig = {
   docsSidebar: [
     {
       type: "doc",
-      id : "introduction",
+      id: "introduction",
     },
     {
       type: "category",
@@ -27,6 +27,10 @@ const sidebars: SidebarsConfig = {
         {
           type: "doc",
           id: "setup/configuration",
+        },
+        {
+          type: "doc",
+          id: "setup/admin-users",
         },
         {
           type: "doc",

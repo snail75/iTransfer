@@ -16,6 +16,7 @@ model User {
   email             String  @unique
   password          String?
   isAdmin           Boolean @default(false)
+  isDisabled        Boolean @default(false)
   storageQuotaBytes String?
   ldapDN            String? @unique
 

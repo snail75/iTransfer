@@ -102,6 +102,15 @@ const doesFileSupportPreview = (fileName: string) => {
   return supportedMimeTypes.some((isSupported) => isSupported);
 };
 
+const doesFilePreviewOpenInNewTab = (fileName: string) => {
+  const mimeType = (mime.contentType(fileName) || "").split(";")[0];
+
+  return mimeType == "application/pdf";
+};
+
+const getFilePreviewUrl = (shareId: string, fileId: string) =>
+  `/api/shares/${shareId}/files/${fileId}?download=false`;
+
 const downloadFile = async (shareId: string, fileId: string) => {
   window.location.href = `${window.location.origin}/api/shares/${shareId}/files/${fileId}`;
 };
@@ -180,6 +189,8 @@ export default {
   remove,
   getMetaData,
   doesFileSupportPreview,
+  doesFilePreviewOpenInNewTab,
+  getFilePreviewUrl,
   getMyShares,
   updateExpiration,
   updateName,

@@ -79,7 +79,11 @@ export class ApiTokenService {
       include: { user: true },
     });
 
-    if (!apiToken || !(await argon.verify(apiToken.tokenHash, secret))) {
+    if (
+      !apiToken ||
+      apiToken.user.isDisabled ||
+      !(await argon.verify(apiToken.tokenHash, secret))
+    ) {
       return null;
     }
 

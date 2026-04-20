@@ -24,7 +24,16 @@ export class UserSevice {
   ) {}
 
   async list() {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      include: {
+        _count: {
+          select: {
+            shares: true,
+            reverseShares: true,
+          },
+        },
+      },
+    });
   }
 
   async get(id: string) {
@@ -60,17 +69,54 @@ export class UserSevice {
           );
         }
       }
+      throw e;
     }
   }
 
   async update(id: string, user: UpdateUserDto) {
     try {
       const hash = user.password && (await argon.hash(user.password));
-      user.storageQuotaBytes = this.normalizeStorageQuota(user.storageQuotaBytes);
+      user.storageQuotaBytes = this.normalizeStorageQuota(
+        user.storageQuotaBytes,
+      );
 
-      return await this.prisma.user.update({
-        where: { id },
-        data: { ...user, password: hash },
+      return await this.prisma.$transaction(async (tx) => {
+        const existingUser = await tx.user.findUnique({
+          where: { id },
+          select: { id: true, isAdmin: true, isDisabled: true },
+        });
+
+        if (!existingUser) throw new BadRequestException("User not found");
+
+        const removesActiveAdmin =
+          existingUser.isAdmin &&
+          !existingUser.isDisabled &&
+          (user.isAdmin === false || user.isDisabled === true);
+
+        if (removesActiveAdmin) {
+          const activeAdminCount = await tx.user.count({
+            where: { isAdmin: true, isDisabled: false },
+          });
+
+          if (activeAdminCount === 1) {
+            throw new BadRequestException(
+              "Cannot disable or demote the last active admin user",
+            );
+          }
+        }
+
+        const updatedUser = await tx.user.update({
+          where: { id },
+          data: { ...user, password: hash },
+        });
+
+        if (user.isDisabled === true && !existingUser.isDisabled) {
+          await tx.refreshToken.deleteMany({ where: { userId: id } });
+          await tx.loginToken.deleteMany({ where: { userId: id } });
+          await tx.resetPasswordToken.deleteMany({ where: { userId: id } });
+        }
+
+        return updatedUser;
       });
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
@@ -81,6 +127,7 @@ export class UserSevice {
           );
         }
       }
+      throw e;
     }
   }
 
@@ -91,13 +138,15 @@ export class UserSevice {
     });
     if (!user) throw new BadRequestException("User not found");
 
-    if (user.isAdmin) {
+    if (user.isAdmin && !user.isDisabled) {
       const userCount = await this.prisma.user.count({
-        where: { isAdmin: true },
+        where: { isAdmin: true, isDisabled: false },
       });
 
       if (userCount === 1) {
-        throw new BadRequestException("Cannot delete the last admin user");
+        throw new BadRequestException(
+          "Cannot delete the last active admin user",
+        );
       }
     }
 
@@ -106,6 +155,101 @@ export class UserSevice {
     );
 
     return await this.prisma.user.delete({ where: { id } });
+  }
+
+  async getTransferOwnershipSummary(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!user) throw new BadRequestException("User not found");
+
+    const [shareCount, reverseShareCount, files] = await Promise.all([
+      this.prisma.share.count({
+        where: { creatorId: id },
+      }),
+      this.prisma.reverseShare.count({
+        where: { creatorId: id },
+      }),
+      this.prisma.file.findMany({
+        where: {
+          share: {
+            creatorId: id,
+          },
+        },
+        select: {
+          size: true,
+        },
+      }),
+    ]);
+
+    const totalSizeBytes = files
+      .reduce((acc, file) => acc + BigInt(file.size), 0n)
+      .toString();
+
+    return {
+      sourceUserId: id,
+      shareCount,
+      reverseShareCount,
+      totalSizeBytes,
+    };
+  }
+
+  async transferOwnership(
+    sourceUserId: string,
+    targetUserId: string,
+    includeReverseShares = true,
+  ) {
+    if (sourceUserId === targetUserId) {
+      throw new BadRequestException("Source and target user must be different");
+    }
+
+    const [sourceUser, targetUser] = await Promise.all([
+      this.prisma.user.findUnique({
+        where: { id: sourceUserId },
+        select: { id: true },
+      }),
+      this.prisma.user.findUnique({
+        where: { id: targetUserId },
+        select: { id: true, isDisabled: true },
+      }),
+    ]);
+
+    if (!sourceUser) throw new BadRequestException("Source user not found");
+    if (!targetUser) throw new BadRequestException("Target user not found");
+    if (targetUser.isDisabled) {
+      throw new BadRequestException(
+        "Transfers can't be moved to a disabled user",
+      );
+    }
+
+    const summary = await this.getTransferOwnershipSummary(sourceUserId);
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      const shares = await tx.share.updateMany({
+        where: { creatorId: sourceUserId },
+        data: { creatorId: targetUserId },
+      });
+
+      const reverseShares = includeReverseShares
+        ? await tx.reverseShare.updateMany({
+            where: { creatorId: sourceUserId },
+            data: { creatorId: targetUserId },
+          })
+        : { count: 0 };
+
+      return {
+        sharesTransferred: shares.count,
+        reverseSharesTransferred: reverseShares.count,
+      };
+    });
+
+    return {
+      sourceUserId,
+      targetUserId,
+      ...result,
+      totalSizeBytes: summary.totalSizeBytes,
+    };
   }
 
   async findOrCreateFromLDAP(

@@ -1,5 +1,11 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { TbDownload, TbEye, TbLink, TbRefresh, TbShieldCheck } from "react-icons/tb";
+import {
+  TbDownload,
+  TbEye,
+  TbLink,
+  TbRefresh,
+  TbShieldCheck,
+} from "react-icons/tb";
 import { FormattedMessage } from "react-intl";
 import useTranslate from "../../hooks/useTranslate.hook";
 import shareService from "../../services/share.service";
@@ -24,6 +30,7 @@ const FileList = ({
   setShare: Dispatch<SetStateAction<Share | undefined>>;
   share: Share;
   isLoading: boolean;
+  // eslint-disable-next-line no-unused-vars
   onReplaceFile?: (file: FileMetaData) => void;
 }) => {
   const clipboard = useClipboard();
@@ -76,6 +83,17 @@ const FileList = ({
     }
   };
 
+  const previewFile = (file: FileMetaData) => {
+    const previewUrl = shareService.getFilePreviewUrl(share.id, file.id);
+
+    if (shareService.doesFilePreviewOpenInNewTab(file.name)) {
+      window.open(previewUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    showFilePreviewModal(share.id, file, modals);
+  };
+
   useEffect(sortFiles, [sort]);
 
   return (
@@ -116,14 +134,14 @@ const FileList = ({
                       )}
                     </div>
                   </Table.Cell>
-                  <Table.Cell>{byteToHumanSizeString(parseInt(file.size))}</Table.Cell>
+                  <Table.Cell>
+                    {byteToHumanSizeString(parseInt(file.size))}
+                  </Table.Cell>
                   <Table.Cell>
                     <div className="flex items-center justify-end gap-2">
                       {shareService.doesFileSupportPreview(file.name) && (
                         <button
-                          onClick={() =>
-                            showFilePreviewModal(share.id, file, modals)
-                          }
+                          onClick={() => previewFile(file)}
                           className="p-1.5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                           aria-label="Preview file"
                         >

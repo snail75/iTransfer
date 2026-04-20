@@ -262,6 +262,36 @@ export default {
     "Deaktiviere diese Option, um dem Benutzer ein Speicherkontingent zuzuweisen.",
   "admin.users.action.edit": "Benutzer bearbeiten",
   "admin.users.action.delete": "Benutzer löschen",
+  "admin.users.action.transfer-ownership": "Transfers übertragen",
+  "admin.users.transfer.title": "Transfers von {username} übertragen",
+  "admin.users.transfer.target-user": "Zielbenutzer",
+  "admin.users.transfer.include-reverse-shares":
+    "Auch Upload-Anfragen übertragen",
+  "admin.users.transfer.summary": "Zusammenfassung",
+  "admin.users.transfer.summary.shares": "Transfers",
+  "admin.users.transfer.summary.reverse-shares": "Upload-Anfragen",
+  "admin.users.transfer.summary.size": "Datenmenge",
+  "admin.users.transfer.warning":
+    "Diese Aktion ändert den Besitzer der ausgewählten Transfers. Bestehende Links, Dateien, Passwörter, Ablaufdaten und Empfänger bleiben unverändert.",
+  "admin.users.transfer.no-target":
+    "Es gibt keinen aktiven Benutzer, der als Ziel verwendet werden kann.",
+  "admin.users.transfer.success":
+    "{shares} Transfers und {reverseShares} Upload-Anfragen wurden übertragen.",
+  "admin.users.transfer.delete-warning":
+    "Dieser Benutzer besitzt noch {count} Transfers oder Upload-Anfragen. Übertrage sie vor dem Löschen, wenn sie verfügbar bleiben sollen.",
+  "admin.users.transfer.submit": "Transfers übertragen",
+  "admin.users.status.disabled": "Deaktiviert",
+  "admin.users.action.disable": "Benutzer deaktivieren",
+  "admin.users.action.enable": "Benutzer aktivieren",
+  "admin.users.disable.title": "Benutzer deaktivieren: {username}",
+  "admin.users.disable.description":
+    "Dieser Benutzer kann sich danach nicht mehr anmelden und keine API-Tokens mehr verwenden. Bestehende Transfers bleiben verfügbar.",
+  "admin.users.enable.title": "Benutzer aktivieren: {username}",
+  "admin.users.enable.description":
+    "Dieser Benutzer kann sich danach wieder anmelden und API-Tokens verwenden.",
+  "admin.users.edit.update.disabled": "Benutzer deaktiviert",
+  "admin.users.edit.update.disabled.description":
+    "Deaktivierte Benutzer können sich nicht anmelden und keine API-Tokens verwenden. Ihre Transfers bleiben verfügbar.",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Freigaben Verwaltung",
@@ -487,7 +517,7 @@ export default {
     "Maximale Ablaufzeit. Auf 0 setzen, um kein Ablaufdatum zu definieren.",
   "admin.config.share.default-expiration": "Standard-Ablaufzeit",
   "admin.config.share.default-expiration.description":
-    "Standard-Ablaufzeit fuer API-Clients, wenn keine Ablaufzeit angegeben wird.",
+    "Standard-Ablaufzeit für API-Clients, wenn keine Ablaufzeit angegeben wird.",
   "admin.config.share.share-id-length": "Standardlänge der Freigabe-ID",
   "admin.config.share.share-id-length.description":
     "Standardlänge für die generierte ID einer Freigabe. Dieser Wert wird auch verwendet, um Links für umgekehrte Freigaben zu generieren. Ein Wert unter 8 wird als nicht sicher betrachtet.",
@@ -585,8 +615,7 @@ export default {
   "admin.system.roots.title": "Lokale Speicherorte",
   "admin.system.roots.summary":
     "{shares} Freigaben, {files} Dateien, {bytes} gespeichert.",
-  "admin.system.file-count":
-    "{count, plural, one {# Datei} other {# Dateien}}",
+  "admin.system.file-count": "{count, plural, one {# Datei} other {# Dateien}}",
   "admin.config.share.zip-compression-level": "ZIP-Kompressionslevel",
   "admin.config.share.zip-compression-level.description":
     "Passe den Wert an, um ein Gleichgewicht zwischen Dateigrösse und Kompressionsgeschwindigkeit herzustellen. Gültige Werte liegen zwischen 0 und 9, wobei 0 für keine Komprimierung und 9 für maximale Komprimierung steht. ",
@@ -800,6 +829,7 @@ export default {
   "error.msg.unverified_account":
     "Dieses Konto {0} wurde noch nicht verifiziert, bitte versuche es nach der Verifikation erneut.",
   "error.msg.user_not_allowed": "Du bist nicht berechtigt, dich anzumelden.",
+  "error.msg.user_disabled": "Dieses Benutzerkonto ist deaktiviert.",
   "error.msg.cannot_get_user_info":
     "Ihre Benutzerinformationen können von diesem {0} Konto nicht abgerufen werden.",
   "error.param.provider_github": "GitHub",

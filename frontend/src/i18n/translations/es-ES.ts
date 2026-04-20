@@ -267,6 +267,35 @@ export default {
     "Desactiva esta opción para asignar una cuota de almacenamiento al usuario.",
   "admin.users.action.edit": "Editar usuario",
   "admin.users.action.delete": "Eliminar usuario",
+  "admin.users.action.transfer-ownership": "Transfer shares",
+  "admin.users.transfer.title": "Transfer shares from {username}",
+  "admin.users.transfer.target-user": "Target user",
+  "admin.users.transfer.include-reverse-shares": "Also transfer reverse shares",
+  "admin.users.transfer.summary": "Transfer summary",
+  "admin.users.transfer.summary.shares": "Shares",
+  "admin.users.transfer.summary.reverse-shares": "Reverse shares",
+  "admin.users.transfer.summary.size": "Data size",
+  "admin.users.transfer.warning":
+    "This changes the owner of the selected shares. Existing links, files, passwords, expiration dates, and recipients remain unchanged.",
+  "admin.users.transfer.no-target":
+    "There is no active user available as a transfer target.",
+  "admin.users.transfer.success":
+    "Transferred {shares} shares and {reverseShares} reverse shares.",
+  "admin.users.transfer.delete-warning":
+    "This user still owns {count} transfers or reverse shares. Transfer them before deleting the user if they should remain available.",
+  "admin.users.transfer.submit": "Transfer shares",
+  "admin.users.status.disabled": "Disabled",
+  "admin.users.action.disable": "Disable user",
+  "admin.users.action.enable": "Enable user",
+  "admin.users.disable.title": "Disable user: {username}",
+  "admin.users.disable.description":
+    "This user will no longer be able to sign in or use API tokens. Existing transfers stay available.",
+  "admin.users.enable.title": "Enable user: {username}",
+  "admin.users.enable.description":
+    "This user will be able to sign in and use API tokens again.",
+  "admin.users.edit.update.disabled": "User disabled",
+  "admin.users.edit.update.disabled.description":
+    "Disabled users cannot sign in or use API tokens. Their transfers remain available.",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Gestión de comparticiones",
@@ -533,7 +562,8 @@ export default {
   "admin.system.field.current-upload-path": "Ruta de subida activa",
   "admin.system.field.current-upload-path.description":
     "Esta ruta está configurada actualmente para nuevos compartidos locales. Los compartidos existentes pueden seguir en rutas anteriores hasta que se migren.",
-  "admin.system.field.default-upload-path": "Ruta de subida de reserva integrada",
+  "admin.system.field.default-upload-path":
+    "Ruta de subida de reserva integrada",
   "admin.system.field.default-upload-path.description":
     "Esta ruta solo se usa si no hay una ruta de subida local personalizada en la interfaz, las variables de entorno o config.yaml. No es automáticamente el destino de la migración.",
   "admin.system.field.temp-upload-path": "Ruta de subida temporal",
@@ -567,7 +597,8 @@ export default {
   "admin.system.migration.dry-run": "Dry run",
   "admin.system.migration.start": "Iniciar migración",
   "admin.system.migration.started": "Migración de almacenamiento iniciada",
-  "admin.system.migration.cancel-requested": "Cancelación de migración solicitada",
+  "admin.system.migration.cancel-requested":
+    "Cancelación de migración solicitada",
   "admin.system.migration.unsaved-path.title": "Ruta sin guardar",
   "admin.system.migration.unsaved-path.description":
     "Guarda la ruta de almacenamiento antes de iniciar la migración. El dry run puede seguir usándose para previsualizar el destino.",
@@ -688,7 +719,7 @@ export default {
     "URI de descubrimiento de la aplicación OAuth de OpenID Connect",
   "admin.config.oauth.oidc-sign-out": "Cerrar sesión de OpenID Connect",
   "admin.config.oauth.oidc-sign-out.description":
-    "Si el botón \"Cerrar sesión\" cerrará la sesión del proveedor de OpenID Connect",
+    'Si el botón "Cerrar sesión" cerrará la sesión del proveedor de OpenID Connect',
   "admin.config.oauth.oidc-scope": "Ámbito de OpenID Connect",
   "admin.config.oauth.oidc-scope.description":
     "Ámbitos que se deberían solicitar al proveedor OpenID Connect.",
@@ -814,6 +845,7 @@ export default {
   "error.msg.unverified_account":
     "Esta cuenta {0} no está verificada, por favor inténtalo de nuevo después de la verificación.",
   "error.msg.user_not_allowed": "No tienes permitido iniciar sesion.",
+  "error.msg.user_disabled": "This user account is disabled.",
   "error.msg.cannot_get_user_info":
     "No se puede obtener tu información de usuario de esta cuenta {0}.",
   "error.param.provider_github": "GitHub",

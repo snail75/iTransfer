@@ -269,6 +269,35 @@ export default {
     "Desative esta opção para atribuir uma cota de armazenamento ao usuário.",
   "admin.users.action.edit": "Editar usuário",
   "admin.users.action.delete": "Excluir usuário",
+  "admin.users.action.transfer-ownership": "Transfer shares",
+  "admin.users.transfer.title": "Transfer shares from {username}",
+  "admin.users.transfer.target-user": "Target user",
+  "admin.users.transfer.include-reverse-shares": "Also transfer reverse shares",
+  "admin.users.transfer.summary": "Transfer summary",
+  "admin.users.transfer.summary.shares": "Shares",
+  "admin.users.transfer.summary.reverse-shares": "Reverse shares",
+  "admin.users.transfer.summary.size": "Data size",
+  "admin.users.transfer.warning":
+    "This changes the owner of the selected shares. Existing links, files, passwords, expiration dates, and recipients remain unchanged.",
+  "admin.users.transfer.no-target":
+    "There is no active user available as a transfer target.",
+  "admin.users.transfer.success":
+    "Transferred {shares} shares and {reverseShares} reverse shares.",
+  "admin.users.transfer.delete-warning":
+    "This user still owns {count} transfers or reverse shares. Transfer them before deleting the user if they should remain available.",
+  "admin.users.transfer.submit": "Transfer shares",
+  "admin.users.status.disabled": "Disabled",
+  "admin.users.action.disable": "Disable user",
+  "admin.users.action.enable": "Enable user",
+  "admin.users.disable.title": "Disable user: {username}",
+  "admin.users.disable.description":
+    "This user will no longer be able to sign in or use API tokens. Existing transfers stay available.",
+  "admin.users.enable.title": "Enable user: {username}",
+  "admin.users.enable.description":
+    "This user will be able to sign in and use API tokens again.",
+  "admin.users.edit.update.disabled": "User disabled",
+  "admin.users.edit.update.disabled.description":
+    "Disabled users cannot sign in or use API tokens. Their transfers remain available.",
   // END /admin/users
   // /admin/shares
   "admin.shares.title": "Gerenciamento de compartilhamentos",
@@ -542,7 +571,8 @@ export default {
   "admin.system.field.current-upload-path": "Caminho de upload ativo",
   "admin.system.field.current-upload-path.description":
     "Este caminho está configurado atualmente para novos compartilhamentos locais. Compartilhamentos existentes ainda podem estar em caminhos antigos até serem migrados.",
-  "admin.system.field.default-upload-path": "Caminho de upload de fallback integrado",
+  "admin.system.field.default-upload-path":
+    "Caminho de upload de fallback integrado",
   "admin.system.field.default-upload-path.description":
     "Este caminho só é usado quando nenhum caminho de upload local personalizado está definido na interface, nas variáveis de ambiente ou no config.yaml. Ele não é automaticamente o destino da migração.",
   "admin.system.field.temp-upload-path": "Caminho de upload temporário",
@@ -576,7 +606,8 @@ export default {
   "admin.system.migration.dry-run": "Dry run",
   "admin.system.migration.start": "Iniciar migração",
   "admin.system.migration.started": "Migração de armazenamento iniciada",
-  "admin.system.migration.cancel-requested": "Cancelamento da migração solicitado",
+  "admin.system.migration.cancel-requested":
+    "Cancelamento da migração solicitado",
   "admin.system.migration.unsaved-path.title": "Caminho não salvo",
   "admin.system.migration.unsaved-path.description":
     "Salve o caminho de armazenamento antes de iniciar a migração. O dry run ainda pode ser usado para pré-visualizar o destino.",
@@ -816,6 +847,7 @@ export default {
   "error.msg.unverified_account":
     "Esta conta {0} não foi verificada, tente novamente após a verificação.",
   "error.msg.user_not_allowed": "Você não tem permissão para acessar.",
+  "error.msg.user_disabled": "This user account is disabled.",
   "error.msg.cannot_get_user_info":
     "Não é possível obter suas informações de usuário desta conta {0}.",
   "error.param.provider_github": "GitHub",

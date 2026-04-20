@@ -36,6 +36,8 @@ export class AuthTotpService {
     if (token.expiresAt < new Date())
       throw new UnauthorizedException("Login token expired", "token_expired");
 
+    this.authService.assertUserIsActive(token.user);
+
     // Check the TOTP code
     const { totpSecret } = token.user;
 

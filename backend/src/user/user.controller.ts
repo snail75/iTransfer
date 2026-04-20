@@ -17,6 +17,7 @@ import { AdministratorGuard } from "src/auth/guard/isAdmin.guard";
 import { JwtGuard } from "src/auth/guard/jwt.guard";
 import { ConfigService } from "../config/config.service";
 import { CreateUserDTO } from "./dto/createUser.dto";
+import { TransferOwnershipDTO } from "./dto/transferOwnership.dto";
 import { UpdateOwnUserDTO } from "./dto/updateOwnUser.dto";
 import { UpdateUserDto } from "./dto/updateUser.dto";
 import { UserDTO } from "./dto/user.dto";
@@ -82,6 +83,26 @@ export class UserController {
   @UseGuards(JwtGuard, AdministratorGuard)
   async create(@Body() user: CreateUserDTO) {
     return new UserDTO().from(await this.userService.create(user));
+  }
+
+  @Get(":id/transfer-ownership/summary")
+  @UseGuards(JwtGuard, AdministratorGuard)
+  async getTransferOwnershipSummary(@Param("id") id: string) {
+    return this.userService.getTransferOwnershipSummary(id);
+  }
+
+  @Post(":id/transfer-ownership")
+  @HttpCode(200)
+  @UseGuards(JwtGuard, AdministratorGuard)
+  async transferOwnership(
+    @Param("id") id: string,
+    @Body() body: TransferOwnershipDTO,
+  ) {
+    return this.userService.transferOwnership(
+      id,
+      body.targetUserId,
+      body.includeReverseShares,
+    );
   }
 
   @Patch(":id")

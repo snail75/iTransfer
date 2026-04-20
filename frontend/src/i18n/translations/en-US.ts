@@ -302,6 +302,35 @@ export default {
     "Turn this off to assign a storage quota to the user.",
   "admin.users.action.edit": "Edit user",
   "admin.users.action.delete": "Delete user",
+  "admin.users.action.transfer-ownership": "Transfer shares",
+  "admin.users.transfer.title": "Transfer shares from {username}",
+  "admin.users.transfer.target-user": "Target user",
+  "admin.users.transfer.include-reverse-shares": "Also transfer reverse shares",
+  "admin.users.transfer.summary": "Transfer summary",
+  "admin.users.transfer.summary.shares": "Shares",
+  "admin.users.transfer.summary.reverse-shares": "Reverse shares",
+  "admin.users.transfer.summary.size": "Data size",
+  "admin.users.transfer.warning":
+    "This changes the owner of the selected shares. Existing links, files, passwords, expiration dates, and recipients remain unchanged.",
+  "admin.users.transfer.no-target":
+    "There is no active user available as a transfer target.",
+  "admin.users.transfer.success":
+    "Transferred {shares} shares and {reverseShares} reverse shares.",
+  "admin.users.transfer.delete-warning":
+    "This user still owns {count} transfers or reverse shares. Transfer them before deleting the user if they should remain available.",
+  "admin.users.transfer.submit": "Transfer shares",
+  "admin.users.status.disabled": "Disabled",
+  "admin.users.action.disable": "Disable user",
+  "admin.users.action.enable": "Enable user",
+  "admin.users.disable.title": "Disable user: {username}",
+  "admin.users.disable.description":
+    "This user will no longer be able to sign in or use API tokens. Existing transfers stay available.",
+  "admin.users.enable.title": "Enable user: {username}",
+  "admin.users.enable.description":
+    "This user will be able to sign in and use API tokens again.",
+  "admin.users.edit.update.disabled": "User disabled",
+  "admin.users.edit.update.disabled.description":
+    "Disabled users cannot sign in or use API tokens. Their transfers remain available.",
   // END /admin/users
 
   // /admin/shares
@@ -628,7 +657,8 @@ export default {
   "admin.system.migration.unsaved-path.title": "Unsaved path",
   "admin.system.migration.unsaved-path.description":
     "Save the storage path before starting the migration. Dry run can still be used to preview the target.",
-  "admin.system.migration.dry-run-ok": "Dry run finished without blocking issues.",
+  "admin.system.migration.dry-run-ok":
+    "Dry run finished without blocking issues.",
   "admin.system.migration.latest-job": "Latest migration job",
   "admin.system.migration.progress":
     "{done} of {total} shares processed. Moved data: {bytes}.",
@@ -863,6 +893,7 @@ export default {
   "error.msg.unverified_account":
     "This {0} account is unverified, please try again after verification.",
   "error.msg.user_not_allowed": "You are not allowed to sign in.",
+  "error.msg.user_disabled": "This user account is disabled.",
   "error.msg.cannot_get_user_info":
     "Cannot get your user info from this {0} account.",
   "error.param.provider_github": "GitHub",

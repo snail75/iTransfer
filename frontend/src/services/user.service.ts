@@ -1,6 +1,8 @@
 import {
   CreateUser,
   CurrentUser,
+  TransferOwnershipResult,
+  TransferOwnershipSummary,
   UpdateCurrentUser,
   UpdateUser,
 } from "../types/user.type";
@@ -21,6 +23,25 @@ const update = async (id: string, user: UpdateUser) => {
 
 const remove = async (id: string) => {
   await api.delete(`/users/${id}`);
+};
+
+const getTransferOwnershipSummary = async (
+  id: string,
+): Promise<TransferOwnershipSummary> => {
+  return (await api.get(`/users/${id}/transfer-ownership/summary`)).data;
+};
+
+const transferOwnership = async (
+  id: string,
+  targetUserId: string,
+  includeReverseShares: boolean,
+): Promise<TransferOwnershipResult> => {
+  return (
+    await api.post(`/users/${id}/transfer-ownership`, {
+      targetUserId,
+      includeReverseShares,
+    })
+  ).data;
 };
 
 const updateCurrentUser = async (user: UpdateCurrentUser) => {
@@ -45,6 +66,8 @@ export default {
   create,
   update,
   remove,
+  getTransferOwnershipSummary,
+  transferOwnership,
   getCurrentUser,
   updateCurrentUser,
   removeCurrentUser,

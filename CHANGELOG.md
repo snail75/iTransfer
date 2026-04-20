@@ -3,6 +3,8 @@
 ### Features
 
 * add a central `/admin/system` page for configuration status, storage path validation, SMTP status, and local storage migrations
+* add admin-only transfer ownership reassignment for user shares and reverse shares
+* add admin-only user deactivation that keeps existing shares available while blocking sign-in, refresh tokens, reset tokens, login tokens, and API tokens
 * add persistent local storage migration jobs with dry-run, progress tracking, cancellation, conflict reporting, and optional cleanup of empty old upload root folders
 * allow desktop API tokens to be renamed and copied again from the account page
 * add password reset by email from the sign-in flow
@@ -16,6 +18,7 @@
 * stream multi-file ZIP downloads without storing duplicate ZIP files on disk
 * keep desktop history details open while toggling options inside the expanded panel
 * use the share name as the downloaded ZIP file name where possible
+* open PDF file previews from public share pages in a new browser tab instead of replacing the share page
 * use synchronized translations for the active German, English, Italian, French, Spanish, and Portuguese locales
 
 ## [1.13.0](https://github.com/stonith404/pingvin-share/compare/v1.12.0...v1.13.0) (2025-05-25)

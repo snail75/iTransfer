@@ -118,6 +118,8 @@ export class AuthService {
   }
 
   async generateToken(user: User, oauth?: { idToken?: string }) {
+    this.assertUserIsActive(user);
+
     // TODO: Make all old loginTokens invalid when a new one is created
     // Check if the user has TOTP enabled
     if (user.totpVerified && !(oauth && this.config.get("oauth.ignoreTotp"))) {
@@ -144,7 +146,7 @@ export class AuthService {
       include: { resetPasswordToken: true },
     });
 
-    if (!user) return;
+    if (!user || user.isDisabled) return;
 
     if (user.ldapDN) {
       this.logger.log(
@@ -181,7 +183,7 @@ export class AuthService {
       include: { user: true },
     });
 
-    if (!resetPasswordToken)
+    if (!resetPasswordToken || resetPasswordToken.user.isDisabled)
       throw new BadRequestException("Token invalid or expired");
 
     if (resetPasswordToken.expiresAt < new Date()) {
@@ -224,6 +226,8 @@ export class AuthService {
   }
 
   async createAccessToken(user: User, refreshTokenId: string) {
+    this.assertUserIsActive(user);
+
     return this.jwtService.sign(
       {
         sub: user.id,
@@ -305,6 +309,13 @@ export class AuthService {
     if (!refreshTokenMetaData || refreshTokenMetaData.expiresAt < new Date())
       throw new UnauthorizedException();
 
+    if (refreshTokenMetaData.user.isDisabled) {
+      await this.prisma.refreshToken.deleteMany({
+        where: { userId: refreshTokenMetaData.user.id },
+      });
+      throw new UnauthorizedException("Account is disabled");
+    }
+
     return this.createAccessToken(
       refreshTokenMetaData.user,
       refreshTokenMetaData.id,
@@ -376,7 +387,11 @@ export class AuthService {
           secret: this.config.get("internal.jwtSecret"),
         },
       );
-      return payload.sub;
+      const user = await this.prisma.user.findFirst({
+        where: { id: payload.sub, isDisabled: false },
+        select: { id: true },
+      });
+      return user?.id ?? null;
     } catch {
       return null;
     }
@@ -388,5 +403,11 @@ export class AuthService {
     }
 
     return argon.verify(user.password, password);
+  }
+
+  assertUserIsActive(user: User) {
+    if (user.isDisabled) {
+      throw new UnauthorizedException("Account is disabled");
+    }
   }
 }

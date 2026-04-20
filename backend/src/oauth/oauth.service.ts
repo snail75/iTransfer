@@ -69,6 +69,9 @@ export class OAuthService {
           id: oauthUser.userId,
         },
       });
+      if (updatedUser?.isDisabled) {
+        throw new ErrorPageException("user_disabled", "/auth/signIn");
+      }
       this.logger.log(`Successful login for user ${user.email} from IP ${ip}`);
       return this.auth.generateToken(updatedUser, { idToken: user.idToken });
     }
@@ -162,6 +165,10 @@ export class OAuthService {
     });
 
     if (existingUser) {
+      if (existingUser.isDisabled) {
+        throw new ErrorPageException("user_disabled", "/auth/signIn");
+      }
+
       await this.prisma.oAuthUser.create({
         data: {
           provider: user.provider,

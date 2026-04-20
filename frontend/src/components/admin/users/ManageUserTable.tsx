@@ -1,5 +1,13 @@
-import { TbCheck, TbEdit, TbTrash } from "react-icons/tb";
+import {
+  TbCheck,
+  TbEdit,
+  TbTrash,
+  TbUserCheck,
+  TbUserOff,
+  TbUserShare,
+} from "react-icons/tb";
 import User from "../../../types/user.type";
+import showTransferOwnershipModal from "./showTransferOwnershipModal";
 import showUpdateUserModal from "./showUpdateUserModal";
 import { FormattedMessage } from "react-intl";
 import { Table, Badge } from "../../../components/ui";
@@ -11,11 +19,15 @@ const ManageUserTable = ({
   users,
   getUsers,
   deleteUser,
+  toggleUserDisabled,
   isLoading,
 }: {
   users: User[];
   getUsers: () => void;
-  deleteUser: (user: User) => void;
+  // eslint-disable-next-line no-unused-vars
+  deleteUser(user: User): void;
+  // eslint-disable-next-line no-unused-vars
+  toggleUserDisabled(user: User): void;
   isLoading: boolean;
 }) => {
   const modals = useModals();
@@ -50,6 +62,11 @@ const ManageUserTable = ({
                     <div className="flex items-center gap-2">
                       {user.username}{" "}
                       {user.isLdap && <Badge variant="secondary">LDAP</Badge>}
+                      {user.isDisabled && (
+                        <Badge variant="danger">
+                          <FormattedMessage id="admin.users.status.disabled" />
+                        </Badge>
+                      )}
                     </div>
                   </Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
@@ -79,6 +96,35 @@ const ManageUserTable = ({
                           <TbEdit size={18} />
                         </button>
                       )}
+                      <button
+                        onClick={() =>
+                          showTransferOwnershipModal(
+                            modals,
+                            user,
+                            users,
+                            getUsers,
+                          )
+                        }
+                        className="p-1.5 text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:text-primary-400 dark:hover:text-primary-300 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+                        aria-label={t("admin.users.action.transfer-ownership")}
+                      >
+                        <TbUserShare size={18} />
+                      </button>
+                      <button
+                        onClick={() => toggleUserDisabled(user)}
+                        className="p-1.5 text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:text-primary-400 dark:hover:text-primary-300 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+                        aria-label={t(
+                          user.isDisabled
+                            ? "admin.users.action.enable"
+                            : "admin.users.action.disable",
+                        )}
+                      >
+                        {user.isDisabled ? (
+                          <TbUserCheck size={18} />
+                        ) : (
+                          <TbUserOff size={18} />
+                        )}
+                      </button>
                       <button
                         onClick={() => deleteUser(user)}
                         className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20 rounded-lg transition-colors"

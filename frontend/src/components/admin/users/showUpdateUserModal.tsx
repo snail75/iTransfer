@@ -51,6 +51,7 @@ const Body = ({
       username: user.username,
       email: user.email,
       isAdmin: user.isAdmin,
+      isDisabled: user.isDisabled,
       storageQuotaBytes: user.storageQuotaBytes
         ? parseInt(user.storageQuotaBytes)
         : 12_000_000_000,
@@ -80,6 +81,7 @@ const Body = ({
               username: values.username,
               email: values.email,
               isAdmin: values.isAdmin,
+              isDisabled: values.isDisabled,
               storageQuotaBytes: values.unlimitedStorage
                 ? null
                 : values.storageQuotaBytes.toString(),
@@ -109,6 +111,12 @@ const Body = ({
           label={t("admin.users.edit.update.admin-privileges")}
           checked={accountForm.values.isAdmin}
           onChange={(checked) => accountForm.setValue("isAdmin", checked)}
+        />
+        <Switch
+          label={t("admin.users.edit.update.disabled")}
+          helperText={t("admin.users.edit.update.disabled.description")}
+          checked={accountForm.values.isDisabled}
+          onChange={(checked) => accountForm.setValue("isDisabled", checked)}
         />
         <Switch
           label={t("admin.users.storage.unlimited")}

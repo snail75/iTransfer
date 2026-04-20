@@ -29,7 +29,7 @@ const FilePreview = ({
 }) => {
   const [isNotSupported, setIsNotSupported] = useState(false);
   const modals = useModals();
-  
+
   if (isNotSupported) return <UnSupportedFile />;
 
   return (
@@ -132,9 +132,10 @@ const TextPreview = () => {
     overrides: {
       pre: {
         props: {
-          className: theme === "dark" 
-            ? "bg-gray-800/50 p-3 whitespace-pre-wrap rounded"
-            : "bg-gray-200/50 p-3 whitespace-pre-wrap rounded",
+          className:
+            theme === "dark"
+              ? "bg-gray-800/50 p-3 whitespace-pre-wrap rounded"
+              : "bg-gray-200/50 p-3 whitespace-pre-wrap rounded",
         },
       },
       table: {
@@ -150,10 +151,13 @@ const TextPreview = () => {
 
 const PdfPreview = () => {
   const { shareId, fileId } = React.useContext(FilePreviewContext);
-  if (typeof window !== "undefined") {
-    window.location.href = `/api/shares/${shareId}/files/${fileId}?download=false`;
-  }
-  return null;
+  return (
+    <iframe
+      title="PDF preview"
+      src={`/api/shares/${shareId}/files/${fileId}?download=false`}
+      className="h-[70vh] w-full rounded border border-gray-200 dark:border-gray-700"
+    />
+  );
 };
 
 const UnSupportedFile = () => {

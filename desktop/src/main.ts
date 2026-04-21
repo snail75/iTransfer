@@ -689,6 +689,7 @@ let isUploading = false;
 let loadedLinks: MyShare[] = [];
 const expandedLinkIds = new Set<string>();
 let currentShareId: string | undefined;
+let currentShareCompleted = false;
 let sharePassword = "";
 let transferNameLocked = false;
 let transferNameSource: "empty" | "auto" | "manual" | "locked" = "empty";
@@ -995,7 +996,7 @@ function bindUiEvents() {
   filePicker.addEventListener("change", () => {
     if (filePicker.files) {
       const files = Array.from(filePicker.files);
-      applyDefaultTransferName(files);
+      if (!currentShareId) applyDefaultTransferName(files);
       void uploadFiles(files);
     }
     filePicker.value = "";
@@ -1013,7 +1014,7 @@ function bindUiEvents() {
     dropZone.classList.remove("drag-over");
     if (event.dataTransfer?.files?.length) {
       const files = Array.from(event.dataTransfer.files);
-      applyDefaultTransferName(files);
+      if (!currentShareId) applyDefaultTransferName(files);
       void uploadFiles(files);
     }
   });
@@ -1815,29 +1816,39 @@ async function uploadFiles(files: File[]) {
   progress.value = 0;
   uploadSpeed.textContent = "0 KB/s";
   chooseFilesButton.textContent = t("uploading");
-  renderUploadList(files);
-  lastLink.hidden = true;
+  const existingShareId = currentShareId;
+  const uploadItems = existingShareId
+    ? appendUploadList(files)
+    : renderUploadList(files);
+  if (!existingShareId) {
+    lastLink.hidden = true;
+  }
 
   try {
-    const share = await createShare(apiUrl, files);
-    currentShareId = share.id;
+    const shareId = existingShareId ?? (await createShare(apiUrl, files)).id;
+    currentShareId = shareId;
+    if (!existingShareId) currentShareCompleted = false;
     let completedBytes = 0;
     const uploadStartedAt = performance.now();
 
     for (const file of files) {
-      updateUploadListItem(file.name, t("uploading"));
-      await uploadFile(apiUrl, share.id, file, (fileUploadedBytes) => {
+      updateUploadListItem(uploadItems.get(file), t("uploading"));
+      await uploadFile(apiUrl, shareId, file, (fileUploadedBytes) => {
         const uploadedBytes = completedBytes + fileUploadedBytes;
         progress.value =
           uploadBytes > 0 ? (uploadedBytes / uploadBytes) * 100 : 100;
         updateUploadSpeed(uploadedBytes, uploadStartedAt);
       });
       completedBytes += file.size;
-      updateUploadListItem(file.name, t("uploaded"));
+      updateUploadListItem(uploadItems.get(file), t("uploaded"));
     }
 
-    await completeShare(apiUrl, share.id);
-    const shareUrl = `${serverUrl}/s/${share.id}`;
+    if (!currentShareCompleted) {
+      await completeShare(apiUrl, shareId);
+      currentShareCompleted = true;
+    }
+
+    const shareUrl = `${serverUrl}/s/${shareId}`;
     await writeText(shareUrl);
     await notify(t("uploadCompleteTitle"), t("uploadCompleteNotification"));
 
@@ -1864,7 +1875,15 @@ async function uploadFiles(files: File[]) {
 
 function renderUploadList(files: File[]) {
   uploadList.replaceChildren();
-  uploadList.classList.toggle("is-scrollable", files.length > 1);
+  return appendUploadList(files);
+}
+
+function appendUploadList(files: File[]) {
+  uploadList.classList.toggle(
+    "is-scrollable",
+    uploadList.children.length + files.length > 1,
+  );
+  const items = new Map<File, HTMLElement>();
 
   for (const file of files) {
     const item = document.createElement("li");
@@ -1881,13 +1900,13 @@ function renderUploadList(files: File[]) {
 
     item.append(fileName, status);
     uploadList.appendChild(item);
+    items.set(file, item);
   }
+
+  return items;
 }
 
-function updateUploadListItem(fileName: string, statusText: string) {
-  const item = Array.from(uploadList.children).find(
-    (child) => (child as HTMLElement).dataset.fileName === fileName,
-  ) as HTMLElement | undefined;
+function updateUploadListItem(item: HTMLElement | undefined, statusText: string) {
   if (!item) return;
 
   const status = item.querySelector<HTMLElement>(".upload-list-status");
@@ -2158,6 +2177,7 @@ function resetTransfer() {
   }
 
   currentShareId = undefined;
+  currentShareCompleted = false;
   sharePassword = "";
   transferNameLocked = false;
   transferNameSource = "empty";

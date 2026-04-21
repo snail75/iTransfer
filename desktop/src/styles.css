@@ -33,6 +33,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   height: 100%;
@@ -697,11 +701,16 @@ select:focus {
 }
 
 .copy-button {
-  flex: 0 0 auto;
+  flex: 0 0 96px;
   font-size: 10px;
   letter-spacing: 0.04em;
+  max-width: 96px;
+  min-width: 96px;
+  overflow: hidden;
   padding: 10px 16px;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .share-url {
@@ -714,6 +723,8 @@ select:focus {
   align-items: center;
   display: flex;
   gap: 8px;
+  min-width: 0;
+  width: 100%;
 }
 
 .share-value {
@@ -721,7 +732,7 @@ select:focus {
   border: 1px solid rgba(191, 219, 254, 0.34);
   border-radius: 12px;
   color: rgba(37, 52, 64, 0.84);
-  flex: 1;
+  flex: 1 1 auto;
   font-size: 12px;
   font-weight: 650;
   min-width: 0;
@@ -913,11 +924,11 @@ progress::-webkit-progress-value {
 }
 
 .links-list {
-  align-content: start;
   background: rgba(235, 245, 255, 0.32);
   border: 1px solid rgba(191, 219, 254, 0.34);
   border-radius: 12px;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0;
   flex: 1 1 auto;
   min-height: 0;
@@ -929,11 +940,11 @@ progress::-webkit-progress-value {
 
 .link-item {
   border-top: 1px solid rgba(219, 234, 254, 0.86);
-  content-visibility: auto;
-  contain-intrinsic-size: 76px;
-  display: grid;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
   gap: 8px;
-  grid-auto-rows: max-content;
+  min-height: 76px;
   padding: 12px 0;
 }
 
@@ -944,6 +955,8 @@ progress::-webkit-progress-value {
   display: grid;
   gap: 4px 10px;
   grid-template-columns: minmax(0, 1fr) auto;
+  line-height: 1.25;
+  min-height: 50px;
   padding: 0;
   text-align: left;
 }
@@ -952,6 +965,7 @@ progress::-webkit-progress-value {
   color: var(--on-surface);
   font-size: 14px;
   font-weight: 750;
+  line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -961,6 +975,7 @@ progress::-webkit-progress-value {
   color: var(--on-surface-variant);
   font-size: 11px;
   font-weight: 650;
+  line-height: 1.25;
 }
 
 .link-meta-right {

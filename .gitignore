@@ -28,6 +28,7 @@ yarn-error.log*
 
 # local tooling
 /.playwright-cli/
+/desktop/node-v*/
 
 # env file
 .env

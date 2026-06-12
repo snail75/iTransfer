@@ -1,4 +1,5 @@
 import { GetServerSidePropsContext } from "next";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { AxiosError } from "axios";
@@ -208,7 +209,7 @@ const Share = ({ shareId }: { shareId: string }) => {
       />
       <Container>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div className="flex-1 max-w-[70%]">
+          <div className="flex-1 max-w-full sm:max-w-[70%]">
             <h1 className="text-2xl font-bold text-text dark:text-text-dark mb-2">
               {share?.name || share?.id}
             </h1>
@@ -232,6 +233,18 @@ const Share = ({ shareId }: { shareId: string }) => {
                     ),
                   }}
                 />
+              </p>
+            )}
+            {share && (
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                <span className="font-medium">
+                  <FormattedMessage id="account.shares.table.expiresAt" />:
+                </span>{" "}
+                {moment(share.expiration).unix() === 0 ? (
+                  <FormattedMessage id="account.shares.table.expiry-never" />
+                ) : (
+                  moment(share.expiration).format("YYYY/MM/DD HH:mm")
+                )}
               </p>
             )}
           </div>

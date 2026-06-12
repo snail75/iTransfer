@@ -119,6 +119,11 @@ const removeFile = async (shareId: string, fileId: string) => {
   await api.delete(`shares/${shareId}/files/${fileId}`);
 };
 
+const renameFile = async (shareId: string, fileId: string, name: string) => {
+  return (await api.patch(`shares/${shareId}/files/${fileId}/name`, { name }))
+    .data;
+};
+
 const uploadFile = async (
   shareId: string,
   chunk: Blob,
@@ -199,6 +204,7 @@ export default {
   isShareIdAvailable,
   downloadFile,
   removeFile,
+  renameFile,
   uploadFile,
   setReverseShare,
   createReverseShare,

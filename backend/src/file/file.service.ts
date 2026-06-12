@@ -42,6 +42,7 @@ export class FileService {
     allowCompletedShareUpload = false,
     allowVersioning = false,
     allowPublicUpload = false,
+    isShareOwnerUpload = false,
   ) {
     this.storageMigrationLock.assertShareIsNotLocked(shareId);
 
@@ -54,6 +55,7 @@ export class FileService {
       allowCompletedShareUpload,
       allowVersioning,
       allowPublicUpload,
+      isShareOwnerUpload,
     );
   }
 
@@ -73,6 +75,16 @@ export class FileService {
     });
     const storageService = this.getStorageService(share.storageProvider);
     return storageService.remove(shareId, fileId);
+  }
+
+  async rename(shareId: string, fileId: string, name?: string) {
+    this.storageMigrationLock.assertShareIsNotLocked(shareId);
+
+    const share = await this.prisma.share.findFirst({
+      where: { id: shareId },
+    });
+    const storageService = this.getStorageService(share.storageProvider);
+    return storageService.rename(shareId, fileId, name);
   }
 
   async deleteAllFiles(shareId: string) {

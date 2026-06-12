@@ -14,6 +14,7 @@ import { Button, Container } from "../ui";
 
 const promiseLimit = pLimit(3);
 let errorToastShown = false;
+type ExistingFile = FileMetaData & { deleted?: boolean; newName?: string };
 
 const EditableUpload = ({
   maxShareSize,
@@ -32,7 +33,7 @@ const EditableUpload = ({
   const chunkSize = useRef(parseInt(config.get("share.chunkSize")));
 
   const [existingFiles, setExistingFiles] =
-    useState<Array<FileMetaData & { deleted?: boolean }>>(savedFiles);
+    useState<ExistingFile[]>(savedFiles);
   const [uploadingFiles, setUploadingFiles] = useState<FileUpload[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -42,7 +43,11 @@ const EditableUpload = ({
   );
   const dirty = useMemo(() => {
     return (
-      existingFiles.some((file) => !!file.deleted) || !!uploadingFiles.length
+      existingFiles.some((file) => !!file.deleted) ||
+      existingFiles.some(
+        (file) => file.newName !== undefined && file.newName !== file.name,
+      ) ||
+      !!uploadingFiles.length
     );
   }, [existingFiles, uploadingFiles]);
 
@@ -52,7 +57,7 @@ const EditableUpload = ({
     ) as FileUpload[];
     const _existingFiles = files.filter(
       (file) => !("uploadingProgress" in file),
-    ) as FileMetaData[];
+    ) as ExistingFile[];
 
     setUploadingFiles(_uploadFiles);
     setExistingFiles(_existingFiles);
@@ -67,6 +72,7 @@ const EditableUpload = ({
       // Limit the number of concurrent uploads to 3
       promiseLimit(async () => {
         let fileId: string | undefined;
+        const uploadName = file.uploadName || file.name;
 
         const setFileProgress = (progress: number) => {
           setUploadingFiles((files) =>
@@ -79,7 +85,7 @@ const EditableUpload = ({
           );
         };
 
-        console.log(`[EditableUpload] Starting upload of file ${fileIndex + 1}/${files.length}: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+        console.log(`[EditableUpload] Starting upload of file ${fileIndex + 1}/${files.length}: ${uploadName} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
         setFileProgress(1);
 
         let chunks = Math.ceil(file.size / chunkSize.current);
@@ -87,28 +93,29 @@ const EditableUpload = ({
         // If the file is 0 bytes, we still need to upload 1 chunk
         if (chunks == 0) chunks++;
 
-        console.log(`[EditableUpload] File ${file.name} will be uploaded in ${chunks} chunks (chunk size: ${(chunkSize.current / 1024 / 1024).toFixed(2)} MB)`);
+        console.log(`[EditableUpload] File ${uploadName} will be uploaded in ${chunks} chunks (chunk size: ${(chunkSize.current / 1024 / 1024).toFixed(2)} MB)`);
 
         for (let chunkIndex = 0; chunkIndex < chunks; chunkIndex++) {
           const from = chunkIndex * chunkSize.current;
           const to = from + chunkSize.current;
           const blob = file.slice(from, to);
           try {
-            console.log(`[EditableUpload] Uploading chunk ${chunkIndex + 1}/${chunks} of file ${file.name}`);
+            console.log(`[EditableUpload] Uploading chunk ${chunkIndex + 1}/${chunks} of file ${uploadName}`);
             await shareService
               .uploadFile(
                 shareId,
                 blob,
                 {
                   id: fileId,
-                  name: file.name,
+                  name: uploadName,
+                  replaceFileId: file.replaceFileId,
                 },
                 chunkIndex,
                 chunks,
               )
               .then((response) => {
                 fileId = response.id;
-                console.log(`[EditableUpload] Chunk ${chunkIndex + 1}/${chunks} of file ${file.name} uploaded successfully, fileId: ${fileId}`);
+                console.log(`[EditableUpload] Chunk ${chunkIndex + 1}/${chunks} of file ${uploadName} uploaded successfully, fileId: ${fileId}`);
               });
 
             setFileProgress(((chunkIndex + 1) / chunks) * 100);
@@ -117,12 +124,12 @@ const EditableUpload = ({
               e instanceof AxiosError &&
               e.response?.data.error == "unexpected_chunk_index"
             ) {
-              console.warn(`[EditableUpload] Unexpected chunk index for file ${file.name}, retrying with expected index: ${e.response!.data!.expectedChunkIndex}`);
+              console.warn(`[EditableUpload] Unexpected chunk index for file ${uploadName}, retrying with expected index: ${e.response!.data!.expectedChunkIndex}`);
               // Retry with the expected chunk index
               chunkIndex = e.response!.data!.expectedChunkIndex - 1;
               continue;
             } else {
-              console.error(`[EditableUpload] Error uploading chunk ${chunkIndex + 1}/${chunks} of file ${file.name}:`, e);
+              console.error(`[EditableUpload] Error uploading chunk ${chunkIndex + 1}/${chunks} of file ${uploadName}:`, e);
               if (e instanceof AxiosError) {
                 console.error(`[EditableUpload] Error details:`, {
                   status: e.response?.status,
@@ -133,7 +140,7 @@ const EditableUpload = ({
               }
               setFileProgress(-1);
               // Retry after 5 seconds
-              console.log(`[EditableUpload] Retrying upload of file ${file.name} in 5 seconds...`);
+              console.log(`[EditableUpload] Retrying upload of file ${uploadName} in 5 seconds...`);
               await new Promise((resolve) => setTimeout(resolve, 5000));
               chunkIndex = -1;
 
@@ -141,7 +148,7 @@ const EditableUpload = ({
             }
           }
         }
-        console.log(`[EditableUpload] Successfully completed upload of file ${file.name}`);
+        console.log(`[EditableUpload] Successfully completed upload of file ${uploadName}`);
       }),
     );
 
@@ -160,6 +167,46 @@ const EditableUpload = ({
       );
 
       setExistingFiles(existingFiles.filter((file) => !file.deleted));
+    }
+  };
+
+  const renameFiles = async () => {
+    const replacedFileIds = new Set(
+      uploadingFiles
+        .map((file) => file.replaceFileId)
+        .filter((fileId): fileId is string => !!fileId),
+    );
+    const renamedFiles = existingFiles.filter((file) => {
+      const newName = file.newName?.trim();
+      return (
+        !!newName &&
+        newName !== file.name &&
+        !file.deleted &&
+        !replacedFileIds.has(file.id)
+      );
+    });
+
+    if (renamedFiles.length > 0) {
+      const updatedFiles = await Promise.all(
+        renamedFiles.map(async (file) => {
+          return await shareService.renameFile(
+            shareId,
+            file.id,
+            file.newName!.trim(),
+          );
+        }),
+      );
+
+      setExistingFiles((files) =>
+        files.map((file) => {
+          const updatedFile = updatedFiles.find(
+            (updated) => updated.id === file.id,
+          );
+          return updatedFile
+            ? { ...file, name: updatedFile.name, newName: undefined }
+            : file;
+        }),
+      );
     }
   };
 
@@ -217,6 +264,8 @@ const EditableUpload = ({
       if (hasFailed) {
         console.warn(`[EditableUpload] Some files failed to upload, skipping file removal`);
       } else {
+        console.log(`[EditableUpload] Renaming changed files...`);
+        await renameFiles();
         console.log(`[EditableUpload] Removing deleted files...`);
         await removeFiles();
       }
@@ -263,6 +312,26 @@ const EditableUpload = ({
     setUploadingFiles([...appendingFiles, ...uploadingFiles]);
   };
 
+  const replaceFile = (fileToReplace: FileListItem) => {
+    if ("uploadingProgress" in fileToReplace) return;
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.onchange = () => {
+      const selectedFile = input.files?.[0];
+      if (!selectedFile) return;
+
+      const replacement = Object.assign(selectedFile, {
+        uploadingProgress: 0,
+        uploadName: fileToReplace.newName?.trim() || fileToReplace.name,
+        replaceFileId: fileToReplace.id,
+      }) as FileUpload;
+
+      setUploadingFiles((files) => [replacement, ...files]);
+    };
+    input.click();
+  };
+
   useEffect(() => {
     // Check if there are any files that failed to upload
     const fileErrorCount = uploadingFiles.filter(
@@ -295,7 +364,11 @@ const EditableUpload = ({
         isUploading={isUploading}
       />
       {existingAndUploadedFiles.length > 0 && (
-        <FileList files={existingAndUploadedFiles} setFiles={setFiles} />
+        <FileList
+          files={existingAndUploadedFiles}
+          setFiles={setFiles}
+          onReplace={replaceFile}
+        />
       )}
     </Container>
   );

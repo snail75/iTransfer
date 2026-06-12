@@ -1,10 +1,11 @@
 import { TbTrash } from "react-icons/tb";
+import { TbPencil, TbRefresh } from "react-icons/tb";
 import { GrUndo } from "react-icons/gr";
 import { FileListItem } from "../../types/File.type";
 import { byteToHumanSizeString } from "../../utils/fileSize.util";
 import UploadProgressIndicator from "./UploadProgressIndicator";
 import { FormattedMessage } from "react-intl";
-import { Table } from "../ui";
+import { Input, Table } from "../ui";
 import clsx from "clsx";
 import useTranslate from "../../hooks/useTranslate.hook";
 
@@ -12,10 +13,14 @@ const FileListRow = ({
   file,
   onRemove,
   onRestore,
+  onRename,
+  onReplace,
 }: {
   file: FileListItem;
   onRemove?: () => void;
   onRestore?: () => void;
+  onRename?: (name: string) => void;
+  onReplace?: () => void;
 }) => {
   const t = useTranslate();
   const uploadable = "uploadingProgress" in file;
@@ -30,13 +35,43 @@ const FileListRow = ({
     : onRemove && !file.deleted;
   const restorable = onRestore && !uploadable && !!file.deleted;
   const deleted = !uploadable && !!file.deleted;
+  const displayName = !uploadable && file.newName ? file.newName : file.name;
 
   return (
     <Table.Row className={clsx(deleted && "opacity-50 line-through")}>
-      <Table.Cell>{file.name}</Table.Cell>
+      <Table.Cell>
+        {!uploadable && onRename ? (
+          <Input
+            value={displayName}
+            disabled={deleted}
+            onChange={(event) => onRename(event.target.value)}
+            aria-label={t("upload.filelist.action.rename")}
+            className="max-w-md"
+          />
+        ) : (
+          <span>{displayName}</span>
+        )}
+      </Table.Cell>
       <Table.Cell>{byteToHumanSizeString(+file.size)}</Table.Cell>
       <Table.Cell>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
+          {!uploadable && onRename && !deleted && (
+            <TbPencil
+              size={18}
+              className="text-gray-400 dark:text-gray-500"
+              aria-hidden="true"
+            />
+          )}
+          {!uploadable && onReplace && !deleted && (
+            <button
+              onClick={onReplace}
+              className="p-1.5 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label={t("upload.filelist.action.replace")}
+              title={t("upload.filelist.action.replace")}
+            >
+              <TbRefresh size={18} />
+            </button>
+          )}
           {removable && (
             <button
               onClick={onRemove}
@@ -81,9 +116,11 @@ const FileListRow = ({
 const FileList = <T extends FileListItem = FileListItem>({
   files,
   setFiles,
+  onReplace,
 }: {
   files: T[];
   setFiles: (files: T[]) => void;
+  onReplace?: (file: T) => void;
 }) => {
   const remove = (index: number) => {
     const file = files[index];
@@ -109,12 +146,29 @@ const FileList = <T extends FileListItem = FileListItem>({
     setFiles([...files]);
   };
 
+  const rename = (index: number, name: string) => {
+    const file = files[index];
+
+    if ("uploadingProgress" in file) return;
+
+    files[index] = { ...file, newName: name };
+    setFiles([...files]);
+  };
+
   const rows = files.map((file, i) => (
     <FileListRow
       key={i}
       file={file}
       onRemove={() => remove(i)}
       onRestore={() => restore(i)}
+      onRename={
+        "uploadingProgress" in file ? undefined : (name) => rename(i, name)
+      }
+      onReplace={
+        onReplace && !("uploadingProgress" in file)
+          ? () => onReplace(file)
+          : undefined
+      }
     />
   ));
 

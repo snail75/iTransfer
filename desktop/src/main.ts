@@ -28,6 +28,14 @@ type MyShare = {
   files?: Array<{ id: string; name: string; size: string }>;
 };
 
+type ShareFile = { id: string; name: string };
+type UploadConflictResolution = "cancel" | "rename" | "replace";
+type UploadItem = {
+  file: File;
+  uploadName: string;
+  replaceFileId?: string;
+};
+
 type DesktopLocaleCode =
   | "en-US"
   | "de-DE"
@@ -46,119 +54,128 @@ const DESKTOP_LOCALES: Array<{ code: DesktopLocaleCode; name: string }> = [
 ];
 
 const DESKTOP_MESSAGES_EN = {
-    appAria: "Transporter file transfer",
-    openSettings: "Open settings",
-    minimizeWindow: "Minimize window",
-    closeWindow: "Close window",
-    appSections: "App sections",
-    transferTab: "Transfer",
-    historyTab: "History",
-    settingsTitle: "Settings",
-    close: "Close",
-    serverUrl: "Server URL",
-    apiToken: "API token",
-    language: "Language",
-    save: "Save",
-    clearToken: "Clear token",
-    transferName: "Transfer Name",
-    transferNamePlaceholder: "Enter Transfer Name ...",
-    expiration: "Expiration",
-    password: "Password",
-    uploads: "Uploads",
-    versions: "Versions",
-    enabled: "Enabled",
-    off: "Off",
-    setPassword: "Set password",
-    enterPassword: "Enter password",
-    cancel: "Cancel",
-    startNewTransfer: "Start New Transfer",
-    chooseFiles: "Drop files here or choose files",
-    uploadFiles: "Upload files",
-    configureFirst:
-      "Configure the server URL and API token before the first upload.",
-    secureUpload: "Secure chunked upload",
-    ready: "Ready",
-    shareableUrl: "Shareable URL",
-    uploadToCreateLink: "Upload a file to create a share link",
-    copy: "Copy",
-    sentLinks: "Sent Links",
-    yourTransfers: "Your transfers",
-    openWeb: "Open Web",
-    refresh: "Refresh",
-    searchLinks: "Search links",
-    historyLoadHint: "Open History to load your shares.",
-    serverLimitPending:
-      "Server upload limit is loaded after saving the server URL.",
-    oneDay: "1 Day",
-    oneWeek: "1 Week",
-    twoWeeks: "2 Weeks",
-    oneMonth: "1 Month",
-    threeMonths: "3 Months",
-    oneYear: "1 Year",
-    never: "Never",
-    storedToken: "Stored token",
-    readyDrop: "Ready. Drop files to upload.",
-    tokenReadError:
-      "Could not read the stored API token. Open Settings to enter it again.",
-    enterValidServerUrl: "Enter a valid server URL.",
-    apiTokenCleared: "API token cleared.",
-    configureFirstShort: "Configure the server URL and API token first.",
-    loadingLinks: "Loading links...",
-    noLinksFound: "No links found.",
-    linkCount: "{shown} of {total} link{plural} shown.",
-    filesCount: "{count} files - {size}",
-    more: "More",
-    less: "Less",
-    expires: "Expires {date}",
-    expirationUpdated: "Expiration updated.",
-    couldNotUpdateExpiration: "Could not update expiration.",
-    uploadBackUpdated: "Upload-back setting updated.",
-    versioningUpdated: "Versioning setting updated.",
-    couldNotUpdateUploadBack: "Could not update upload-back setting.",
-    couldNotUpdateVersioning: "Could not update versioning setting.",
-    transferNamePlaceholderShort: "Transfer name",
-    nameUpdated: "Name updated.",
-    couldNotUpdateName: "Could not update name.",
-    open: "Open",
-    delete: "Delete",
-    reallyDelete: "Really delete?",
-    deleting: "Deleting...",
-    linkDeleted: "Link deleted.",
-    couldNotDeleteLink: "Could not delete link.",
-    couldNotCreateShare: "Could not create share.",
-    couldNotCompleteShare: "Could not complete share.",
-    couldNotUpdatePassword: "Could not update password setting.",
-    couldNotUpdateSetting: "Could not update setting.",
-    uploadSettingSaved: "Upload setting saved.",
-    versioningSettingSaved: "Versioning setting saved.",
-    expirationSaved: "Expiration saved.",
-    passwordSaved: "Password setting saved.",
-    passwordRemoved: "Password removed.",
-    passwordTooShort: "Password must be at least 3 characters.",
-    noServerLimit: "No server limit reported.",
-    serverUploadLimit: "Server upload limit: {size}.",
-    uploadAlreadyRunning: "An upload is already running.",
-    uploadTooLarge: "Upload is {uploadSize}. Server limit is {serverSize}.",
-    uploading: "Uploading...",
-    queued: "Queued",
-    uploaded: "Uploaded",
-    uploadCompleteTitle: "Upload complete",
-    uploadCompleteNotification: "The share link was copied to the clipboard.",
-    uploadCompleteMessage: "Upload complete. Link copied to clipboard.",
-    uploadCompleteButton: "Upload complete. Link copied to clip",
-    uploadFailed: "Upload failed.",
-    uploadFailedChooseFiles: "Upload failed. Choose files",
-    transferNameCleared: "Transfer name cleared.",
-    couldNotClearTransferName: "Could not clear transfer name.",
-    couldNotSaveTransferName: "Could not save transfer name.",
-    transferNameSaved: "Transfer name saved.",
-    waitForUpload:
-      "Wait for the current upload to finish before starting a new transfer.",
-    newTransferReady: "New transfer ready. Drop files to upload.",
-    copyNeedsLink: "Upload a file to create a share link first.",
-    shareLinkCopied: "Share link copied to clipboard.",
-    couldNotReachServer: "{fallback} Could not reach {server}.",
-    theServer: "the server",
+  appAria: "Transporter file transfer",
+  openSettings: "Open settings",
+  minimizeWindow: "Minimize window",
+  closeWindow: "Close window",
+  appSections: "App sections",
+  transferTab: "Transfer",
+  historyTab: "History",
+  settingsTitle: "Settings",
+  close: "Close",
+  serverUrl: "Server URL",
+  apiToken: "API token",
+  language: "Language",
+  save: "Save",
+  clearToken: "Clear token",
+  transferName: "Transfer Name",
+  transferNamePlaceholder: "Enter Transfer Name ...",
+  expiration: "Expiration",
+  password: "Password",
+  uploads: "Uploads",
+  versions: "Versions",
+  enabled: "Enabled",
+  off: "Off",
+  setPassword: "Set password",
+  enterPassword: "Enter password",
+  cancel: "Cancel",
+  startNewTransfer: "Start New Transfer",
+  chooseFiles: "Drop files here or choose files",
+  uploadFiles: "Upload files",
+  configureFirst:
+    "Configure the server URL and API token before the first upload.",
+  secureUpload: "Secure chunked upload",
+  ready: "Ready",
+  shareableUrl: "Shareable URL",
+  uploadToCreateLink: "Upload a file to create a share link",
+  copy: "Copy",
+  sentLinks: "Sent Links",
+  yourTransfers: "Your transfers",
+  openWeb: "Open Web",
+  refresh: "Refresh",
+  searchLinks: "Search links",
+  historyLoadHint: "Open History to load your shares.",
+  serverLimitPending:
+    "Server upload limit is loaded after saving the server URL.",
+  oneDay: "1 Day",
+  oneWeek: "1 Week",
+  twoWeeks: "2 Weeks",
+  oneMonth: "1 Month",
+  threeMonths: "3 Months",
+  oneYear: "1 Year",
+  never: "Never",
+  storedToken: "Stored token",
+  readyDrop: "Ready. Drop files to upload.",
+  tokenReadError:
+    "Could not read the stored API token. Open Settings to enter it again.",
+  enterValidServerUrl: "Enter a valid server URL.",
+  apiTokenCleared: "API token cleared.",
+  configureFirstShort: "Configure the server URL and API token first.",
+  loadingLinks: "Loading links...",
+  noLinksFound: "No links found.",
+  linkCount: "{shown} of {total} link{plural} shown.",
+  filesCount: "{count} files - {size}",
+  more: "More",
+  less: "Less",
+  expires: "Expires {date}",
+  expirationUpdated: "Expiration updated.",
+  couldNotUpdateExpiration: "Could not update expiration.",
+  uploadBackUpdated: "Upload-back setting updated.",
+  versioningUpdated: "Versioning setting updated.",
+  couldNotUpdateUploadBack: "Could not update upload-back setting.",
+  couldNotUpdateVersioning: "Could not update versioning setting.",
+  transferNamePlaceholderShort: "Transfer name",
+  nameUpdated: "Name updated.",
+  couldNotUpdateName: "Could not update name.",
+  open: "Open",
+  delete: "Delete",
+  reallyDelete: "Really delete?",
+  deleting: "Deleting...",
+  linkDeleted: "Link deleted.",
+  couldNotDeleteLink: "Could not delete link.",
+  couldNotCreateShare: "Could not create share.",
+  couldNotCompleteShare: "Could not complete share.",
+  couldNotUpdatePassword: "Could not update password setting.",
+  couldNotUpdateSetting: "Could not update setting.",
+  uploadSettingSaved: "Upload setting saved.",
+  versioningSettingSaved: "Versioning setting saved.",
+  expirationSaved: "Expiration saved.",
+  passwordSaved: "Password setting saved.",
+  passwordRemoved: "Password removed.",
+  passwordTooShort: "Password must be at least 3 characters.",
+  noServerLimit: "No server limit reported.",
+  serverUploadLimit: "Server upload limit: {size}.",
+  uploadAlreadyRunning: "An upload is already running.",
+  nameConflictTitle: "File name conflict",
+  nameConflictMessage:
+    "Some files have names that already exist. Replace existing files or rename the new uploads.",
+  rename: "Rename",
+  replace: "Replace",
+  uploadTooLarge: "Upload is {uploadSize}. Server limit is {serverSize}.",
+  uploading: "Uploading...",
+  queued: "Queued",
+  uploaded: "Uploaded",
+  uploadCompleteTitle: "Upload complete",
+  uploadCompleteNotification: "The share link was copied to the clipboard.",
+  uploadCompleteMessage: "Upload complete. Link copied to clipboard.",
+  uploadCompleteButton: "Upload complete. Link copied to clip",
+  uploadFailed: "Upload failed.",
+  uploadFailedChooseFiles: "Upload failed. Choose files",
+  transferNameCleared: "Transfer name cleared.",
+  couldNotClearTransferName: "Could not clear transfer name.",
+  couldNotSaveTransferName: "Could not save transfer name.",
+  transferNameSaved: "Transfer name saved.",
+  waitForUpload:
+    "Wait for the current upload to finish before starting a new transfer.",
+  newTransferReady: "New transfer ready. Drop files to upload.",
+  copyNeedsLink: "Upload a file to create a share link first.",
+  emptyTransferNameRequired:
+    "Enter a transfer name first to create an empty upload link.",
+  creatingEmptyTransfer: "Creating empty upload link...",
+  emptyTransferCreated: "Empty upload link created and copied.",
+  shareLinkCopied: "Share link copied to clipboard.",
+  couldNotReachServer: "{fallback} Could not reach {server}.",
+  theServer: "the server",
 } as const;
 
 const DESKTOP_MESSAGES = {
@@ -260,6 +277,11 @@ const DESKTOP_MESSAGES = {
     noServerLimit: "Kein Serverlimit gemeldet.",
     serverUploadLimit: "Server-Uploadlimit: {size}.",
     uploadAlreadyRunning: "Es läuft bereits ein Upload.",
+    nameConflictTitle: "Dateiname bereits vorhanden",
+    nameConflictMessage:
+      "Einige Dateien haben Namen, die bereits existieren. Bestehende Dateien ersetzen oder neue Uploads umbenennen.",
+    rename: "Umbenennen",
+    replace: "Ersetzen",
     uploadTooLarge: "Upload ist {uploadSize}. Serverlimit ist {serverSize}.",
     uploading: "Wird hochgeladen...",
     queued: "In Warteschlange",
@@ -281,6 +303,10 @@ const DESKTOP_MESSAGES = {
     newTransferReady: "Neuer Transfer bereit. Dateien zum Hochladen ablegen.",
     copyNeedsLink:
       "Lade zuerst eine Datei hoch, um einen Freigabelink zu erstellen.",
+    emptyTransferNameRequired:
+      "Gib zuerst einen Transfernamen ein, um einen leeren Upload-Link zu erstellen.",
+    creatingEmptyTransfer: "Leerer Upload-Link wird erstellt...",
+    emptyTransferCreated: "Leerer Upload-Link erstellt und kopiert.",
     shareLinkCopied: "Freigabelink in die Zwischenablage kopiert.",
     couldNotReachServer: "{fallback} {server} konnte nicht erreicht werden.",
     theServer: "der Server",
@@ -314,7 +340,8 @@ const DESKTOP_MESSAGES = {
     startNewTransfer: "Démarrer un nouveau transfert",
     chooseFiles: "Déposez des fichiers ici ou choisissez-les",
     uploadFiles: "Téléverser des fichiers",
-    configureFirst: "Configurez l’URL du serveur et le jeton API avant le premier téléversement.",
+    configureFirst:
+      "Configurez l’URL du serveur et le jeton API avant le premier téléversement.",
     secureUpload: "Téléversement sécurisé par morceaux",
     ready: "Prêt",
     shareableUrl: "URL de partage",
@@ -326,7 +353,8 @@ const DESKTOP_MESSAGES = {
     refresh: "Actualiser",
     searchLinks: "Rechercher des liens",
     historyLoadHint: "Ouvrez l’historique pour charger vos partages.",
-    serverLimitPending: "La limite d’upload du serveur est chargée après l’enregistrement de l’URL du serveur.",
+    serverLimitPending:
+      "La limite d’upload du serveur est chargée après l’enregistrement de l’URL du serveur.",
     oneDay: "1 jour",
     oneWeek: "1 semaine",
     twoWeeks: "2 semaines",
@@ -336,7 +364,8 @@ const DESKTOP_MESSAGES = {
     never: "Jamais",
     storedToken: "Jeton enregistr?",
     readyDrop: "Prêt. Déposez les fichiers ? téléverser.",
-    tokenReadError: "Impossible de lire le jeton API enregistré. Ouvrez les paramètres et saisissez-le à nouveau.",
+    tokenReadError:
+      "Impossible de lire le jeton API enregistré. Ouvrez les paramètres et saisissez-le à nouveau.",
     enterValidServerUrl: "Saisissez une URL de serveur valide.",
     apiTokenCleared: "Jeton API effacé.",
     configureFirstShort: "Configurez d’abord l’URL du serveur et le jeton API.",
@@ -371,15 +400,18 @@ const DESKTOP_MESSAGES = {
     queued: "En file d’attente",
     uploaded: "Téléversé",
     uploadCompleteTitle: "Upload terminé",
-    uploadCompleteNotification: "Le lien de partage a été copié dans le presse-papiers.",
+    uploadCompleteNotification:
+      "Le lien de partage a été copié dans le presse-papiers.",
     uploadCompleteMessage: "Upload terminé. Lien copié dans le presse-papiers.",
     uploadCompleteButton: "Upload terminé. Lien copié",
     uploadFailed: "Échec de l’upload.",
     uploadFailedChooseFiles: "Échec de l’upload. Choisir des fichiers",
     transferNameCleared: "Nom du transfert effacé.",
     transferNameSaved: "Nom du transfert enregistré.",
-    newTransferReady: "Nouveau transfert prêt. Déposez les fichiers ? téléverser.",
-    copyNeedsLink: "Téléversez d’abord un fichier pour créer un lien de partage.",
+    newTransferReady:
+      "Nouveau transfert prêt. Déposez les fichiers ? téléverser.",
+    copyNeedsLink:
+      "Téléversez d’abord un fichier pour créer un lien de partage.",
     shareLinkCopied: "Lien de partage copié dans le presse-papiers.",
     theServer: "le serveur",
   },
@@ -412,7 +444,8 @@ const DESKTOP_MESSAGES = {
     startNewTransfer: "Iniciar nueva transferencia",
     chooseFiles: "Suelta archivos aquí o elígelos",
     uploadFiles: "Subir archivos",
-    configureFirst: "Configura la URL del servidor y el token API antes de la primera subida.",
+    configureFirst:
+      "Configura la URL del servidor y el token API antes de la primera subida.",
     ready: "Listo",
     shareableUrl: "URL compartible",
     uploadToCreateLink: "Sube un archivo para crear un enlace compartido",
@@ -456,7 +489,8 @@ const DESKTOP_MESSAGES = {
     queued: "En cola",
     uploaded: "Subido",
     uploadCompleteTitle: "Subida completa",
-    uploadCompleteNotification: "El enlace compartido se copié al portapapeles.",
+    uploadCompleteNotification:
+      "El enlace compartido se copié al portapapeles.",
     uploadCompleteMessage: "Subida completa. Enlace copiado al portapapeles.",
     uploadCompleteButton: "Subida completa. Enlace copiado",
     uploadFailed: "Error al subir.",
@@ -529,8 +563,10 @@ const DESKTOP_MESSAGES = {
     queued: "In coda",
     uploaded: "Caricato",
     uploadCompleteTitle: "Caricamento completato",
-    uploadCompleteNotification: "Il link di condivisione è stato copiato negli appunti.",
-    uploadCompleteMessage: "Caricamento completato. Link copiato negli appunti.",
+    uploadCompleteNotification:
+      "Il link di condivisione è stato copiato negli appunti.",
+    uploadCompleteMessage:
+      "Caricamento completato. Link copiato negli appunti.",
     uploadFailed: "Caricamento non riuscito.",
     transferNameSaved: "Nome trasferimento salvato.",
     copyNeedsLink: "Carica prima un file per creare un link di condivisione.",
@@ -567,7 +603,8 @@ const DESKTOP_MESSAGES = {
     uploadFiles: "Enviar arquivos",
     ready: "Pronto",
     shareableUrl: "URL compartilhável",
-    uploadToCreateLink: "Envie um arquivo para criar um link de compartilhamento",
+    uploadToCreateLink:
+      "Envie um arquivo para criar um link de compartilhamento",
     copy: "Copiar",
     sentLinks: "Links enviados",
     yourTransfers: "Suas transferências",
@@ -598,12 +635,16 @@ const DESKTOP_MESSAGES = {
     queued: "Na fila",
     uploaded: "Enviado",
     uploadCompleteTitle: "Upload concluído",
-    uploadCompleteNotification: "O link de compartilhamento foi copiado para a área de transferência.",
-    uploadCompleteMessage: "Upload concluído. Link copiado para a área de transferência.",
+    uploadCompleteNotification:
+      "O link de compartilhamento foi copiado para a área de transferência.",
+    uploadCompleteMessage:
+      "Upload concluído. Link copiado para a área de transferência.",
     uploadFailed: "Falha no upload.",
     transferNameSaved: "Nome da transferência salvo.",
-    copyNeedsLink: "Envie primeiro um arquivo para criar um link de compartilhamento.",
-    shareLinkCopied: "Link de compartilhamento copiado para a área de transferência.",
+    copyNeedsLink:
+      "Envie primeiro um arquivo para criar um link de compartilhamento.",
+    shareLinkCopied:
+      "Link de compartilhamento copiado para a área de transferência.",
     theServer: "o servidor",
   },
 } as const;
@@ -681,6 +722,27 @@ const sharePlaceholder =
   document.querySelector<HTMLElement>("#share-placeholder")!;
 const copyLastLinkButton =
   document.querySelector<HTMLButtonElement>("#copy-last-link")!;
+const nameConflictDialog = document.querySelector<HTMLDialogElement>(
+  "#name-conflict-dialog",
+)!;
+const nameConflictTitle = document.querySelector<HTMLElement>(
+  "#name-conflict-title",
+)!;
+const nameConflictMessage = document.querySelector<HTMLElement>(
+  "#name-conflict-message",
+)!;
+const nameConflictList = document.querySelector<HTMLUListElement>(
+  "#name-conflict-list",
+)!;
+const nameConflictCancel = document.querySelector<HTMLButtonElement>(
+  "#name-conflict-cancel",
+)!;
+const nameConflictRename = document.querySelector<HTMLButtonElement>(
+  "#name-conflict-rename",
+)!;
+const nameConflictReplace = document.querySelector<HTMLButtonElement>(
+  "#name-conflict-replace",
+)!;
 
 let apiToken = "";
 let chunkSize = 10_000_000;
@@ -690,6 +752,7 @@ let loadedLinks: MyShare[] = [];
 const expandedLinkIds = new Set<string>();
 let currentShareId: string | undefined;
 let currentShareCompleted = false;
+let currentShareFiles: ShareFile[] = [];
 let sharePassword = "";
 let transferNameLocked = false;
 let transferNameSource: "empty" | "auto" | "manual" | "locked" = "empty";
@@ -841,6 +904,11 @@ function applyDesktopTranslations() {
   if (lastLink.hidden) lastLink.textContent = t("uploadToCreateLink");
   sharePlaceholder.textContent = t("uploadToCreateLink");
   copyLastLinkButton.textContent = t("copy");
+  nameConflictTitle.textContent = t("nameConflictTitle");
+  nameConflictMessage.textContent = t("nameConflictMessage");
+  nameConflictCancel.textContent = t("cancel");
+  nameConflictRename.textContent = t("rename");
+  nameConflictReplace.textContent = t("replace");
   document.querySelector<HTMLElement>(
     ".history-header .section-label",
   )!.textContent = t("sentLinks");
@@ -1025,7 +1093,7 @@ function bindUiEvents() {
   });
   copyLastLinkButton.addEventListener("click", () => {
     if (lastLink.hidden || !lastLink.href || lastLink.href.endsWith("#")) {
-      setMessage(t("copyNeedsLink"));
+      void createEmptyTransferAndCopyLink();
       return;
     }
     void writeText(lastLink.href);
@@ -1801,7 +1869,13 @@ async function uploadFiles(files: File[]) {
 
   if (files.length === 0) return;
 
-  const uploadBytes = files.reduce((total, file) => total + file.size, 0);
+  const preparedUploads = await prepareUploadItems(files);
+  if (preparedUploads.length === 0) return;
+
+  const uploadBytes = preparedUploads.reduce(
+    (total, item) => total + item.file.size,
+    0,
+  );
   if (serverMaxUploadBytes && uploadBytes > serverMaxUploadBytes) {
     setMessage(
       t("uploadTooLarge", {
@@ -1818,29 +1892,48 @@ async function uploadFiles(files: File[]) {
   chooseFilesButton.textContent = t("uploading");
   const existingShareId = currentShareId;
   const uploadItems = existingShareId
-    ? appendUploadList(files)
-    : renderUploadList(files);
+    ? appendUploadList(preparedUploads)
+    : renderUploadList(preparedUploads);
   if (!existingShareId) {
     lastLink.hidden = true;
   }
 
   try {
-    const shareId = existingShareId ?? (await createShare(apiUrl, files)).id;
+    const shareId =
+      existingShareId ??
+      (
+        await createShare(
+          apiUrl,
+          preparedUploads.map((item) => item.file),
+        )
+      ).id;
     currentShareId = shareId;
-    if (!existingShareId) currentShareCompleted = false;
+    if (!existingShareId) {
+      currentShareCompleted = false;
+      currentShareFiles = [];
+    }
     let completedBytes = 0;
     const uploadStartedAt = performance.now();
 
-    for (const file of files) {
-      updateUploadListItem(uploadItems.get(file), t("uploading"));
-      await uploadFile(apiUrl, shareId, file, (fileUploadedBytes) => {
-        const uploadedBytes = completedBytes + fileUploadedBytes;
-        progress.value =
-          uploadBytes > 0 ? (uploadedBytes / uploadBytes) * 100 : 100;
-        updateUploadSpeed(uploadedBytes, uploadStartedAt);
-      });
-      completedBytes += file.size;
-      updateUploadListItem(uploadItems.get(file), t("uploaded"));
+    for (const uploadItem of preparedUploads) {
+      updateUploadListItem(uploadItems.get(uploadItem), t("uploading"));
+      const savedFile = await uploadFile(
+        apiUrl,
+        shareId,
+        uploadItem,
+        (fileUploadedBytes) => {
+          const uploadedBytes = completedBytes + fileUploadedBytes;
+          progress.value =
+            uploadBytes > 0 ? (uploadedBytes / uploadBytes) * 100 : 100;
+          updateUploadSpeed(uploadedBytes, uploadStartedAt);
+        },
+      );
+      currentShareFiles = currentShareFiles.filter(
+        (file) => file.id !== uploadItem.replaceFileId,
+      );
+      currentShareFiles.push(savedFile);
+      completedBytes += uploadItem.file.size;
+      updateUploadListItem(uploadItems.get(uploadItem), t("uploaded"));
     }
 
     if (!currentShareCompleted) {
@@ -1873,26 +1966,199 @@ async function uploadFiles(files: File[]) {
   }
 }
 
-function renderUploadList(files: File[]) {
-  uploadList.replaceChildren();
-  return appendUploadList(files);
+async function createEmptyTransferAndCopyLink() {
+  if (isUploading) {
+    setMessage(t("uploadAlreadyRunning"));
+    return;
+  }
+
+  if (currentShareId && !lastLink.hidden && lastLink.href) {
+    await writeText(lastLink.href);
+    setMessage(t("shareLinkCopied"));
+    return;
+  }
+
+  const serverUrl = getServerUrl();
+  const apiUrl = getApiUrl();
+  apiToken = apiToken || ((await invoke<string | null>("get_api_token")) ?? "");
+
+  if (!serverUrl || !apiUrl || !apiToken) {
+    toggleSettings(true);
+    setMessage(t("configureFirstShort"));
+    return;
+  }
+
+  const transferName = transferNameInput.value.trim();
+  if (transferName.length < 3) {
+    setMessage(t("emptyTransferNameRequired"));
+    transferNameInput.focus();
+    return;
+  }
+
+  isUploading = true;
+  setMessage(t("creatingEmptyTransfer"));
+
+  try {
+    allowPublicUploadInput.checked = true;
+    localStorage.setItem("allowPublicUpload", "true");
+    updateOptionStatuses();
+
+    const share = await createShare(apiUrl, [], {
+      forceAllowPublicUpload: true,
+    });
+    await completeShare(apiUrl, share.id);
+
+    currentShareId = share.id;
+    currentShareCompleted = true;
+    currentShareFiles = [];
+
+    const shareUrl = `${serverUrl}/s/${share.id}`;
+    await writeText(shareUrl);
+    await notify(t("uploadCompleteTitle"), t("emptyTransferCreated"));
+
+    lastLink.href = shareUrl;
+    lastLink.textContent = shareUrl;
+    lastLink.hidden = false;
+    sharePlaceholder.hidden = true;
+    progress.value = 100;
+    uploadSpeed.textContent = "0 KB/s";
+    chooseFilesButton.textContent = t("chooseFiles");
+    setMessage(t("emptyTransferCreated"));
+    await loadLinksIfVisible();
+  } catch (error) {
+    setMessage(
+      error instanceof Error
+        ? networkErrorMessage(error, t("couldNotCreateShare"))
+        : t("couldNotCreateShare"),
+    );
+  } finally {
+    isUploading = false;
+  }
 }
 
-function appendUploadList(files: File[]) {
+async function prepareUploadItems(files: File[]): Promise<UploadItem[]> {
+  const existingByName = new Map(
+    currentShareFiles.map((file) => [file.name, file]),
+  );
+  const selectedNameCounts = files.reduce((counts, file) => {
+    counts.set(file.name, (counts.get(file.name) ?? 0) + 1);
+    return counts;
+  }, new Map<string, number>());
+  const conflictNames = Array.from(
+    new Set(
+      files
+        .filter(
+          (file) =>
+            existingByName.has(file.name) ||
+            (selectedNameCounts.get(file.name) ?? 0) > 1,
+        )
+        .map((file) => file.name),
+    ),
+  );
+
+  if (conflictNames.length === 0) {
+    return files.map((file) => ({ file, uploadName: file.name }));
+  }
+
+  const resolution = await askNameConflictResolution(
+    conflictNames,
+    allowVersioningInput.checked,
+  );
+  if (resolution === "cancel") return [];
+
+  if (resolution === "replace") {
+    const replacements = new Map<string, UploadItem>();
+    for (const file of files) {
+      replacements.set(file.name, {
+        file,
+        uploadName: file.name,
+        replaceFileId: existingByName.get(file.name)?.id,
+      });
+    }
+    return Array.from(replacements.values());
+  }
+
+  const usedNames = currentShareFiles.map((file) => file.name);
+  return files.map((file) => {
+    const uploadName = createAvailableUploadName(file.name, usedNames);
+    usedNames.push(uploadName);
+    return { file, uploadName };
+  });
+}
+
+function askNameConflictResolution(
+  conflictNames: string[],
+  canReplace: boolean,
+): Promise<UploadConflictResolution> {
+  if (!("showModal" in HTMLDialogElement.prototype)) {
+    return Promise.resolve(
+      canReplace && window.confirm(t("nameConflictMessage"))
+        ? "replace"
+        : "rename",
+    );
+  }
+
+  nameConflictList.replaceChildren();
+  for (const name of conflictNames) {
+    const item = document.createElement("li");
+    item.textContent = name;
+    nameConflictList.appendChild(item);
+  }
+  nameConflictReplace.disabled = !canReplace;
+  nameConflictDialog.returnValue = "cancel";
+
+  return new Promise((resolve) => {
+    nameConflictDialog.addEventListener(
+      "close",
+      () => {
+        const value = nameConflictDialog.returnValue;
+        resolve(
+          value === "replace" || value === "rename" || value === "cancel"
+            ? value
+            : "cancel",
+        );
+      },
+      { once: true },
+    );
+    nameConflictDialog.showModal();
+  });
+}
+
+function createAvailableUploadName(name: string, usedNames: string[]) {
+  const used = new Set(usedNames);
+  if (!used.has(name)) return name;
+
+  const dotIndex = name.lastIndexOf(".");
+  const hasExtension = dotIndex > 0;
+  const basename = hasExtension ? name.slice(0, dotIndex) : name;
+  const extension = hasExtension ? name.slice(dotIndex) : "";
+
+  for (let index = 2; ; index++) {
+    const candidate = `${basename} (${index})${extension}`;
+    if (!used.has(candidate)) return candidate;
+  }
+}
+
+function renderUploadList(items: UploadItem[]) {
+  uploadList.replaceChildren();
+  return appendUploadList(items);
+}
+
+function appendUploadList(items: UploadItem[]) {
   uploadList.classList.toggle(
     "is-scrollable",
-    uploadList.children.length + files.length > 1,
+    uploadList.children.length + items.length > 1,
   );
-  const items = new Map<File, HTMLElement>();
+  const elements = new Map<UploadItem, HTMLElement>();
 
-  for (const file of files) {
+  for (const uploadItem of items) {
     const item = document.createElement("li");
     item.className = "upload-list-item";
-    item.dataset.fileName = file.name;
+    item.dataset.fileName = uploadItem.uploadName;
 
     const fileName = document.createElement("span");
     fileName.className = "upload-list-name";
-    fileName.textContent = file.name;
+    fileName.textContent = uploadItem.uploadName;
 
     const status = document.createElement("span");
     status.className = "upload-list-status";
@@ -1900,22 +2166,30 @@ function appendUploadList(files: File[]) {
 
     item.append(fileName, status);
     uploadList.appendChild(item);
-    items.set(file, item);
+    elements.set(uploadItem, item);
   }
 
-  return items;
+  return elements;
 }
 
-function updateUploadListItem(item: HTMLElement | undefined, statusText: string) {
+function updateUploadListItem(
+  item: HTMLElement | undefined,
+  statusText: string,
+) {
   if (!item) return;
 
   const status = item.querySelector<HTMLElement>(".upload-list-status");
   if (status) status.textContent = statusText;
 }
 
-async function createShare(serverUrl: string, files: File[]) {
+async function createShare(
+  serverUrl: string,
+  files: File[],
+  options: { forceAllowPublicUpload?: boolean } = {},
+) {
   const customShareName = transferNameInput.value.trim();
-  const shareName = customShareName || stripExtension(files[0].name);
+  const shareName =
+    customShareName || (files[0] ? stripExtension(files[0].name) : undefined);
 
   const response = await fetch(`${serverUrl}/api/shares`, {
     method: "POST",
@@ -1924,7 +2198,8 @@ async function createShare(serverUrl: string, files: File[]) {
       id: createShareId(),
       name: shareName && shareName.length >= 3 ? shareName : undefined,
       expiration: getExpiration(),
-      allowPublicUpload: allowPublicUploadInput.checked,
+      allowPublicUpload:
+        options.forceAllowPublicUpload || allowPublicUploadInput.checked,
       allowVersioning: allowVersioningInput.checked,
       recipients: [],
       security: sharePassword ? { password: sharePassword } : {},
@@ -1939,10 +2214,12 @@ async function createShare(serverUrl: string, files: File[]) {
 async function uploadFile(
   serverUrl: string,
   shareId: string,
-  file: File,
+  uploadItem: UploadItem,
   onProgress: (uploadedBytes: number) => void,
 ) {
   let fileId: string | undefined;
+  let savedName = uploadItem.uploadName;
+  const { file, uploadName, replaceFileId } = uploadItem;
   let chunks = Math.ceil(file.size / chunkSize);
   if (chunks === 0) chunks = 1;
 
@@ -1953,7 +2230,8 @@ async function uploadFile(
     );
     const url = new URL(`${serverUrl}/api/shares/${shareId}/files`);
     if (fileId) url.searchParams.set("id", fileId);
-    url.searchParams.set("name", file.name);
+    if (replaceFileId) url.searchParams.set("replaceFileId", replaceFileId);
+    url.searchParams.set("name", uploadName);
     url.searchParams.set("chunkIndex", chunkIndex.toString());
     url.searchParams.set("totalChunks", chunks.toString());
 
@@ -1972,12 +2250,16 @@ async function uploadFile(
         chunkIndex = body.expectedChunkIndex - 1;
         continue;
       }
-      throw new Error(body?.message ?? `Could not upload ${file.name}.`);
+      throw new Error(body?.message ?? `Could not upload ${uploadName}.`);
     }
 
-    fileId = ((await response.json()) as { id: string }).id;
+    const savedFile = (await response.json()) as { id: string; name: string };
+    fileId = savedFile.id;
+    savedName = savedFile.name;
     onProgress(Math.min(file.size, (chunkIndex + 1) * chunkSize));
   }
+
+  return { id: fileId!, name: savedName };
 }
 
 async function completeShare(serverUrl: string, shareId: string) {
@@ -2178,6 +2460,7 @@ function resetTransfer() {
 
   currentShareId = undefined;
   currentShareCompleted = false;
+  currentShareFiles = [];
   sharePassword = "";
   transferNameLocked = false;
   transferNameSource = "empty";

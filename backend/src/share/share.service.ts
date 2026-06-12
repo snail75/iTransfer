@@ -5,11 +5,10 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { JwtService, JwtSignOptions } from "@nestjs/jwt";
-import { Share, User } from "@prisma/client";
+import { Prisma, Share, User } from "@prisma/client";
 import * as argon from "argon2";
 import * as fs from "fs";
 import * as moment from "moment";
-import { ClamScanService } from "src/clamscan/clamscan.service";
 import { ConfigService } from "src/config/config.service";
 import { EmailService } from "src/email/email.service";
 import { FileService } from "src/file/file.service";
@@ -18,6 +17,14 @@ import { ReverseShareService } from "src/reverseShare/reverseShare.service";
 import { getConfiguredLocalStorageRoot } from "src/storage/localStoragePath.util";
 import { parseRelativeDateToAbsolute } from "src/utils/date.util";
 import { CreateShareDTO } from "./dto/createShare.dto";
+
+type ShareWithPublicDetails = Prisma.ShareGetPayload<{
+  include: {
+    files: true;
+    creator: true;
+    security: true;
+  };
+}> & { hasPassword: boolean };
 
 @Injectable()
 export class ShareService {
@@ -29,7 +36,6 @@ export class ShareService {
     private config: ConfigService,
     private jwtService: JwtService,
     private reverseShareService: ReverseShareService,
-    private clamScanService: ClamScanService,
   ) {}
 
   async create(share: CreateShareDTO, user?: User, reverseShareToken?: string) {
@@ -113,7 +119,7 @@ export class ShareService {
     if (await this.isShareCompleted(id))
       throw new BadRequestException("Share already completed");
 
-    if (share.files.length == 0)
+    if (share.files.length == 0 && !share.allowPublicUpload)
       throw new BadRequestException(
         "You need at least on file in your share to complete it.",
       );
@@ -139,10 +145,6 @@ export class ShareService {
         share.reverseShare.creator.email,
         share.id,
       );
-    }
-
-    if (share.storageProvider == "LOCAL") {
-      void this.clamScanService.checkAndRemove(share.id);
     }
 
     if (share.reverseShare) {
@@ -237,7 +239,9 @@ export class ShareService {
           const defaultExpiration = this.config.get("share.defaultExpiration");
           return defaultExpiration.value === 0
             ? moment(0).toDate()
-            : moment().add(defaultExpiration.value, defaultExpiration.unit).toDate();
+            : moment()
+                .add(defaultExpiration.value, defaultExpiration.unit)
+                .toDate();
         })();
 
     const expiresNever = moment(0).isSame(parsedExpiration);
@@ -302,7 +306,7 @@ export class ShareService {
     });
   }
 
-  async get(id: string): Promise<any> {
+  async get(id: string): Promise<ShareWithPublicDetails> {
     const share = await this.prisma.share.findUnique({
       where: { id },
       include: {

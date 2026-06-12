@@ -381,6 +381,8 @@ export default {
     "Nous avons notifié le créateur du partage inverse. Vous pouvez également partager manuellement ce lien avec eux par d'autres moyens.",
   "upload.filelist.action.remove": "Retirer le fichier",
   "upload.filelist.action.restore": "Restaurer le fichier",
+  "upload.filelist.action.rename": "Renommer le fichier",
+  "upload.filelist.action.replace": "Remplacer le fichier",
   "upload.filelist.status.waiting": "En attente du téléversement",
   "upload.filelist.status.queued": "En file d’attente",
   // END /upload

@@ -14,7 +14,7 @@ import {
 import { JwtService, JwtSignOptions } from "@nestjs/jwt";
 import { Throttle } from "@nestjs/throttler";
 import { User } from "@prisma/client";
-import { Request, Response } from "express";
+import { CookieOptions, Request, Response } from "express";
 import * as moment from "moment";
 import { GetUser } from "src/auth/decorator/getUser.decorator";
 import { AdministratorGuard } from "src/auth/guard/isAdmin.guard";
@@ -201,8 +201,7 @@ export class ShareController {
 
     this.clearShareTokenCookies(request, response);
     response.cookie(`share_${id}_token`, token, {
-      path: "/",
-      httpOnly: true,
+      ...this.getShareTokenCookieOptions(),
     });
 
     return { token };
@@ -214,26 +213,42 @@ export class ShareController {
   private clearShareTokenCookies(request: Request, response: Response) {
     const shareTokenCookies = Object.entries(request.cookies)
       .filter(([key]) => key.startsWith("share_") && key.endsWith("_token"))
-      .map(([key, value]) => ({
-        key,
-        payload: this.jwtService.decode(value as string),
-      }));
+      .map(([key, value]) => {
+        const payload = this.jwtService.decode(value as string);
+        return typeof payload === "object" && payload !== null
+          ? { key, exp: payload.exp ?? Number.MAX_SAFE_INTEGER }
+          : null;
+      })
+      .filter((cookie): cookie is { key: string; exp: number } => !!cookie);
 
     const expiredTokens = shareTokenCookies.filter(
-      (cookie) => cookie.payload.exp < moment().unix(),
+      (cookie) => cookie.exp < moment().unix(),
     );
     const validTokens = shareTokenCookies.filter(
-      (cookie) => cookie.payload.exp >= moment().unix(),
+      (cookie) => cookie.exp >= moment().unix(),
     );
 
-    expiredTokens.forEach((cookie) => response.clearCookie(cookie.key));
+    expiredTokens.forEach((cookie) =>
+      response.clearCookie(cookie.key, this.getShareTokenCookieOptions()),
+    );
 
     if (validTokens.length > 10) {
       validTokens
-        .sort((a, b) => a.payload.exp - b.payload.exp)
+        .sort((a, b) => a.exp - b.exp)
         .slice(0, -10)
-        .forEach((cookie) => response.clearCookie(cookie.key));
+        .forEach((cookie) =>
+          response.clearCookie(cookie.key, this.getShareTokenCookieOptions()),
+        );
     }
+  }
+
+  private getShareTokenCookieOptions(): CookieOptions {
+    return {
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      secure: this.configService.get("general.secureCookies"),
+    };
   }
 
   private setAnonymousShareOwnerCookie(

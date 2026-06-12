@@ -378,6 +378,8 @@ export default {
     "Abbiamo avvisato il creatore della condivisione inversa. Puoi anche condividere manualmente questo link tramite altri mezzi.",
   "upload.filelist.action.remove": "Rimuovi file",
   "upload.filelist.action.restore": "Ripristina file",
+  "upload.filelist.action.rename": "Rinomina file",
+  "upload.filelist.action.replace": "Sostituisci file",
   "upload.filelist.status.waiting": "In attesa del caricamento",
   "upload.filelist.status.queued": "In coda",
   // END /upload

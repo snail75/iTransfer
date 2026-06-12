@@ -375,6 +375,8 @@ export default {
     "Wir haben den Ersteller der externen Freigabe benachrichtigt. Du kannst den Link auch auf andere Wege teilen.",
   "upload.filelist.action.remove": "Datei entfernen",
   "upload.filelist.action.restore": "Datei wiederherstellen",
+  "upload.filelist.action.rename": "Datei umbenennen",
+  "upload.filelist.action.replace": "Datei ersetzen",
   "upload.filelist.status.waiting": "Wartet auf den Upload",
   "upload.filelist.status.queued": "In Warteschlange",
   // END /upload

@@ -427,6 +427,8 @@ export default {
 
   "upload.filelist.action.remove": "Remove file",
   "upload.filelist.action.restore": "Restore file",
+  "upload.filelist.action.rename": "Rename file",
+  "upload.filelist.action.replace": "Replace file",
   "upload.filelist.status.waiting": "Waiting to upload",
   "upload.filelist.status.queued": "Queued",
   // END /upload

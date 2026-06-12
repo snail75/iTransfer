@@ -8,6 +8,7 @@ import {
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
+  CopyObjectCommand,
   CreateMultipartUploadCommand,
   DeleteObjectCommand,
   DeleteObjectsCommand,
@@ -23,6 +24,7 @@ import { ConfigService } from "src/config/config.service";
 import * as crypto from "crypto";
 import * as mime from "mime-types";
 import { File } from "./file.service";
+import { createAvailableFileName } from "./local.service";
 import { Readable } from "stream";
 import { validate as isValidUUID } from "uuid";
 import * as archiver from "archiver";
@@ -52,6 +54,7 @@ export class S3FileService {
     allowCompletedShareUpload = false,
     allowVersioning = false,
     allowPublicUpload = false,
+    isShareOwnerUpload = false,
   ) {
     if (!file.id) {
       file.id = crypto.randomUUID();
@@ -67,24 +70,39 @@ export class S3FileService {
     if (share?.uploadLocked && !allowCompletedShareUpload)
       throw new BadRequestException("Share is already completed");
 
-    const versionedFiles = allowVersioning
-      ? share?.files.filter((savedFile) =>
-          file.replaceFileId
-            ? savedFile.id === file.replaceFileId
-            : savedFile.name === file.name,
+    const canReplace = allowVersioning || isShareOwnerUpload;
+    const wantsReplacement = canReplace && !!file.replaceFileId;
+    const versionedFiles = wantsReplacement
+      ? share?.files.filter(
+          (savedFile) => savedFile.id === file.replaceFileId,
         ) || []
       : [];
+    if (wantsReplacement && versionedFiles.length === 0) {
+      throw new BadRequestException("Replacement file not found");
+    }
+    const replacedFileIds = new Set(
+      versionedFiles.map((savedFile) => savedFile.id),
+    );
+    const fileName = createAvailableFileName(
+      file.name,
+      share?.files
+        .filter((savedFile) => !replacedFileIds.has(savedFile.id))
+        .map((savedFile) => savedFile.name) || [],
+    );
 
     if (
       share?.uploadLocked &&
+      !isShareOwnerUpload &&
       allowVersioning &&
       !allowPublicUpload &&
-      versionedFiles.length === 0
+      !wantsReplacement
     ) {
-      throw new BadRequestException("Versioning requires an existing file name");
+      throw new BadRequestException(
+        "Versioning requires an existing file name",
+      );
     }
 
-    const key = `${this.getS3Path()}${shareId}/${file.name}`;
+    const key = `${this.getS3Path()}${shareId}/${fileName}`;
     const bucketName = this.config.get("s3.bucketName");
     const s3Instance = this.getS3Instance();
 
@@ -178,11 +196,11 @@ export class S3FileService {
 
     const isLastChunk = chunk.index == chunk.total - 1;
     if (isLastChunk) {
-      const fileSize: number = await this.getFileSize(shareId, file.name);
+      const fileSize: number = await this.getFileSize(shareId, fileName);
 
       if (versionedFiles.length > 0) {
         const oldKeysToDelete = versionedFiles
-          .filter((savedFile) => savedFile.name !== file.name)
+          .filter((savedFile) => savedFile.name !== fileName)
           .map((savedFile) => ({
             Key: `${this.getS3Path()}${shareId}/${savedFile.name}`,
           }));
@@ -208,7 +226,7 @@ export class S3FileService {
       await this.prisma.file.create({
         data: {
           id: file.id,
-          name: file.name,
+          name: fileName,
           size: fileSize.toString(),
           scanStatus: "UNSCANNED",
           scanMessage: "ClamAV scan is not available for S3 storage.",
@@ -223,7 +241,7 @@ export class S3FileService {
       }
     }
 
-    return file;
+    return { ...file, name: fileName };
   }
 
   async get(shareId: string, fileId: string): Promise<File> {
@@ -281,6 +299,62 @@ export class S3FileService {
     }
 
     await this.prisma.file.delete({ where: { id: fileId } });
+  }
+
+  async rename(shareId: string, fileId: string, name?: string) {
+    const desiredName = name?.trim();
+    if (!desiredName) {
+      throw new BadRequestException("File name is required");
+    }
+
+    const fileMetaData = await this.prisma.file.findFirst({
+      where: { id: fileId, shareId },
+      include: { share: { include: { files: true } } },
+    });
+
+    if (!fileMetaData) throw new NotFoundException("File not found");
+
+    const fileName = createAvailableFileName(
+      desiredName,
+      fileMetaData.share.files
+        .filter((file) => file.id !== fileId)
+        .map((file) => file.name),
+    );
+
+    if (fileName !== fileMetaData.name) {
+      const bucketName = this.config.get("s3.bucketName");
+      const s3Instance = this.getS3Instance();
+      const sourceKey = `${this.getS3Path()}${shareId}/${fileMetaData.name}`;
+      const targetKey = `${this.getS3Path()}${shareId}/${fileName}`;
+
+      await s3Instance.send(
+        new CopyObjectCommand({
+          Bucket: bucketName,
+          CopySource: encodeURI(`${bucketName}/${sourceKey}`),
+          Key: targetKey,
+        }),
+      );
+      await s3Instance.send(
+        new DeleteObjectCommand({
+          Bucket: bucketName,
+          Key: sourceKey,
+        }),
+      );
+    }
+
+    const file = await this.prisma.file.update({
+      where: { id: fileId },
+      data: { name: fileName },
+    });
+
+    if (fileMetaData.share.uploadLocked) {
+      await this.prisma.share.update({
+        where: { id: shareId },
+        data: { isZipReady: false },
+      });
+    }
+
+    return file;
   }
 
   async deleteAllFiles(shareId: string) {

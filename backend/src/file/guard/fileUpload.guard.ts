@@ -48,6 +48,7 @@ export class FileUploadGuard extends JwtGuard {
         (!share.creatorId && this.verifyAnonymousOwnerToken(request, share))
       ) {
         request["allowCompletedShareUpload"] = true;
+        request["isShareOwnerUpload"] = true;
         return true;
       }
     } catch {

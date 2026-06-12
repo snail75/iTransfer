@@ -21,7 +21,12 @@
         <header class="app-header">
           <div id="window-drag-region" class="title-row">
             <div class="brand">
-              <img class="brand-icon-image" src="/icon.png" alt="" aria-hidden="true" />
+              <img
+                class="brand-icon-image"
+                src="/icon.png"
+                alt=""
+                aria-hidden="true"
+              />
               <h1>Transporter</h1>
             </div>
             <div class="header-actions">
@@ -223,6 +228,44 @@
               <span class="switch" aria-hidden="true"></span>
             </label>
           </section>
+
+          <dialog id="name-conflict-dialog" class="conflict-dialog">
+            <form method="dialog" class="conflict-dialog-content">
+              <p id="name-conflict-title" class="dialog-title">
+                File name conflict
+              </p>
+              <p id="name-conflict-message" class="dialog-message">
+                Some files have names that already exist.
+              </p>
+              <ul id="name-conflict-list" class="dialog-file-list"></ul>
+              <div class="dialog-actions">
+                <button
+                  id="name-conflict-cancel"
+                  class="secondary-button"
+                  value="cancel"
+                  type="submit"
+                >
+                  Cancel
+                </button>
+                <button
+                  id="name-conflict-rename"
+                  class="secondary-button"
+                  value="rename"
+                  type="submit"
+                >
+                  Rename
+                </button>
+                <button
+                  id="name-conflict-replace"
+                  class="primary-button"
+                  value="replace"
+                  type="submit"
+                >
+                  Replace
+                </button>
+              </div>
+            </form>
+          </dialog>
 
           <section id="drop-zone" class="drop-zone" tabindex="0">
             <form id="password-panel" class="password-panel" hidden>

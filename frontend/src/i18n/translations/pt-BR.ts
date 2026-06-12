@@ -383,6 +383,8 @@ export default {
     "Nós notificamos o criador do compartilhamento reverso. Você também pode compartilhar este link manualmente com ele por outros meios.",
   "upload.filelist.action.remove": "Remover arquivo",
   "upload.filelist.action.restore": "Restaurar arquivo",
+  "upload.filelist.action.rename": "Renomear arquivo",
+  "upload.filelist.action.replace": "Substituir arquivo",
   "upload.filelist.status.waiting": "Aguardando upload",
   "upload.filelist.status.queued": "Na fila",
   // END /upload

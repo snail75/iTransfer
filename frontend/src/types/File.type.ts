@@ -1,4 +1,8 @@
-export type FileUpload = File & { uploadingProgress: number };
+export type FileUpload = File & {
+  uploadingProgress: number;
+  uploadName?: string;
+  replaceFileId?: string;
+};
 
 export type FileUploadResponse = { id: string; name: string };
 
@@ -11,4 +15,6 @@ export type FileMetaData = {
   scanMessage?: string;
 };
 
-export type FileListItem = FileUpload | (FileMetaData & { deleted?: boolean });
+export type FileListItem =
+  | FileUpload
+  | (FileMetaData & { deleted?: boolean; newName?: string });

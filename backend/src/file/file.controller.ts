@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -56,6 +57,7 @@ export class FileController {
       request["allowCompletedShareUpload"] === true,
       request["allowVersioning"] === true,
       request["allowPublicUpload"] === true,
+      request["isShareOwnerUpload"] === true,
     );
   }
 
@@ -119,12 +121,25 @@ export class FileController {
   ) {
     await this.fileService.remove(shareId, fileId);
   }
+
+  @Patch(":fileId/name")
+  @UseGuards(ShareOwnerGuard)
+  async rename(
+    @Param("fileId") fileId: string,
+    @Param("shareId") shareId: string,
+    @Body() body: { name?: string },
+  ) {
+    return await this.fileService.rename(shareId, fileId, body.name);
+  }
 }
 
 function sanitizeZipFileName(name: string) {
   const safeName = name
     .trim()
-    .replace(/[<>:"/\\|?*\u0000-\u001f]/g, "_")
+    .split("")
+    .map((char) => (char.charCodeAt(0) < 32 ? "_" : char))
+    .join("")
+    .replace(/[<>:"/\\|?*]/g, "_")
     .replace(/[. ]+$/g, "")
     .slice(0, 128);
 

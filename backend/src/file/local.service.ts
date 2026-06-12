@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from "@nestjs/common";
 import * as crypto from "crypto";
@@ -19,8 +20,25 @@ import { resolveShareDirectory } from "src/storage/localStoragePath.util";
 import { validate as isValidUUID } from "uuid";
 import { Readable } from "stream";
 
+export function createAvailableFileName(name: string, usedNames: string[]) {
+  const used = new Set(usedNames);
+  if (!used.has(name)) return name;
+
+  const dotIndex = name.lastIndexOf(".");
+  const hasExtension = dotIndex > 0;
+  const basename = hasExtension ? name.slice(0, dotIndex) : name;
+  const extension = hasExtension ? name.slice(dotIndex) : "";
+
+  for (let index = 2; ; index++) {
+    const candidate = `${basename} (${index})${extension}`;
+    if (!used.has(candidate)) return candidate;
+  }
+}
+
 @Injectable()
 export class LocalFileService {
+  private readonly logger = new Logger(LocalFileService.name);
+
   constructor(
     private prisma: PrismaService,
     private config: ConfigService,
@@ -36,6 +54,7 @@ export class LocalFileService {
     allowCompletedShareUpload = false,
     allowVersioning = false,
     allowPublicUpload = false,
+    isShareOwnerUpload = false,
   ) {
     if (!file.id) {
       file.id = crypto.randomUUID();
@@ -54,13 +73,23 @@ export class LocalFileService {
     if (share.uploadLocked && !allowCompletedShareUpload)
       throw new BadRequestException("Share is already completed");
 
-    const versionedFiles = allowVersioning
-      ? share.files.filter((savedFile) =>
-          file.replaceFileId
-            ? savedFile.id === file.replaceFileId
-            : savedFile.name === file.name,
-        )
+    const canReplace = allowVersioning || isShareOwnerUpload;
+    const wantsReplacement = canReplace && !!file.replaceFileId;
+    const versionedFiles = wantsReplacement
+      ? share.files.filter((savedFile) => savedFile.id === file.replaceFileId)
       : [];
+    if (wantsReplacement && versionedFiles.length === 0) {
+      throw new BadRequestException("Replacement file not found");
+    }
+    const replacedFileIds = new Set(
+      versionedFiles.map((savedFile) => savedFile.id),
+    );
+    const fileName = createAvailableFileName(
+      file.name,
+      share.files
+        .filter((savedFile) => !replacedFileIds.has(savedFile.id))
+        .map((savedFile) => savedFile.name),
+    );
     const versionedFileSize = versionedFiles.reduce(
       (n, { size }) => n + parseInt(size),
       0,
@@ -68,9 +97,10 @@ export class LocalFileService {
 
     if (
       share.uploadLocked &&
+      !isShareOwnerUpload &&
       allowVersioning &&
       !allowPublicUpload &&
-      versionedFiles.length === 0
+      !wantsReplacement
     ) {
       throw new BadRequestException(
         "Versioning requires an existing file name",
@@ -152,20 +182,6 @@ export class LocalFileService {
       );
       const filePath = `${shareDirectory}/${file.id}`;
       const fileSize = (await fs.stat(filePath)).size;
-      let scanResult: {
-        scanStatus: string;
-        scanCheckedAt: Date;
-        scanMessage: string;
-      };
-      try {
-        scanResult = await this.clamScanService.scanLocalFile(
-          filePath,
-          file.name,
-        );
-      } catch (error) {
-        await fs.rm(filePath, { force: true });
-        throw error;
-      }
 
       if (versionedFiles.length > 0) {
         await Promise.all(
@@ -185,14 +201,20 @@ export class LocalFileService {
       await this.prisma.file.create({
         data: {
           id: file.id,
-          name: file.name,
+          name: fileName,
           size: fileSize.toString(),
-          scanStatus: scanResult.scanStatus,
-          scanCheckedAt: scanResult.scanCheckedAt,
-          scanMessage: scanResult.scanMessage,
+          scanStatus: "UNSCANNED",
+          scanCheckedAt: new Date(),
+          scanMessage: "Virus scan queued.",
           share: { connect: { id: shareId } },
         },
       });
+      void this.scanFileInBackground(
+        shareId,
+        shareDirectory,
+        file.id,
+        fileName,
+      );
       if (share.uploadLocked) {
         await this.prisma.share.update({
           where: { id: shareId },
@@ -201,7 +223,7 @@ export class LocalFileService {
       }
     }
 
-    return file;
+    return { ...file, name: fileName };
   }
 
   async get(shareId: string, fileId: string) {
@@ -240,6 +262,41 @@ export class LocalFileService {
     await fs.unlink(`${resolveShareDirectory(fileMetaData.share)}/${fileId}`);
 
     await this.prisma.file.delete({ where: { id: fileId } });
+  }
+
+  async rename(shareId: string, fileId: string, name?: string) {
+    const desiredName = name?.trim();
+    if (!desiredName) {
+      throw new BadRequestException("File name is required");
+    }
+
+    const fileMetaData = await this.prisma.file.findFirst({
+      where: { id: fileId, shareId },
+      include: { share: { include: { files: true } } },
+    });
+
+    if (!fileMetaData) throw new NotFoundException("File not found");
+
+    const fileName = createAvailableFileName(
+      desiredName,
+      fileMetaData.share.files
+        .filter((file) => file.id !== fileId)
+        .map((file) => file.name),
+    );
+
+    const file = await this.prisma.file.update({
+      where: { id: fileId },
+      data: { name: fileName },
+    });
+
+    if (fileMetaData.share.uploadLocked) {
+      await this.prisma.share.update({
+        where: { id: shareId },
+        data: { isZipReady: false },
+      });
+    }
+
+    return file;
   }
 
   async deleteAllFiles(shareId: string) {
@@ -299,5 +356,102 @@ export class LocalFileService {
     });
 
     return files.reduce((sum, file) => sum + parseInt(file.size), 0);
+  }
+
+  private async scanFileInBackground(
+    shareId: string,
+    shareDirectory: string,
+    fileId: string,
+    fileName: string,
+  ) {
+    const filePath = `${shareDirectory}/${fileId}`;
+
+    try {
+      const scanResult = await this.clamScanService.scanLocalFile(
+        filePath,
+        fileName,
+      );
+
+      await this.updateFileScanStatus(fileId, {
+        scanStatus: scanResult.scanStatus,
+        scanCheckedAt: scanResult.scanCheckedAt,
+        scanMessage: scanResult.scanMessage,
+      });
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        await fs
+          .rm(shareDirectory, { recursive: true, force: true })
+          .catch((removeError) => {
+            this.logger.warn(
+              `Could not delete files for infected share ${shareId}: ${
+                removeError instanceof Error
+                  ? removeError.message
+                  : String(removeError)
+              }`,
+            );
+          });
+        await this.prisma.file
+          .deleteMany({ where: { shareId } })
+          .catch((deleteError) => {
+            this.logger.warn(
+              `Could not delete file records for infected share ${shareId}: ${
+                deleteError instanceof Error
+                  ? deleteError.message
+                  : String(deleteError)
+              }`,
+            );
+          });
+        await this.prisma.share
+          .update({
+            where: { id: shareId },
+            data: {
+              isZipReady: false,
+              removedReason: `Your share got removed because the file ${fileName} is malicious.`,
+            },
+          })
+          .catch((updateError) => {
+            this.logger.warn(
+              `Could not mark share ${shareId} as removed after malware detection: ${
+                updateError instanceof Error
+                  ? updateError.message
+                  : String(updateError)
+              }`,
+            );
+          });
+        this.logger.warn(
+          `Share ${shareId} deleted because ${fileName} is malicious.`,
+        );
+        return;
+      }
+
+      this.logger.error(
+        `Virus scan failed for ${fileName}`,
+        error instanceof Error ? error.stack : String(error),
+      );
+
+      await this.updateFileScanStatus(fileId, {
+        scanStatus: "ERROR",
+        scanCheckedAt: new Date(),
+        scanMessage: "ClamAV scan failed.",
+      });
+    }
+  }
+
+  private async updateFileScanStatus(
+    fileId: string,
+    data: { scanStatus: string; scanCheckedAt: Date; scanMessage: string },
+  ) {
+    await this.prisma.file
+      .update({
+        where: { id: fileId },
+        data,
+      })
+      .catch((error) => {
+        this.logger.warn(
+          `Could not update scan status for file ${fileId}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
   }
 }
